@@ -1,6 +1,7 @@
 /**
  * Mock results matching the exact shape from fake_data.txt
- * (columns array + data array of row arrays)
+ * (columns array + data array of row arrays).
+ * farms array is derived from data for dashboard cards.
  */
 export const MOCK_RESULTS = {
   columns: [
@@ -101,3 +102,25 @@ export const MOCK_RESULTS = {
     [19.4, 39.6, 3.7, 221.0, 957.0, 2.0, 3.8, 0.20, 0.13, 7310.0, 23.9],
   ],
 };
+
+function buildFarmsFromData(rows) {
+  const regions = ['North', 'South', 'Central'];
+  return (rows || []).slice(0, 12).map((row, i) => {
+    const farm_size_ha = 12 + (i % 38);
+    const yieldScore = Math.min(1, Math.max(0, (row[10] - 15) / 15));
+    return {
+      farm_id: `F${i + 1}`,
+      crop: 'Wheat',
+      region: regions[i % 3],
+      farm_size_ha,
+      is_small: farm_size_ha < 25,
+      yield_score: yieldScore,
+      climate_risk_score: 1 - yieldScore,
+      subsidy_amount: 1200 + i * 80,
+      subsidy_eligible: farm_size_ha < 30,
+      reasoning: `Based on climate and soil data for ${regions[i % 3]}, yield is projected at ${(yieldScore * 100).toFixed(0)}% of baseline.`,
+    };
+  });
+}
+
+MOCK_RESULTS.farms = buildFarmsFromData(MOCK_RESULTS.data);

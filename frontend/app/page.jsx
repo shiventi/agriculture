@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import UploadZone from '@/components/UploadZone'
 import FarmGrid from '@/components/FarmGrid'
+import { MOCK_RESULTS } from '@/lib/mockData'
 
 export default function Home() {
-  const [results, setResults] = useState(null)
+  const [results, setResults] = useState(MOCK_RESULTS);
   const [isLoading, setIsLoading] = useState(false)
 
   return (
