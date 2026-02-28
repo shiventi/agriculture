@@ -65,3 +65,63 @@ body {
   background-color: #2d8a6e;
   transition: stroke 0.3s ease, color 0.3s ease, background-color 0.3s ease;
 }
+
+/* LoadingState – wheat stalk draw, progress bar, particles */
+@keyframes loading-stalk-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes loading-stalk-head-in {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes loading-progress-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+@keyframes loading-particle-float {
+  from {
+    transform: translateY(100vh) scale(0.6);
+    opacity: 0.3;
+  }
+  to {
+    transform: translateY(-20vh) scale(1);
+    opacity: 0.6;
+  }
+}
+
+.loading-stalk-draw {
+  stroke-dasharray: 136;
+  stroke-dashoffset: 136;
+  animation: loading-stalk-draw 1.5s ease-out forwards;
+}
+.loading-stalk-head {
+  opacity: 0;
+  animation: loading-stalk-head-in 0.4s 1.4s ease-out forwards;
+  animation-fill-mode: forwards;
+}
+.loading-progress-bar {
+  width: 0%;
+  animation: loading-progress-fill 8s linear forwards;
+}
+.loading-particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.loading-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #d4a843;
+  bottom: 0;
+  animation: loading-particle-float 10s ease-in-out infinite;
+}
