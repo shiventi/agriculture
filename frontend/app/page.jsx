@@ -11,7 +11,11 @@ export default function Home() {
   return (
     <div className="min-h-[60vh] px-6 py-8">
       {results == null ? (
-        <UploadZone results={results} isLoading={isLoading} />
+        <UploadZone
+          results={results}
+          isLoading={isLoading}
+          onResult={(data) => setResults(data)}
+        />
       ) : (
         <FarmGrid results={results} isLoading={isLoading} />
       )}
