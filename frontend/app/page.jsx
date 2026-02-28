@@ -8,12 +8,12 @@ import { MOCK_RESULTS } from '@/lib/mockData'
 
 export default function Home() {
   const [results, setResults] = useState(MOCK_RESULTS)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
 
   return (
     <>
       {isLoading && <LoadingState />}
-      <div className="min-h-[60vh] px-6 py-8">
+      <div className="mx-auto min-h-[60vh] max-w-7xl px-6 py-8">
       {results == null ? (
         <UploadZone
           results={results}

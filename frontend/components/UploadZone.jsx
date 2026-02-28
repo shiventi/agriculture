@@ -112,7 +112,7 @@ export default function UploadZone({ results, isLoading, onResult }) {
   return (
     <>
       <div
-        className="mx-auto flex max-w-2xl flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gold/60 bg-deep-green/50 px-16 py-20 transition-colors md:py-28"
+        className="mx-auto flex max-w-2xl flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gold/60 bg-deep-green/50 px-16 py-20 transition-all duration-200 md:py-28"
         onDrop={onDrop}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}

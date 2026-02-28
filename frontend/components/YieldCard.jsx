@@ -1,5 +1,7 @@
 'use client'
 
+import { formatPercent } from '@/lib/format'
+
 function WheatIconSmall({ className = '' }) {
   return (
     <svg
@@ -38,21 +40,20 @@ export default function YieldCard({
   yield_score,
 }) {
   const s = yield_score ?? 0
-  const scorePct = Math.round(s * 100)
   const colorClass = getScoreColorClass(s)
   const r = 44
   const circumference = 2 * Math.PI * r
   const strokeDashoffset = circumference * (1 - s)
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-2xl bg-cream shadow-lg shadow-deep-green/15 transition-shadow">
+    <article className="card-hover flex h-full flex-col overflow-hidden rounded-2xl bg-cream shadow-lg shadow-deep-green/15">
       {/* Gold header bar */}
       <div className="flex items-center gap-2 bg-gold px-4 py-2.5">
         <WheatIconSmall className="h-5 w-4 text-deep-green" />
         <span className="text-sm font-semibold text-deep-green">Expected Yield</span>
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex min-h-0 flex-1 flex-col p-5">
         {/* Farm id, subtitle, size, badge */}
         <div className="mb-4">
           <h3 className="text-xl font-bold text-deep-green">{farm_id ?? '—'}</h3>
@@ -95,9 +96,9 @@ export default function YieldCard({
           </svg>
           <span
             className={`absolute text-2xl font-bold transition-colors duration-300 ${colorClass}`}
-            aria-label={`Yield score ${scorePct} percent`}
+            aria-label={`Yield score ${formatPercent(s)}`}
           >
-            {scorePct}%
+            {formatPercent(s)}
           </span>
         </div>
 
