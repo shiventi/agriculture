@@ -147,15 +147,13 @@ export default function UploadZone({ results, isLoading, onResult }) {
             ))}
           </div>
 
-          {process.env.NODE_ENV === 'development' && (
-            <button
-              type="button"
-              onClick={loadMockData}
-              className="mt-6 text-xs text-zinc-500 underline hover:text-zinc-400"
-            >
-              Load sample data (dev)
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={loadMockData}
+            className="mt-6 text-xs text-zinc-500 underline hover:text-zinc-400"
+          >
+            Load sample data
+          </button>
         </div>
       </div>
 
