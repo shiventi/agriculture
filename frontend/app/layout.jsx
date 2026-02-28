@@ -1,5 +1,6 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
+import { ResultsProvider } from '@/contexts/ResultsContext'
 import Header from '@/components/Header'
 
 const inter = Inter({
@@ -17,13 +18,15 @@ export default function RootLayout({ children }) {
     <html lang="en" className={inter.className}>
       <body className="min-h-screen bg-zinc-950 text-zinc-100 antialiased flex flex-col">
         <div className="grain-overlay" aria-hidden />
-        <Header />
-        <main className="relative z-10 flex-1">
-          {children}
-        </main>
-        <footer className="site-footer">
-          Powered by PyTorch · OR-Tools
-        </footer>
+        <ResultsProvider>
+          <Header />
+          <main className="relative z-10 flex-1">
+            {children}
+          </main>
+          <footer className="site-footer">
+            Powered by PyTorch · OR-Tools
+          </footer>
+        </ResultsProvider>
       </body>
     </html>
   )

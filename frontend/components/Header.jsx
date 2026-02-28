@@ -1,6 +1,15 @@
 'use client'
 
+import { useMemo } from 'react'
 import { Badge } from '@/components/ui/badge'
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+} from '@/components/ui/navigation-menu'
+import { useResults } from '@/contexts/ResultsContext'
+import { formatUSD } from '@/lib/format'
 
 function WheatLeafIcon({ className = '' }) {
   return (
@@ -28,11 +37,26 @@ const NAV_PILLS = [
 ]
 
 export default function Header() {
+  const { results } = useResults()
+  const summary = useMemo(() => {
+    const farms = results?.farms ?? []
+    if (!farms.length)
+      return { totalFarms: 0, totalBudget: 0, smallFarmShare: 0 }
+    const totalBudget = farms.reduce((sum, f) => sum + (f.subsidy_amount ?? 0), 0)
+    const smallCount = farms.filter((f) => f.is_small).length
+    const smallFarmShare = Math.round((smallCount / farms.length) * 1000) / 10
+    return {
+      totalFarms: farms.length,
+      totalBudget,
+      smallFarmShare,
+    }
+  }, [results])
+
   return (
     <>
       <header className="premium-header">
         <div className="premium-header-scanline" aria-hidden />
-        <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-6">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           <a
             href="/"
             className="premium-logo group flex items-center gap-2"
@@ -48,17 +72,24 @@ export default function Header() {
             <span className="premium-pulse-dot" aria-hidden title="Live" />
           </a>
 
-          <nav className="hidden items-center gap-2 sm:flex" aria-label="Primary">
-            {NAV_PILLS.map(({ label }) => (
-              <Badge
-                key={label}
-                variant="outline"
-                className="rounded-full border-[rgba(0,255,135,0.2)] px-3 py-1 text-[12px] font-normal text-[#00ff87]"
-              >
-                {label}
-              </Badge>
-            ))}
-          </nav>
+          <NavigationMenu className="flex-1 justify-center">
+            <NavigationMenuList className="h-auto gap-2 border-0 bg-transparent">
+              {NAV_PILLS.map(({ label }) => (
+                <NavigationMenuItem key={label}>
+                  <NavigationMenuLink asChild>
+                    <span className="cursor-default">
+                      <Badge
+                        variant="outline"
+                        className="rounded-full border-[rgba(0,255,135,0.2)] px-3 py-1 text-[12px] font-normal text-[#00ff87]"
+                      >
+                        {label}
+                      </Badge>
+                    </span>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
 
           <Badge
             variant="outline"
@@ -83,25 +114,33 @@ export default function Header() {
             />
           ))}
         </div>
-        <div className="relative z-10 flex flex-col items-center justify-center px-6 py-8 text-center">
-          <h2 className="text-[28px] font-bold leading-tight text-white">
-            AI-Powered Farm Intelligence
-          </h2>
-          <p className="mt-2 text-[14px] text-zinc-500">
-            Yield prediction · Climate risk analysis · Fair subsidy allocation
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-10">
-            <div>
-              <p className="text-lg font-bold text-[#00ff87]">8</p>
-              <p className="mt-0.5 text-[11px] text-zinc-500">Farms Analyzed</p>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-[#00ff87]">$1,000,000</p>
-              <p className="mt-0.5 text-[11px] text-zinc-500">Allocated</p>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-[#00ff87]">48.2%</p>
-              <p className="mt-0.5 text-[11px] text-zinc-500">Small Farm Share</p>
+        <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
+          <div className="flex flex-col items-center text-center">
+            <h2 className="text-[28px] font-bold leading-tight text-white">
+              AI-Powered Farm Intelligence
+            </h2>
+            <p className="mt-2 text-[14px] text-zinc-500">
+              Yield prediction · Climate risk analysis · Fair subsidy allocation
+            </p>
+            <div className="mt-6 grid w-full grid-cols-3 gap-4 text-center">
+              <div>
+                <p className="text-lg font-bold text-[#00ff87]">
+                  {summary.totalFarms}
+                </p>
+                <p className="mt-0.5 text-[11px] text-zinc-500">Farms Analyzed</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-[#00ff87]">
+                  {formatUSD(summary.totalBudget)}
+                </p>
+                <p className="mt-0.5 text-[11px] text-zinc-500">Allocated</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-[#00ff87]">
+                  {summary.smallFarmShare}%
+                </p>
+                <p className="mt-0.5 text-[11px] text-zinc-500">Small Farm Share</p>
+              </div>
             </div>
           </div>
         </div>
