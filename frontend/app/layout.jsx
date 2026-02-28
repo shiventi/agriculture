@@ -15,14 +15,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="min-h-screen bg-deep-green text-cream antialiased flex flex-col">
+      <body className="min-h-screen bg-zinc-950 text-zinc-100 antialiased flex flex-col">
         <div className="grain-overlay" aria-hidden />
         <Header />
         <main className="relative z-10 flex-1">
           {children}
         </main>
         <footer className="site-footer">
-          Powered by PyTorch · OR-Tools · Claude AI
+          Powered by PyTorch · OR-Tools
         </footer>
       </body>
     </html>

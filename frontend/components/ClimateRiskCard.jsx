@@ -1,27 +1,40 @@
 'use client'
 
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 import { formatPercent } from '@/lib/format'
 
-function getRiskColor(score) {
-  if (score < 0.4) return { stroke: '#2d8a6e', label: 'LOW RISK' }
-  if (score <= 0.7) return { stroke: '#d97706', label: 'MODERATE' }
-  return { stroke: '#c0392b', label: 'HIGH RISK' }
+function AlertTriangleIcon({ className = '' }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  )
 }
 
 function ThermometerIcon({ className = '' }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
       <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z" />
     </svg>
   )
 }
 
-function RaindropIcon({ className = '' }) {
+function CloudRainIcon({ className = '' }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M16 13v8M8 13v8M12 15v8M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" />
     </svg>
   )
+}
+
+function getRiskLevel(score) {
+  if (score < 0.4) return { label: 'LOW', variant: 'outline', className: 'border-emerald-600 text-emerald-400' }
+  if (score <= 0.7) return { label: 'MODERATE', variant: 'default', className: 'bg-amber-600 text-white border-0' }
+  return { label: 'HIGH RISK', variant: 'default', className: 'bg-red-600 text-white border-0' }
 }
 
 export default function ClimateRiskCard({
@@ -31,77 +44,70 @@ export default function ClimateRiskCard({
   precipitation_mm,
 }) {
   const score = climate_risk_score ?? 0
-  const { stroke, label } = getRiskColor(score)
+  const level = getRiskLevel(score)
   const angleDeg = 180 - score * 180
   const angleRad = (angleDeg * Math.PI) / 180
-  const needleLength = 35
+  const needleLength = 32
   const cx = 50
   const cy = 50
   const needleX = cx + needleLength * Math.cos(angleRad)
   const needleY = cy - needleLength * Math.sin(angleRad)
-  const showWarnings = score > 0.5
+  const gaugeColor = score < 0.4 ? '#14b8a6' : score <= 0.7 ? '#f59e0b' : '#ef4444'
 
   return (
-    <div className="dashboard-card flex flex-col bg-[#1e2d26] text-cream">
-      <p className="card-header-label text-cream/80">Climate Risk</p>
-      <div className="mt-1 flex min-h-0 flex-1 items-center gap-2">
-        <div className="relative flex-shrink-0" style={{ width: 100, height: 52 }}>
-          <svg viewBox="0 0 100 60" className="h-[52px] w-[100px]" aria-hidden>
-            <path
-              d="M 10 50 A 40 40 0 0 1 90 50"
-              fill="none"
-              stroke="rgba(255,255,255,0.1)"
-              strokeWidth="6"
-              strokeLinecap="round"
-            />
-            <path
-              d="M 10 50 A 40 40 0 0 1 90 50"
-              fill="none"
-              stroke={stroke}
-              strokeWidth="6"
-              strokeLinecap="round"
-              strokeDasharray={125}
-              strokeDashoffset={125 - (score * 125)}
-              className="transition-all duration-200"
-            />
-            <line
-              x1={cx}
-              y1={cy}
-              x2={needleX}
-              y2={needleY}
-              stroke={stroke}
-              strokeWidth="2"
-              strokeLinecap="round"
-              className="transition-all duration-200"
-            />
-          </svg>
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-cream/70">
-            {label}
-          </p>
-          <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-cream/80">
-            <span className="flex items-center gap-1">
-              <ThermometerIcon className="h-3 w-3" />
-              {temperature_c != null ? `${temperature_c}°C` : '—'}
-            </span>
-            <span className="flex items-center gap-1">
-              <RaindropIcon className="h-3 w-3" />
-              {precipitation_mm != null ? `${precipitation_mm} mm` : '—'}
-            </span>
+    <Card className="h-[200px] overflow-hidden border-zinc-800 bg-zinc-900 transition-shadow hover:shadow-lg hover:shadow-black/20">
+      <CardHeader className="flex flex-row items-center gap-2 space-y-0 p-4 pb-0">
+        <AlertTriangleIcon className="h-4 w-4 text-amber-500" />
+        <CardTitle className="text-sm font-semibold text-zinc-100">Climate Risk</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2 p-4 pt-2">
+        <div className="flex items-center gap-3">
+          <div className="relative flex-shrink-0" style={{ width: 80, height: 44 }}>
+            <svg viewBox="0 0 100 60" className="h-11 w-20" aria-hidden>
+              <path
+                d="M 10 50 A 40 40 0 0 1 90 50"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="5"
+                strokeLinecap="round"
+                className="text-zinc-700"
+              />
+              <path
+                d="M 10 50 A 40 40 0 0 1 90 50"
+                fill="none"
+                stroke={gaugeColor}
+                strokeWidth="5"
+                strokeLinecap="round"
+                strokeDasharray={125}
+                strokeDashoffset={125 - score * 125}
+                className="transition-all duration-200"
+              />
+              <line
+                x1={cx}
+                y1={cy}
+                x2={needleX}
+                y2={needleY}
+                stroke={gaugeColor}
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
-          {showWarnings && (
-            <div className="mt-1.5 flex flex-wrap gap-1">
-              <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-medium text-amber-400">
-                Drought
-              </span>
-              <span className="rounded bg-blue-500/20 px-1.5 py-0.5 text-[10px] font-medium text-blue-300">
-                Flood
-              </span>
-            </div>
-          )}
+          <Badge className={level.className}>{level.label}</Badge>
         </div>
-      </div>
-    </div>
+        <Separator className="bg-zinc-700" />
+        <div className="flex items-center gap-4 text-[12px] text-zinc-400">
+          <span className="flex items-center gap-1">
+            <ThermometerIcon className="h-3.5 w-3.5" />
+            {temperature_c != null ? `${temperature_c}°C` : '—'}
+          </span>
+          <Separator orientation="vertical" className="h-4 bg-zinc-700" />
+          <span className="flex items-center gap-1">
+            <CloudRainIcon className="h-3.5 w-3.5" />
+            {precipitation_mm != null ? `${precipitation_mm} mm` : '—'}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

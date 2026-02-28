@@ -1,5 +1,8 @@
 'use client'
 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
 import { formatUSD } from '@/lib/format'
 
 export default function SubsidyCard({
@@ -15,37 +18,29 @@ export default function SubsidyCard({
   const pct = maxAmount > 0 ? Math.min(100, (amount / maxAmount) * 100) : 0
 
   return (
-    <div className="dashboard-card flex flex-col bg-[#1a3a2a] text-cream">
-      <p className="card-header-label text-cream/70">Subsidy</p>
-      <p className="mt-0.5 text-[28px] font-bold leading-tight text-gold">
-        {formatUSD(amount)}
-      </p>
-      <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-cream/10">
-        <div
-          className="h-full rounded-full bg-teal transition-all duration-200"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      {is_small && (
-        <div className="mt-2 flex items-center gap-1.5 rounded bg-teal/20 px-2 py-1 text-[11px] font-medium text-teal">
-          <span aria-hidden>✓</span>
-          Equity constraints applied
+    <Card className="h-[180px] overflow-hidden border-emerald-900/30 bg-zinc-950 transition-shadow hover:shadow-lg hover:shadow-black/20">
+      <CardHeader className="space-y-0 p-4 pb-0">
+        <CardTitle className="text-sm font-semibold text-zinc-100">
+          Subsidy Allocation
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2 p-4 pt-2">
+        <p className="text-2xl font-bold text-[#00ff87]">{formatUSD(amount)}</p>
+        <Progress value={pct} className="h-1.5 [&>div]:bg-emerald-500" />
+        {is_small && (
+          <Badge className="w-fit border border-emerald-800 bg-emerald-950/80 text-emerald-400 text-[10px]">
+            ✓ Equity Applied
+          </Badge>
+        )}
+        <div className="flex gap-3 text-[11px]">
+          <CardDescription className="text-zinc-500">
+            Gini: {gini_coefficient != null ? gini_coefficient.toFixed(2) : '—'}
+          </CardDescription>
+          <CardDescription className="text-zinc-500">
+            Small share: {small_farm_share_pct != null ? `${small_farm_share_pct}%` : '—'}
+          </CardDescription>
         </div>
-      )}
-      <div className="mt-2 flex gap-3">
-        <div className="rounded bg-cream/5 px-2 py-1">
-          <p className="text-[10px] text-cream/60">Gini</p>
-          <p className="text-[12px] font-semibold text-cream">
-            {gini_coefficient != null ? gini_coefficient.toFixed(2) : '—'}
-          </p>
-        </div>
-        <div className="rounded bg-cream/5 px-2 py-1">
-          <p className="text-[10px] text-cream/60">Small share</p>
-          <p className="text-[12px] font-semibold text-cream">
-            {small_farm_share_pct != null ? `${small_farm_share_pct}%` : '—'}
-          </p>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
