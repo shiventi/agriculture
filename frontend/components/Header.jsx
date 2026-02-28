@@ -2,12 +2,7 @@
 
 import { useMemo } from 'react'
 import { Badge } from '@/components/ui/badge'
-import {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuLink,
-} from '@/components/ui/navigation-menu'
+import { Separator } from '@/components/ui/separator'
 import { useResults } from '@/contexts/ResultsContext'
 import { formatUSD } from '@/lib/format'
 
@@ -30,10 +25,10 @@ function WheatLeafIcon({ className = '' }) {
   )
 }
 
-const NAV_PILLS = [
-  { label: 'Yield Forecast' },
-  { label: 'Climate Risk' },
-  { label: 'Fair Subsidies' },
+const NAV_ITEMS = [
+  { icon: '◆', label: 'Yield Forecast' },
+  { icon: '⚠', label: 'Climate Risk' },
+  { icon: '⚖', label: 'Fair Subsidies' },
 ]
 
 export default function Header() {
@@ -54,93 +49,81 @@ export default function Header() {
 
   return (
     <>
-      <header className="premium-header">
-        <div className="premium-header-scanline" aria-hidden />
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+      <header className="sticky top-0 z-50 h-16 w-full border-b border-zinc-800 bg-zinc-950">
+        <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6">
           <a
             href="/"
-            className="premium-logo group flex items-center gap-2"
+            className="flex items-center gap-2 text-inherit no-underline"
             aria-label="AgriEquity AI home"
           >
-            <WheatLeafIcon className="h-5 w-5 flex-shrink-0 text-[#00ff87]" />
-            <span className="text-[20px] font-bold leading-none text-white">
-              AgriEquity
+            <WheatLeafIcon className="h-4 w-4 shrink-0 text-[#00ff87]" />
+            <span className="text-lg font-bold text-white">AgriEquity</span>
+            <span className="text-lg font-bold text-[#00ff87]">AI</span>
+            <span className="relative ml-2 flex h-2 w-2" aria-hidden title="Live">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
             </span>
-            <span className="text-[20px] font-bold leading-none text-[#00ff87] transition-[filter] duration-200 group-hover:drop-shadow-[0_0_8px_rgba(0,255,135,0.6)]">
-              AI
-            </span>
-            <span className="premium-pulse-dot" aria-hidden title="Live" />
           </a>
 
-          <NavigationMenu className="flex-1 justify-center">
-            <NavigationMenuList className="h-auto gap-2 border-0 bg-transparent">
-              {NAV_PILLS.map(({ label }) => (
-                <NavigationMenuItem key={label}>
-                  <NavigationMenuLink asChild>
-                    <span className="cursor-default">
-                      <Badge
-                        variant="outline"
-                        className="rounded-full border-[rgba(0,255,135,0.2)] px-3 py-1 text-[12px] font-normal text-[#00ff87]"
-                      >
-                        {label}
-                      </Badge>
-                    </span>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
+          <div className="hidden items-center gap-3 md:flex">
+            {NAV_ITEMS.map(({ icon, label }) => (
+              <Badge
+                key={label}
+                variant="outline"
+                className="cursor-default rounded-full border-zinc-700 bg-zinc-900 px-4 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
+              >
+                {icon} {label}
+              </Badge>
+            ))}
+          </div>
 
-          <Badge
-            variant="outline"
-            className="rounded-full border-zinc-600 bg-zinc-800/80 px-3 py-1.5 text-[11px] font-normal text-zinc-400"
-          >
-            AMD ROCm
-          </Badge>
+          <div className="flex items-center">
+            <Separator orientation="vertical" className="mx-2 h-5 bg-zinc-700" />
+            <Badge
+              variant="outline"
+              className="rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1 text-xs text-zinc-400"
+            >
+              AMD ROCm
+            </Badge>
+          </div>
         </div>
       </header>
 
-      <section className="premium-hero" aria-label="Introduction">
-        <div className="premium-hero-particles" aria-hidden>
-          {[0, 1, 2, 3, 4, 5].map((i) => (
-            <span
-              key={i}
-              className="hero-particle"
-              style={{
-                left: `${12 + i * 15}%`,
-                animationDelay: `${i * 1.2}s`,
-                animationDuration: `${7 + (i % 3)}s`,
-              }}
-            />
-          ))}
-        </div>
-        <div className="relative z-10 mx-auto max-w-7xl px-6 py-8">
-          <div className="flex flex-col items-center text-center">
-            <h2 className="text-[28px] font-bold leading-tight text-white">
-              AI-Powered Farm Intelligence
-            </h2>
-            <p className="mt-2 text-[14px] text-zinc-500">
-              Yield prediction · Climate risk analysis · Fair subsidy allocation
-            </p>
-            <div className="mt-6 grid w-full grid-cols-3 gap-4 text-center">
-              <div>
-                <p className="text-lg font-bold text-[#00ff87]">
-                  {summary.totalFarms}
-                </p>
-                <p className="mt-0.5 text-[11px] text-zinc-500">Farms Analyzed</p>
-              </div>
-              <div>
-                <p className="text-lg font-bold text-[#00ff87]">
-                  {formatUSD(summary.totalBudget)}
-                </p>
-                <p className="mt-0.5 text-[11px] text-zinc-500">Allocated</p>
-              </div>
-              <div>
-                <p className="text-lg font-bold text-[#00ff87]">
-                  {summary.smallFarmShare}%
-                </p>
-                <p className="mt-0.5 text-[11px] text-zinc-500">Small Farm Share</p>
-              </div>
+      <section
+        className="border-b border-zinc-800 bg-zinc-900"
+        aria-label="Introduction"
+      >
+        <div className="mx-auto max-w-7xl px-6 py-8 text-center">
+          <h2 className="text-2xl font-bold tracking-tight text-white">
+            AI-Powered Farm Intelligence
+          </h2>
+          <p className="mt-1 text-sm text-zinc-400">
+            Yield prediction · Climate risk · Fair subsidy allocation
+          </p>
+          <div className="mx-auto mt-6 grid max-w-lg grid-cols-3 gap-8">
+            <div className="border-r border-zinc-700 pr-8 last:border-r-0 last:pr-0">
+              <p className="text-2xl font-bold text-emerald-400">
+                {summary.totalFarms}
+              </p>
+              <p className="mt-1 text-xs uppercase tracking-widest text-zinc-500">
+                Farms
+              </p>
+            </div>
+            <div className="border-r border-zinc-700 pr-8 last:border-r-0 last:pr-0">
+              <p className="text-2xl font-bold text-emerald-400">
+                {formatUSD(summary.totalBudget)}
+              </p>
+              <p className="mt-1 text-xs uppercase tracking-widest text-zinc-500">
+                Allocated
+              </p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-emerald-400">
+                {summary.smallFarmShare}%
+              </p>
+              <p className="mt-1 text-xs uppercase tracking-widest text-zinc-500">
+                Small Farm Share
+              </p>
             </div>
           </div>
         </div>
