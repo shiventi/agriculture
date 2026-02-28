@@ -1,60 +1,33 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { MOCK_RESULTS } from '@/lib/mockData'
 
-function WheatIcon({ className = '' }) {
+function WheatLeafIcon({ className = '' }) {
   return (
     <svg
       className={className}
-      viewBox="0 0 48 64"
+      viewBox="0 0 24 24"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       aria-hidden
     >
-      <path
-        d="M24 4v56M24 4c-4 8-8 16-8 28 0 6 2 12 8 12s8-6 8-12c0-12-4-20-8-28zm0 0c4 8 8 16 8 28 0 6-2 12-8 12s-8-6-8-12c0-12 4-20 8-28z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <ellipse cx="24" cy="12" rx="6" ry="4" fill="currentColor" opacity="0.9" />
-      <ellipse cx="24" cy="22" rx="7" ry="5" fill="currentColor" opacity="0.85" />
-      <ellipse cx="24" cy="34" rx="6" ry="4" fill="currentColor" opacity="0.9" />
+      <path d="M12 2c-2 4-4 8-4 14 0 4 2 8 6 8s6-4 6-8c0-6-2-10-4-14" />
+      <path d="M12 2c2 4 4 8 4 14 0 4-2 8-6 8s-6-4-6-8c0-6 2-10 4-14" />
+      <ellipse cx="12" cy="8" rx="4" ry="3" fill="currentColor" opacity="0.9" />
     </svg>
   )
 }
 
-function WheatGrowthAnimation() {
-  return (
-    <svg
-      className="h-32 w-12"
-      viewBox="0 0 48 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden
-    >
-      <defs>
-        <linearGradient id="upload-stalk" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="#1a3a2a" />
-          <stop offset="100%" stopColor="#2d8a6e" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M24 120 V0"
-        stroke="url(#upload-stalk)"
-        strokeWidth="4"
-        strokeLinecap="round"
-        className="wheat-stalk origin-bottom"
-      />
-      <g className="wheat-head">
-        <ellipse cx="24" cy="8" rx="10" ry="6" fill="#d4a843" />
-        <ellipse cx="24" cy="18" rx="12" ry="7" fill="#d4a843" />
-        <ellipse cx="24" cy="30" rx="10" ry="6" fill="#d4a843" />
-      </g>
-    </svg>
-  )
-}
+const OUTPUT_PILLS = [
+  { icon: '◆', label: 'Yield Forecast' },
+  { icon: '⚠', label: 'Climate Risk' },
+  { icon: '⚖', label: 'Fair Subsidies' },
+]
 
 export default function UploadZone({ results, isLoading, onResult }) {
   const [isDragging, setIsDragging] = useState(false)
@@ -109,61 +82,94 @@ export default function UploadZone({ results, isLoading, onResult }) {
     e.target.value = ''
   }
 
+  const loadMockData = () => {
+    setError(null)
+    onResult?.(MOCK_RESULTS)
+  }
+
   return (
-    <>
-      <div
-        className="mx-auto flex max-w-2xl flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gold/60 bg-deep-green/50 px-16 py-20 transition-all duration-200 md:py-28"
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        onDragLeave={onDragLeave}
-        onClick={() => inputRef.current?.click()}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            inputRef.current?.click()
-          }
-        }}
-        style={{
-          borderColor: isDragging ? 'var(--gold)' : undefined,
-          backgroundColor: isDragging ? 'rgba(26, 58, 42, 0.8)' : undefined,
-        }}
-      >
-        <input
-          ref={inputRef}
-          type="file"
-          accept=".csv"
-          className="sr-only"
-          aria-label="Select CSV file"
-          onChange={onInputChange}
-          disabled={uploading}
-        />
-        <div className="mb-6 text-gold">
-          <WheatIcon className="h-16 w-12 md:h-20 md:w-16" />
-        </div>
-        <p className="text-2xl font-semibold text-cream md:text-3xl">
-          Drop your farms CSV
-        </p>
-        <p className="mt-2 text-sm text-cream/80">or click to browse</p>
-        {error && (
-          <p className="mt-4 text-sm text-soft-red" role="alert">
-            {error}
+    <div className="min-h-[60vh] bg-zinc-950">
+      <div className="mx-auto mt-24 max-w-lg rounded-3xl border border-zinc-800 bg-zinc-900 p-12">
+        <div className="flex flex-col items-center text-center">
+          <WheatLeafIcon className="h-12 w-12 shrink-0 text-[#00ff87]" />
+          <h1 className="mt-4 text-2xl font-bold text-white">AgriEquity AI</h1>
+          <p className="mt-2 text-sm text-zinc-400">
+            Upload your farms CSV to begin analysis
           </p>
-        )}
+
+          <div
+            className={`mt-6 cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition-colors ${
+              isDragging
+                ? 'border-emerald-500 bg-emerald-950/20'
+                : 'border-zinc-700 hover:border-emerald-500'
+            }`}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onClick={() => inputRef.current?.click()}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                inputRef.current?.click()
+              }
+            }}
+          >
+            <input
+              ref={inputRef}
+              type="file"
+              accept=".csv"
+              className="sr-only"
+              aria-label="Select CSV file"
+              onChange={onInputChange}
+              disabled={uploading}
+            />
+            <p className="text-zinc-300">Drop CSV here</p>
+            <p className="mt-1 text-sm text-zinc-500">or click to browse</p>
+          </div>
+
+          {error && (
+            <p className="mt-4 text-sm text-red-400" role="alert">
+              {error}
+            </p>
+          )}
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            {OUTPUT_PILLS.map(({ icon, label }) => (
+              <Badge
+                key={label}
+                variant="outline"
+                className="cursor-default rounded-full border-zinc-700 bg-zinc-900 px-4 py-1.5 text-xs font-medium text-zinc-300"
+              >
+                {icon} {label}
+              </Badge>
+            ))}
+          </div>
+
+          {process.env.NODE_ENV === 'development' && (
+            <button
+              type="button"
+              onClick={loadMockData}
+              className="mt-6 text-xs text-zinc-500 underline hover:text-zinc-400"
+            >
+              Load sample data (dev)
+            </button>
+          )}
+        </div>
       </div>
 
       {uploading && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-deep-green/95 text-cream"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-zinc-950/95 text-zinc-100"
           role="status"
           aria-live="polite"
           aria-label="Analyzing farms"
         >
-          <WheatGrowthAnimation />
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
           <p className="text-lg font-medium">Analyzing farms...</p>
         </div>
       )}
-    </>
+    </div>
   )
 }
