@@ -9,6 +9,7 @@ INPUTS:
                     "farm_id"       str
                     "is_small"      int  (1 = small farm, 0 = large)
                     "baseline_need" float 0–1
+  constraints   - dict of user inputted constraints
 
 OUTPUT from allocate():
   [
@@ -24,7 +25,7 @@ OUTPUT from allocate():
 import numpy as np
 
 
-CONSTRAINTS = {
+defaultCONSTRAINTS = {
     "small_farm_min_share":      0.40,   # small farms get >= 40% of budget
     "per_capita_ratio":          0.70,   # small avg >= 70% of large avg
     "need_floor_dollars":        50_000, # baseline_need x this = floor
@@ -34,13 +35,26 @@ CONSTRAINTS = {
 }
 
 
-def allocate(yield_scores, risk_scores, total_budget, farms, constraints=CONSTRAINTS):
+def allocate(yield_scores, risk_scores, total_budget, farms, constraints):
     """
     Split a budget across farms based on yield/risk, before and after fairness.
 
     Returns:
         list of dicts: [{ "farm_id", "before", "after" }, ...]
     """
+    if not constraints["small_farm_min_share"]:
+        constraints["small_farm_min_share"] = defaultCONSTRAINTS["small_farm_min_share"]
+    if not constraints["per_capita_ratio"]:
+        constraints["per_capita_ratio"] = defaultCONSTRAINTS["per_capita_ratio"]
+    if not constraints["need_floor_dollars"]:
+        constraints["need_floor_dollars"] = defaultCONSTRAINTS["need_floor_dollars"]
+    if not constraints["max_single_farm_share"]:
+        constraints["max_single_farm_share"] = defaultCONSTRAINTS["max_single_farm_share"]
+    if not constraints["high_risk_floor_threshold"]:
+        constraints["high_risk_floor_threshold"] = defaultCONSTRAINTS["high_risk_floor_threshold"]
+    if not constraints["small_farm_min_share"]:
+        constraints["high_risk_floor_amount"] = defaultCONSTRAINTS["high_risk_floor_amount"]
+    
     n = len(farms)
     assert len(yield_scores) == n
     assert len(risk_scores)  == n
