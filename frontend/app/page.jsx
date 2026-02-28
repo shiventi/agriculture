@@ -13,16 +13,16 @@ export default function Home() {
   return (
     <>
       {isLoading && <LoadingState />}
-      <div className="mx-auto min-h-[60vh] max-w-7xl px-6 py-8">
-      {results == null ? (
+      <div className="relative z-10 mx-auto min-h-[60vh] max-w-[1440px] px-6 py-6">
+        {results == null ? (
         <UploadZone
           results={results}
           isLoading={isLoading}
           onResult={(data) => setResults(data)}
         />
-      ) : (
-        <FarmGrid results={results} isLoading={isLoading} />
-      )}
+        ) : (
+          <FarmGrid results={results} isLoading={isLoading} />
+        )}
       </div>
     </>
   )

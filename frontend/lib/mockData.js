@@ -116,8 +116,12 @@ function buildFarmsFromData(rows) {
       is_small: farm_size_ha < 25,
       yield_score: yieldScore,
       climate_risk_score: 1 - yieldScore,
+      temperature_c: Math.round(row[0] * 10) / 10,
+      precipitation_mm: Math.round(row[3]),
       subsidy_amount: 1200 + i * 80,
       subsidy_eligible: farm_size_ha < 30,
+      gini_coefficient: 0.32 + (i % 5) * 0.02,
+      small_farm_share_pct: 28 + (i % 12),
       reasoning: `Based on climate and soil data for ${regions[i % 3]}, yield is projected at ${(yieldScore * 100).toFixed(0)}% of baseline.`,
     };
   });

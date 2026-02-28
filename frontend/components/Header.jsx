@@ -46,7 +46,7 @@ export default function Header() {
     <header className="header-bar">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-semibold text-gold tracking-tight">
+          <h1 className="flex items-center gap-2 text-[22px] font-bold text-gold tracking-tight">
             AgriEquity AI
             <span className="live-pulse-dot" aria-hidden title="Live data" />
           </h1>

@@ -8,24 +8,32 @@
   --gold: #d4a843;
   --soft-red: #c0392b;
   --teal: #2d8a6e;
+  --dark-edge: #0d1f15;
+  --climate-dark: #1e2d26;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  @apply bg-deep-green text-cream;
-  background: radial-gradient(ellipse 120% 100% at 50% 0%, rgba(35, 74, 53, 0.95) 0%, #1a3a2a 60%);
+  @apply text-cream antialiased;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  background: radial-gradient(ellipse 100% 100% at 50% 50%, #1a3a2a 0%, #0d1f15 100%);
   min-height: 100vh;
 }
 
-/* Light theme (class on html) */
+/* Light theme */
 html.theme-light body {
-  @apply bg-cream text-deep-green;
-  background: radial-gradient(ellipse 120% 100% at 50% 0%, rgba(245, 240, 232, 0.98) 0%, #e8e0d5 60%);
+  @apply text-deep-green;
+  background: radial-gradient(ellipse 100% 100% at 50% 50%, #f5f0e8 0%, #e8e0d5 100%);
 }
 html.theme-light .grain-overlay {
   opacity: 0.06;
 }
 
-/* Subtle grain texture overlay - CSS noise pattern */
 .grain-overlay {
   position: fixed;
   inset: 0;
@@ -35,16 +43,55 @@ html.theme-light .grain-overlay {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
-/* Upload zone – growing wheat stalk animation */
+/* Card base – compact, uniform */
+.dashboard-card {
+  max-height: 200px;
+  padding: 16px;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -8px rgb(0 0 0 / 0.2), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+html.theme-light .dashboard-card {
+  border-color: rgba(26, 58, 42, 0.1);
+}
+
+.card-header-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.card-hero-number {
+  font-size: 32px;
+  font-weight: 700;
+}
+.card-body-text {
+  font-size: 13px;
+  line-height: 1.4;
+}
+.card-muted {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+html.theme-light .card-muted {
+  color: rgba(26, 58, 42, 0.5);
+}
+
+/* YieldCard ring colors */
+.yield-poor { stroke: #c0392b; color: #c0392b; }
+.yield-amber { stroke: #d97706; color: #d97706; }
+.yield-good { stroke: #2d8a6e; color: #2d8a6e; }
+
+/* Upload zone */
 @keyframes wheat-stalk {
-  to {
-    stroke-dashoffset: 0;
-  }
+  to { stroke-dashoffset: 0; }
 }
 @keyframes wheat-head-in {
-  to {
-    opacity: 1;
-  }
+  to { opacity: 1; }
 }
 .wheat-stalk {
   stroke-dasharray: 120;
@@ -57,56 +104,21 @@ html.theme-light .grain-overlay {
   animation-fill-mode: forwards;
 }
 
-/* YieldCard score colors – red < 0.4, amber 0.4–0.7, green > 0.7 */
-.yield-poor {
-  stroke: #c0392b;
-  color: #c0392b;
-  background-color: #c0392b;
-  transition: stroke 0.3s ease, color 0.3s ease, background-color 0.3s ease;
-}
-.yield-amber {
-  stroke: #d97706;
-  color: #d97706;
-  background-color: #d97706;
-  transition: stroke 0.3s ease, color 0.3s ease, background-color 0.3s ease;
-}
-.yield-good {
-  stroke: #2d8a6e;
-  color: #2d8a6e;
-  background-color: #2d8a6e;
-  transition: stroke 0.3s ease, color 0.3s ease, background-color 0.3s ease;
-}
-
-/* LoadingState – wheat stalk draw, progress bar, particles */
+/* LoadingState */
 @keyframes loading-stalk-draw {
-  to {
-    stroke-dashoffset: 0;
-  }
+  to { stroke-dashoffset: 0; }
 }
 @keyframes loading-stalk-head-in {
-  to {
-    opacity: 1;
-  }
+  to { opacity: 1; }
 }
 @keyframes loading-progress-fill {
-  from {
-    width: 0%;
-  }
-  to {
-    width: 100%;
-  }
+  from { width: 0%; }
+  to { width: 100%; }
 }
 @keyframes loading-particle-float {
-  from {
-    transform: translateY(100vh) scale(0.6);
-    opacity: 0.3;
-  }
-  to {
-    transform: translateY(-20vh) scale(1);
-    opacity: 0.6;
-  }
+  from { transform: translateY(100vh) scale(0.6); opacity: 0.3; }
+  to { transform: translateY(-20vh) scale(1); opacity: 0.6; }
 }
-
 .loading-stalk-draw {
   stroke-dasharray: 136;
   stroke-dashoffset: 136;
@@ -137,19 +149,7 @@ html.theme-light .grain-overlay {
   animation: loading-particle-float 10s ease-in-out infinite;
 }
 
-/* Card hover – lift and deeper shadow */
-.card-hover {
-  transition: transform 200ms ease, box-shadow 200ms ease;
-}
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.15), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 1px rgb(26 58 42 / 0.08);
-}
-html.theme-light .card-hover:hover {
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.12), 0 8px 10px -6px rgb(0 0 0 / 0.08), 0 0 0 1px rgb(26 58 42 / 0.06);
-}
-
-/* Live pulse dot in header */
+/* Live pulse dot */
 @keyframes live-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.6; transform: scale(1.15); }
@@ -162,28 +162,33 @@ html.theme-light .card-hover:hover {
   animation: live-pulse 2s ease-in-out infinite;
 }
 
-/* Header theme-aware */
+/* Sticky header with blur */
 .header-bar {
-  position: relative;
-  z-index: 10;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(26, 58, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(245, 240, 232, 0.1);
 }
 html.theme-light .header-bar {
+  background: rgba(245, 240, 232, 0.9);
   border-bottom-color: rgba(26, 58, 42, 0.12);
 }
 .header-subtitle {
   margin-top: 2px;
-  font-size: 0.875rem;
-  color: rgba(245, 240, 232, 0.9);
+  font-size: 12px;
+  color: rgba(245, 240, 232, 0.7);
 }
 html.theme-light .header-subtitle {
-  color: rgba(26, 58, 42, 0.8);
+  color: rgba(26, 58, 42, 0.7);
 }
 .theme-toggle-btn {
   padding: 0.5rem;
   border-radius: 0.5rem;
   color: rgba(245, 240, 232, 0.9);
-  transition: color 0.2s, background-color 0.2s;
+  transition: color 200ms ease, background-color 200ms ease;
 }
 .theme-toggle-btn:hover {
   background-color: rgba(245, 240, 232, 0.1);
@@ -201,8 +206,7 @@ html.theme-light .theme-toggle-btn:hover {
   position: relative;
   z-index: 10;
   border-top: 1px solid rgba(245, 240, 232, 0.1);
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+  padding: 0.75rem;
   text-align: center;
   font-size: 0.75rem;
   color: rgba(245, 240, 232, 0.7);
@@ -212,7 +216,26 @@ html.theme-light .site-footer {
   color: rgba(26, 58, 42, 0.7);
 }
 
-/* Light theme card surfaces */
-html.theme-light .card-hover {
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04), 0 0 0 1px rgba(26, 58, 42, 0.06);
+/* Farm panel slide-up */
+@keyframes panel-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.farm-panel {
+  animation: panel-slide-up 0.4s ease-out both;
+}
+
+/* Reasoning typewriter */
+@keyframes typewriter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.reasoning-text {
+  animation: typewriter 0.6s ease-out forwards;
 }

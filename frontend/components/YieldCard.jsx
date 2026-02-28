@@ -2,33 +2,32 @@
 
 import { formatPercent } from '@/lib/format'
 
-function WheatIconSmall({ className = '' }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden
-    >
-      <path
-        d="M12 2v28M12 2c-2 4-4 8-4 14 0 3 1 6 4 6s4-3 4-6c0-6-2-10-4-14zm0 0c2 4 4 8 4 14 0 3-1 6-4 6S8 19 8 16c0-6 2-10 4-14z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <ellipse cx="12" cy="6" rx="3" ry="2" fill="currentColor" opacity="0.9" />
-      <ellipse cx="12" cy="11" rx="3.5" ry="2.5" fill="currentColor" opacity="0.85" />
-      <ellipse cx="12" cy="17" rx="3" ry="2" fill="currentColor" opacity="0.9" />
-    </svg>
-  )
-}
-
 function getScoreColorClass(score) {
   if (score < 0.4) return 'yield-poor'
   if (score <= 0.7) return 'yield-amber'
   return 'yield-good'
+}
+
+function StarRow({ score, colorClass }) {
+  const s = score ?? 0
+  const filled = Math.round(s * 5)
+  return (
+    <div className={`flex items-center justify-center gap-0.5 ${colorClass}`} aria-hidden>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <svg
+          key={i}
+          className="h-3.5 w-3.5"
+          viewBox="0 0 24 24"
+          fill={i <= filled ? 'currentColor' : 'none'}
+          stroke="currentColor"
+          strokeWidth="1.5"
+          aria-hidden
+        >
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+        </svg>
+      ))}
+    </div>
+  )
 }
 
 export default function YieldCard({
@@ -41,89 +40,64 @@ export default function YieldCard({
 }) {
   const s = yield_score ?? 0
   const colorClass = getScoreColorClass(s)
-  const r = 44
+  const r = 32
   const circumference = 2 * Math.PI * r
   const strokeDashoffset = circumference * (1 - s)
 
   return (
-    <article className="card-hover flex h-full flex-col overflow-hidden rounded-2xl bg-cream shadow-lg shadow-deep-green/15">
-      {/* Gold header bar */}
-      <div className="flex items-center gap-2 bg-gold px-4 py-2.5">
-        <WheatIconSmall className="h-5 w-4 text-deep-green" />
-        <span className="text-sm font-semibold text-deep-green">Expected Yield</span>
-      </div>
-
-      <div className="flex min-h-0 flex-1 flex-col p-5">
-        {/* Farm id, subtitle, size, badge */}
-        <div className="mb-4">
-          <h3 className="text-xl font-bold text-deep-green">{farm_id ?? '—'}</h3>
-          <p className="mt-0.5 text-sm text-deep-green/80">
-            {[crop, region].filter(Boolean).join(' · ') || '—'}
-          </p>
-          <p className="mt-1 text-xs text-deep-green/50">
-            {farm_size_ha != null ? `${farm_size_ha} ha` : '—'}
-          </p>
-          {is_small && (
-            <span className="mt-2 inline-block rounded-full bg-teal/20 px-2.5 py-0.5 text-xs font-medium text-teal">
-              Small Farm
-            </span>
-          )}
-        </div>
-
-        {/* Circular progress ring */}
-        <div className="relative mx-auto my-2 flex flex-shrink-0 items-center justify-center">
-          <svg className="h-40 w-40 -rotate-90" viewBox="0 0 100 100" aria-hidden>
+    <article
+      className="dashboard-card flex flex-col overflow-hidden bg-[#f5f0e8] text-deep-green"
+      style={{ borderColor: 'rgba(26,58,42,0.08)' }}
+    >
+      <p className="card-header-label text-deep-green/70">Expected Yield</p>
+      <div className="mt-1 flex min-h-0 flex-1 items-center gap-3">
+        <div className="relative flex-shrink-0">
+          <svg className="h-20 w-20 -rotate-90" viewBox="0 0 80 80" aria-hidden>
             <circle
-              cx="50"
-              cy="50"
+              cx="40"
+              cy="40"
               r={r}
               fill="none"
               stroke="currentColor"
-              strokeWidth="8"
+              strokeWidth="6"
               className="text-deep-green/15"
             />
             <circle
-              cx="50"
-              cy="50"
+              cx="40"
+              cy="40"
               r={r}
               fill="none"
-              strokeWidth="8"
+              strokeWidth="6"
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
-              className={`yield-ring transition-[stroke-dashoffset] duration-500 ease-out ${colorClass}`}
+              className={`transition-[stroke] duration-200 ${colorClass}`}
             />
           </svg>
           <span
-            className={`absolute text-2xl font-bold transition-colors duration-300 ${colorClass}`}
-            aria-label={`Yield score ${formatPercent(s)}`}
+            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-lg font-bold transition-colors duration-200 ${colorClass}`}
+            aria-label={`Yield ${formatPercent(s)}`}
           >
             {formatPercent(s)}
           </span>
         </div>
-
-        {/* Horizontal rating bar: Poor → Excellent */}
-        <div className="mt-4">
-          <div className="relative h-2 w-full overflow-hidden rounded-full bg-deep-green/10">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ease-out ${colorClass}`}
-              style={{ width: `${s * 100}%` }}
-            />
-            <div
-              className={`absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-cream shadow-md transition-all duration-300 ${colorClass}`}
-              style={{
-                left: `${Math.min(100, s * 100)}%`,
-                marginLeft: -6,
-              }}
-            />
-          </div>
-          <div className="mt-1.5 flex justify-between text-xs text-deep-green/60">
-            <span>Poor</span>
-            <span>Fair</span>
-            <span>Good</span>
-            <span>Excellent</span>
-          </div>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-[18px] font-bold leading-tight">{farm_id ?? '—'}</h3>
+          <p className="card-muted mt-0.5 text-xs text-deep-green/60">
+            {[crop, region].filter(Boolean).join(' · ') || '—'}
+          </p>
+          {farm_size_ha != null && (
+            <p className="card-muted mt-0.5 text-deep-green/50">{farm_size_ha} ha</p>
+          )}
+          {is_small && (
+            <span className="mt-1.5 inline-block rounded-full bg-teal/20 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-teal">
+              Small Farm
+            </span>
+          )}
         </div>
+      </div>
+      <div className="mt-2 flex items-center justify-center gap-0.5 text-deep-green/25">
+        <StarRow score={s} colorClass={colorClass} />
       </div>
     </article>
   )
