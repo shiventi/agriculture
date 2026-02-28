@@ -32,7 +32,7 @@ export default function FarmGrid({ results, isLoading }) {
   return (
     <div className="w-full space-y-4">
       {/* Sticky summary bar */}
-      <div className="sticky top-[73px] z-40 flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-deep-green/90 px-4 py-3 backdrop-blur-sm">
+      <div className="sticky top-[64px] z-40 flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-deep-green/90 px-4 py-3 backdrop-blur-sm">
         <span className="text-[13px] text-cream/90">
           <strong className="text-cream">{summary.totalFarms}</strong> farms
         </span>
