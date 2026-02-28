@@ -1,9 +1,20 @@
 import os
-import torch
-import torch.nn as nn
-import torch.optim as optim
+import ast
 import numpy as np
 from typing import Tuple
+
+# Make torch optional at import time so modules that only need data parsing
+# (like smoke tests) can import this file even if PyTorch isn't installed.
+try:
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    TORCH_AVAILABLE = True
+except Exception:
+    torch = None
+    nn = None
+    optim = None
+    TORCH_AVAILABLE = False
 
 
 class FarmModel(nn.Module):
@@ -32,37 +43,51 @@ def load_fake_data(path: str) -> Tuple[np.ndarray, np.ndarray]:
     columns are features.
     """
 
+    # Parse the file and extract a literal assigned to the name `data` using
+    # the AST module to avoid executing arbitrary code.
     with open(path, "r") as f:
-        content = f.read()
+        tree = ast.parse(f.read(), filename=path)
 
-    # Execute the file content in a restricted namespace to extract `data`.
-    ns = {}
-    exec(content, {}, ns)
+    data_node = None
+    for node in tree.body:
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name) and target.id == "data":
+                    data_node = node.value
+                    break
+        if data_node is not None:
+            break
 
-    if "data" not in ns:
-        raise ValueError(f"no 'data' variable found in {path}")
+    if data_node is None:
+        raise ValueError(f"no 'data' assignment found in {path}")
 
-    data = ns["data"]
+    try:
+        data = ast.literal_eval(data_node)
+    except Exception as e:
+        raise ValueError(f"failed to parse 'data' literal from {path}: {e}")
+
     arr = np.array(data, dtype=float)
-
     if arr.ndim != 2 or arr.shape[1] < 5:
         raise ValueError("expected a 2D data array with at least 5 columns")
 
-    # Many versions of `fake_data.txt` include only features (11 cols) and not
-    # explicit outputs. If the file includes extra columns (>11) we treat the
-    # last two columns as [projected_yield_t_ha, climate_risk_score]. If there
-    # are exactly 11 columns we compute targets deterministically with
-    # `compute_targets`.
-    if arr.shape[1] >= 13:
-        # assume last two are outputs
+    # Try to import the features helper (works both when running as package or
+    # as a script)
+    try:
+        from backend import features as feat
+    except Exception:
+        import features as feat
+
+    cols = arr.shape[1]
+    if cols >= 13 or cols == 12:
+        # assume last two are explicit outputs
         X = arr[:, :-2].astype(np.float32)
         y = arr[:, -2:].astype(np.float32)
-    elif arr.shape[1] == 11:
+    elif cols == 11:
         # all columns are features; compute targets via formula
-        X = arr.astype(np.float32)
+        X, _ = feat.build_feature_matrix(data)
         y = compute_targets(X)
     else:
-        # fallback: if between 5 and 12 columns, assume last two are outputs
+        # fallback: assume last two are outputs
         X = arr[:, :-2].astype(np.float32)
         y = arr[:, -2:].astype(np.float32)
 
