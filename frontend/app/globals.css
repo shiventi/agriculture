@@ -45,3 +45,23 @@ body {
   animation: wheat-head-in 0.3s 1s ease-out forwards;
   animation-fill-mode: forwards;
 }
+
+/* YieldCard score colors – red < 0.4, amber 0.4–0.7, green > 0.7 */
+.yield-poor {
+  stroke: #c0392b;
+  color: #c0392b;
+  background-color: #c0392b;
+  transition: stroke 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+}
+.yield-amber {
+  stroke: #d97706;
+  color: #d97706;
+  background-color: #d97706;
+  transition: stroke 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+}
+.yield-good {
+  stroke: #2d8a6e;
+  color: #2d8a6e;
+  background-color: #2d8a6e;
+  transition: stroke 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+}
