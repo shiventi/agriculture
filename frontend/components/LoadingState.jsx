@@ -69,7 +69,7 @@ export default function LoadingState() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-deep-green/95 text-cream"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-deep-green/95 text-cream"
       role="status"
       aria-live="polite"
       aria-label="Loading"

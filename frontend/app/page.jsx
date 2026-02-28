@@ -3,14 +3,17 @@
 import { useState } from 'react'
 import UploadZone from '@/components/UploadZone'
 import FarmGrid from '@/components/FarmGrid'
+import LoadingState from '@/components/LoadingState'
 import { MOCK_RESULTS } from '@/lib/mockData'
 
 export default function Home() {
-  const [results, setResults] = useState(MOCK_RESULTS);
-  const [isLoading, setIsLoading] = useState(false)
+  const [results, setResults] = useState(MOCK_RESULTS)
+  const [isLoading, setIsLoading] = useState(true)
 
   return (
-    <div className="min-h-[60vh] px-6 py-8">
+    <>
+      {isLoading && <LoadingState />}
+      <div className="min-h-[60vh] px-6 py-8">
       {results == null ? (
         <UploadZone
           results={results}
@@ -20,6 +23,7 @@ export default function Home() {
       ) : (
         <FarmGrid results={results} isLoading={isLoading} />
       )}
-    </div>
+      </div>
+    </>
   )
 }
