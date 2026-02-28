@@ -1,3 +1,3 @@
-export default function UploadZone() {
+export default function UploadZone({ results, isLoading }) {
   return <div>UploadZone</div>
 }
