@@ -50,42 +50,74 @@ export default function UploadZone({
   constraints,
   updateConstraint,
 }) {
+  const API_BASE = 'https://592e-129-210-115-104.ngrok-free.app'
+
   const [isDragging, setIsDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState(null)
+  const [errorDetail, setErrorDetail] = useState(null)
   const [selectedFile, setSelectedFile] = useState(null)
   const [constraintsExpanded, setConstraintsExpanded] = useState(false)
   const inputRef = useRef(null)
-
-  const baseUrl = typeof process !== 'undefined' && process.env.NEXT_PUBLIC_API_URL
-    ? process.env.NEXT_PUBLIC_API_URL
-    : 'http://localhost:8000'
 
   const submitAnalysis = async () => {
     if (!selectedFile) return
     if (!selectedFile.name?.toLowerCase().endsWith('.csv')) {
       setError('Please select a CSV file.')
+      setErrorDetail(null)
       return
     }
     setError(null)
+    setErrorDetail(null)
     setUploading(true)
     try {
+      const formData = new FormData()
+      formData.append('file', selectedFile)
+
       const params = new URLSearchParams()
       params.append('fairness_on', 'true')
       if (budget) params.append('budget', budget)
-      Object.entries(constraints).forEach(([k, v]) => params.append(k, String(v)))
-      const url = `${baseUrl}/analyze?${params.toString()}`
-      const form = new FormData()
-      form.append('file', selectedFile)
-      const res = await fetch(url, { method: 'POST', body: form })
-      if (!res.ok) {
-        const text = await res.text()
-        throw new Error(text || `Request failed (${res.status})`)
+      if (constraints.small_farm_min_share) params.append('small_farm_min_share', constraints.small_farm_min_share)
+      if (constraints.per_capita_ratio) params.append('per_capita_ratio', constraints.per_capita_ratio)
+      if (constraints.need_floor_dollars) params.append('need_floor_dollars', constraints.need_floor_dollars)
+      if (constraints.max_single_farm_share) params.append('max_single_farm_share', constraints.max_single_farm_share)
+      if (constraints.high_risk_floor_threshold) params.append('high_risk_floor_threshold', constraints.high_risk_floor_threshold)
+      if (constraints.high_risk_floor_amount) params.append('high_risk_floor_amount', constraints.high_risk_floor_amount)
+
+      const response = await fetch(`${API_BASE}/analyze?${params.toString()}`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+        },
+      })
+
+      if (!response.ok) {
+        let message = `Request failed (${response.status})`
+        let detail = null
+        try {
+          const errJson = await response.json()
+          const rawDetail = errJson.detail ?? errJson.message
+          message = Array.isArray(rawDetail)
+            ? rawDetail.map((d) => (typeof d === 'object' && d?.msg) ? d.msg : String(d)).join(', ')
+            : (typeof rawDetail === 'string' ? rawDetail : rawDetail ? JSON.stringify(rawDetail) : message)
+          detail = JSON.stringify(errJson)
+        } catch {
+          const text = await response.text()
+          detail = text || String(response.status)
+        }
+        setError(message)
+        setErrorDetail(detail)
+        return
       }
-      const data = await res.json()
+
+      const data = await response.json()
+      console.log('Analyze response:', data)
       onResult?.(data)
     } catch (e) {
-      setError(e.message || 'Upload failed.')
+      const isNetwork = e?.name === 'TypeError' && (e?.message?.includes('fetch') || e?.message?.includes('Failed to fetch'))
+      setError(isNetwork ? 'Could not connect to backend. Make sure the server is running.' : (e?.message || 'Upload failed.'))
+      setErrorDetail(e?.message ?? String(e))
     } finally {
       setUploading(false)
     }
@@ -170,9 +202,16 @@ export default function UploadZone({
           </div>
 
           {error && (
-            <p className="mt-4 text-sm text-red-400" role="alert">
-              {error}
-            </p>
+            <div className="mt-4 rounded-lg border border-red-900/50 bg-red-950/30 px-3 py-2 text-left">
+              <p className="text-sm text-red-400" role="alert">
+                {error}
+              </p>
+              {errorDetail && (
+                <p className="mt-1 font-mono text-xs text-zinc-500 break-all">
+                  {errorDetail}
+                </p>
+              )}
+            </div>
           )}
 
           {/* Configuration */}
@@ -261,11 +300,21 @@ export default function UploadZone({
             <Button
               type="button"
               onClick={submitAnalysis}
-              disabled={!selectedFile}
+              disabled={!selectedFile || uploading}
               className="mt-4 h-10 w-full rounded-xl bg-emerald-600 font-medium text-white transition-colors hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Analyze Farms →
+              {uploading ? (
+                <>
+                  <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden />
+                  Analyzing...
+                </>
+              ) : (
+                'Analyze Farms →'
+              )}
             </Button>
+            <p className="mt-2 text-xs text-zinc-600">
+              Sending to: ngrok-free.app
+            </p>
           </div>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
