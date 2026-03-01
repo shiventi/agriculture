@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { ChevronLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import UploadZone from '@/components/UploadZone'
 import FarmGrid from '@/components/FarmGrid'
 import LoadingState from '@/components/LoadingState'
@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <>
       {isLoading && <LoadingState />}
-      <div className="page-content-wrapper relative z-10 mx-auto min-h-[50vh] max-w-7xl bg-[#f4f7f0] px-4 py-4 dark:bg-[#2d4433] sm:min-h-[60vh] sm:px-6 sm:py-6">
+      <div className="page-content-wrapper relative z-10 mx-auto min-h-[50vh] max-w-7xl bg-[#f4f7f0] px-4 py-4 dark:bg-background sm:min-h-[60vh] sm:px-6 sm:py-6">
         {results == null ? (
           <UploadZone
             results={results}
@@ -51,11 +51,11 @@ export default function Home() {
               <button
                 type="button"
                 onClick={handleBackToUpload}
-                className="back-to-upload-btn flex items-center gap-2 mb-6 group text-sm transition-all duration-200 text-[#a8bfa8] hover:text-[#f0f4ee]"
+                className="back-to-upload-btn flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm text-muted-foreground mb-6"
                 aria-label="Back to upload"
               >
-                <ChevronLeft className="w-4 h-4 transition-colors duration-200 group-hover:text-[#76a874]" aria-hidden />
-                <span className="underline-offset-2 group-hover:underline">← Back to Upload</span>
+                <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
+                Back to Upload
               </button>
             </div>
             <FarmGrid

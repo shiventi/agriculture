@@ -232,7 +232,7 @@ export default function UploadZone({
                   </span>
                   <Badge
                     variant="outline"
-                    className="rounded-full border-border bg-muted/80 text-xs text-muted-foreground"
+                    className="all-optional-badge rounded-full border-border bg-muted/80 text-xs text-muted-foreground"
                   >
                     All optional
                   </Badge>
@@ -299,7 +299,7 @@ export default function UploadZone({
               </Button>
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:mt-8 sm:gap-3">
+            <div className="output-pills mt-6 flex flex-wrap items-center justify-center gap-2 sm:mt-8 sm:gap-3">
               {OUTPUT_PILLS.map(({ Icon, label }) => (
                 <Badge
                   key={label}

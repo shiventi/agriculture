@@ -73,7 +73,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
           <span className="text-sm text-muted-foreground">
             <span className="font-semibold text-foreground">{summary.smallFarmShare}%</span> small farm share
           </span>
-          <Badge className="ml-auto w-full justify-center rounded-full border-primary/40 bg-primary/20 py-1.5 text-primary sm:w-auto sm:justify-start">
+          <Badge className="fairness-active-badge ml-auto w-full justify-center rounded-full border-primary/40 bg-primary/20 py-1.5 text-primary sm:w-auto sm:justify-start">
             <Check className="mr-1 h-3.5 w-3.5" aria-hidden />
             Fairness active
           </Badge>
@@ -87,20 +87,8 @@ export default function FarmGrid({ results, isLoading, onBack }) {
           return (
             <Card
               key={farmId}
-              className={`farm-panel relative overflow-hidden rounded-2xl border border-border bg-card p-4 transition-all duration-300 sm:rounded-3xl ${accent.border} border-t-4`}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = `0 10px 40px -10px ${accent.shadow}`
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = ''
-              }}
+              className={`farm-panel relative overflow-hidden rounded-2xl border border-border bg-card p-4 sm:rounded-3xl ${accent.border} border-t-4`}
             >
-              <div
-                className="pointer-events-none absolute inset-0 rounded-2xl sm:rounded-3xl"
-                style={{
-                  background: `radial-gradient(ellipse 80% 50% at 50% 0%, ${accent.glow}, transparent 70%)`,
-                }}
-              />
               <span
                 className="pointer-events-none absolute right-3 top-2 select-none text-5xl font-black text-white/5 sm:text-6xl"
                 aria-hidden

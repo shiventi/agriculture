@@ -30,21 +30,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Back button: light mode overrides (dark uses inline classes) */
+/* Back button: light mode */
 html.theme-light .back-to-upload-btn {
-  color: #5a7a5a;
+  background-color: #ffffff !important;
+  border-color: #d4e0cc !important;
+  color: #5a7a5a !important;
 }
 html.theme-light .back-to-upload-btn:hover {
-  color: #1a2e1a;
-}
-html.theme-light .back-to-upload-btn:hover svg {
-  color: #76a874;
-}
-.back-to-upload-btn span {
-  text-underline-offset: 2px;
-}
-.back-to-upload-btn:hover span {
-  text-decoration: underline;
+  background-color: #f0f4ec !important;
+  color: #1a2e1a !important;
 }
 
 /* Light theme – full palette (#f4f7f0 page, #1a2e1a primary text, #588157 accent) */
@@ -144,6 +138,16 @@ html.theme-light .upload-card button.bg-primary:hover:not(:disabled) {
 html.theme-light .upload-card .text-primary {
   color: #588157;
 }
+html.theme-light .output-pills [class*="rounded-full"] {
+  background-color: #f0f4ec !important;
+  border-color: #d4e0cc !important;
+  color: #5a7a5a !important;
+}
+html.theme-light .all-optional-badge {
+  background-color: #f0f4ec !important;
+  border-color: #d4e0cc !important;
+  color: #5a7a5a !important;
+}
 
 /* Farm grid */
 html.theme-light .farm-grid-wrapper {
@@ -152,7 +156,12 @@ html.theme-light .farm-grid-wrapper {
 html.theme-light .summary-bar {
   background-color: #ffffff;
   border: 1px solid #d4e0cc;
-  box-shadow: 0 1px 4px rgba(88, 129, 87, 0.06);
+  box-shadow: none;
+}
+html.theme-light .fairness-active-badge {
+  background-color: #e8f0e4 !important;
+  border-color: #c4d4bc !important;
+  color: #588157 !important;
 }
 html.theme-light .summary-bar .font-semibold.text-primary {
   color: #588157;
@@ -160,10 +169,7 @@ html.theme-light .summary-bar .font-semibold.text-primary {
 html.theme-light .farm-panel {
   background-color: #ffffff;
   border: 1px solid #d4e0cc;
-  box-shadow: 0 2px 8px rgba(88, 129, 87, 0.08);
-}
-html.theme-light .farm-panel:hover {
-  box-shadow: 0 4px 16px rgba(88, 129, 87, 0.15);
+  box-shadow: none;
 }
 html.theme-light .farm-panel .font-bold.text-foreground {
   color: #1a2e1a;
@@ -285,17 +291,12 @@ html.theme-light .site-footer {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
-/* Card base – compact, uniform */
+/* Card base – compact, uniform (no hover animation) */
 .dashboard-card {
   max-height: 200px;
   padding: 16px;
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: transform 200ms ease, box-shadow 200ms ease;
-}
-.dashboard-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px -8px rgb(0 0 0 / 0.2), 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 html.theme-light .dashboard-card {
   border-color: rgba(26, 58, 42, 0.1);
@@ -425,6 +426,13 @@ html.theme-light .card-muted {
     transform: translateY(0);
   }
 }
+.summary-bar,
+.farm-panel {
+  box-shadow: none;
+}
+.fairness-active-badge {
+  pointer-events: none;
+}
 .farm-panel {
   animation: panel-slide-up 0.4s ease-out both;
 }
@@ -496,4 +504,22 @@ html.theme-light [data-nextjs-dialog] {
     --chart-5: 340 75% 55%;
     --radius: 0.5rem;
   }
+  /* Dark mode: single background shade (no card/secondary lighter tint) */
+  .dark {
+    --card: 84 6% 12%;
+    --popover: 84 6% 12%;
+    --secondary: 84 6% 12%;
+    --muted: 84 6% 12%;
+  }
+}
+
+/* Dark mode: one background color everywhere (no left/right or center split) */
+html.dark,
+html.dark body,
+html.dark .main-content,
+html.dark .page-content-wrapper,
+html.dark .upload-zone-root,
+html.dark .site-header,
+html.dark .hero-banner {
+  background-color: #1F211C !important;
 }
