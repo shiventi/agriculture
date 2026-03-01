@@ -176,6 +176,39 @@ html.theme-light .fairness-active-badge {
 html.theme-light .summary-bar .font-semibold.text-primary {
   color: #588157;
 }
+/* Summary bar text and view toggle – visible in light mode */
+html.theme-light .summary-bar-content,
+html.theme-light .summary-bar-text {
+  color: #5a7a5a;
+}
+html.theme-light .summary-bar-content .text-foreground {
+  color: #1a2e1a;
+}
+html.theme-light .summary-bar-content .text-primary {
+  color: #588157;
+}
+html.theme-light .view-toggle-group .view-toggle-btn {
+  background-color: #f0f4ec;
+  border: 1px solid #d4e0cc;
+  color: #1a2e1a;
+}
+html.theme-light .view-toggle-group .view-toggle-btn:hover {
+  background-color: #e8f0e4;
+  color: #1a2e1a;
+}
+html.theme-light .view-toggle-group .view-toggle-btn[aria-pressed="true"] {
+  background-color: #588157;
+  border-color: #588157;
+  color: #ffffff;
+}
+html.theme-light .view-toggle-group .view-toggle-btn[aria-pressed="true"]:hover {
+  background-color: #4a6e47;
+  border-color: #4a6e47;
+  color: #ffffff;
+}
+html.theme-light .summary-bar [data-slot="separator"] {
+  background-color: #d4e0cc;
+}
 html.theme-light .farm-panel {
   background-color: #ffffff;
   border: 1px solid #d4e0cc;
@@ -186,6 +219,47 @@ html.theme-light .farm-panel .font-bold.text-foreground {
 }
 html.theme-light .farm-panel .text-muted-foreground {
   color: #5a7a5a;
+}
+
+/* Results table – light mode */
+html.theme-light .farms-table {
+  background-color: #ffffff;
+  color: #1a2e1a;
+}
+html.theme-light .farms-table-header {
+  background-color: #e8f0e4 !important;
+  border-bottom: 1px solid #d4e0cc;
+  color: #1a2e1a;
+}
+html.theme-light .farms-table-header th {
+  color: #1a2e1a;
+}
+html.theme-light .farms-table-row {
+  border-bottom: 1px solid #d4e0cc;
+}
+html.theme-light .farms-table-row:nth-child(even) {
+  background-color: #f4f7f0 !important;
+}
+html.theme-light .farms-table-row:nth-child(odd) {
+  background-color: #ffffff !important;
+}
+html.theme-light .farms-table td,
+html.theme-light .farms-table th {
+  border-color: #d4e0cc;
+  color: #1a2e1a;
+}
+html.theme-light .farms-table .text-muted-foreground {
+  color: #5a7a5a;
+}
+html.theme-light .farms-table .text-primary {
+  color: #588157;
+}
+html.theme-light .farms-table-card {
+  background-color: #ffffff !important;
+  border: 1px solid #d4e0cc !important;
+}
+html.theme-light .farms-table-card .overflow-x-auto {
+  background-color: #ffffff;
 }
 
 /* Yield card */
