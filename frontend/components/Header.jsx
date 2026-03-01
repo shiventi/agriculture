@@ -40,7 +40,7 @@ export default function Header() {
             aria-label="PitchFork home"
           >
             <Image
-              src="/fork.jpg"
+              src="/fork.png"
               alt="AgriEquity AI Logo"
               width={36}
               height={36}
