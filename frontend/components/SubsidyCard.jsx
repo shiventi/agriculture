@@ -15,6 +15,7 @@ const formatUSD = (value) => {
 
 export default function SubsidyCard({
   subsidy_amount,
+  subsidy_before,
   subsidy_eligible,
   is_small,
   gini_coefficient,
@@ -22,12 +23,13 @@ export default function SubsidyCard({
   maxAllocation,
 }) {
   const amount = subsidy_amount ?? 0
+  const before = subsidy_before != null ? subsidy_before : null
   const max = maxAllocation != null && maxAllocation > 0 ? maxAllocation : amount || 1
   const pct = Math.min(100, (amount / max) * 100)
   const showEquity = subsidy_eligible || is_small
 
   return (
-    <Card className="subsidy-card h-[200px] overflow-hidden rounded-2xl border border-border bg-card">
+    <Card className="subsidy-card min-h-[200px] overflow-hidden rounded-2xl border border-border bg-card">
       <CardHeader className="space-y-0 p-3 pb-0">
         <div className="flex items-center gap-2">
           <Coins className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
@@ -37,9 +39,20 @@ export default function SubsidyCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-2 p-3 pt-2">
-        <p className="subsidy-amount text-[28px] font-bold tabular-nums text-primary">
-          {formatUSD(amount)}
-        </p>
+        {before != null ? (
+          <div className="space-y-0.5">
+            <p className="text-xs text-muted-foreground">
+              Before constraint: <span className="font-medium tabular-nums text-foreground">{formatUSD(before)}</span>
+            </p>
+            <p className="subsidy-amount text-[22px] font-bold tabular-nums text-primary">
+              After fairness: {formatUSD(amount)}
+            </p>
+          </div>
+        ) : (
+          <p className="subsidy-amount text-[28px] font-bold tabular-nums text-primary">
+            {formatUSD(amount)}
+          </p>
+        )}
         <Progress
           value={pct}
           className="mt-2 h-2 w-full [&>div]:bg-primary"

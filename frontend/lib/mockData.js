@@ -43,21 +43,42 @@ function toBoolean(value) {
 }
 
 /**
+ * Build a map of farm_id -> weather metrics from raw.weather array.
+ */
+function buildWeatherByFarmId(weather) {
+  const map = {}
+  if (!Array.isArray(weather)) return map
+  weather.forEach((w) => {
+    const id = w?.farm_id ?? w?.Farm
+    if (id != null) map[String(id)] = w?.metrics ?? w
+  })
+  return map
+}
+
+/**
  * Adapts raw backend JSON into the shape our components expect.
- * Handles: (A) raw.farms, (B) raw.columns + raw.data, (C) raw.results.farms / raw.output.farms.
+ * Handles: (D) raw.results[] with Farm, Size_ha, Small, expected_yield_t_ha, climate_risk, subsidy_after, reasoning;
+ *         (A) raw.farms, (B) raw.columns + raw.data, (C) raw.results.farms / raw.output.farms.
  */
 export function adaptBackendResponse(raw) {
   if (!raw || typeof raw !== 'object') throw new Error('Invalid response: not an object')
 
   let rows = []
+  const weatherByFarmId = buildWeatherByFarmId(raw.weather)
 
-  if (Array.isArray(raw.farms)) {
+  if (Array.isArray(raw.results) && raw.results.length > 0) {
+    const first = raw.results[0]
+    if (first && (first.Farm != null || first.Size_ha != null || first.subsidy_after != null || first.expected_yield_t_ha != null)) {
+      rows = raw.results
+    }
+  }
+  if (rows.length === 0 && Array.isArray(raw.farms)) {
     rows = raw.farms
-  } else if (raw.results?.farms && Array.isArray(raw.results.farms)) {
+  } else if (rows.length === 0 && raw.results?.farms && Array.isArray(raw.results.farms)) {
     rows = raw.results.farms
-  } else if (raw.output?.farms && Array.isArray(raw.output.farms)) {
+  } else if (rows.length === 0 && raw.output?.farms && Array.isArray(raw.output.farms)) {
     rows = raw.output.farms
-  } else if (Array.isArray(raw.columns) && Array.isArray(raw.data)) {
+  } else if (rows.length === 0 && Array.isArray(raw.columns) && Array.isArray(raw.data)) {
     const cols = raw.columns
     rows = raw.data.map((row) => {
       const obj = {}
@@ -68,15 +89,18 @@ export function adaptBackendResponse(raw) {
 
   const subsidyAmounts = []
   const farms = rows.map((r, i) => {
-    const farmId = r.farm_id ?? r.id ?? r.FARM_ID ?? `F${i + 1}`
-    const lat = r.lat ?? r.latitude
-    const lon = r.lon ?? r.longitude
-    const farmSizeHa = r.farm_size_ha ?? r.farm_size ?? r.size_ha
-    const yieldRaw = r.projected_yield_t_ha ?? r.yield_score ?? r.yield
-    const riskRaw = r.climate_risk_score ?? r.risk_score ?? r.risk
-    const subsidyRaw = r.subsidy_amount ?? r.subsidy_allocated ?? r.allocation ?? r.subsidy
-    const tempRaw = r.temperature_2m_season_mean_C ?? r.temperature_c ?? r.temp
-    const precipRaw = r.precipitation_season_sum_mm ?? r.precipitation_mm ?? r.precip
+    const farmId = r.Farm ?? r.farm_id ?? r.id ?? r.FARM_ID ?? `F${i + 1}`
+    const weather = weatherByFarmId[String(farmId)]
+    const lat = r.lat ?? r.latitude ?? weather?.lat
+    const lon = r.lon ?? r.longitude ?? weather?.lon
+    const farmSizeHa = r.Size_ha ?? r.farm_size_ha ?? r.farm_size ?? r.size_ha
+    const yieldRaw = r.expected_yield_t_ha ?? r.predicted_yield_t_ha ?? r.projected_yield_t_ha ?? r.yield_score ?? r.yield
+    const riskRaw = r.climate_risk ?? r.climate_risk_score ?? r.predicted_risk_score_0_100 ?? r.risk_score ?? r.risk
+    const subsidyBeforeRaw = r.subsidy_before
+    const subsidyAfterRaw = r.subsidy_after ?? r.subsidy_amount ?? r.subsidy_allocated ?? r.allocation ?? r.subsidy
+    const subsidyRaw = subsidyAfterRaw ?? subsidyBeforeRaw
+    const tempRaw = weather?.temperature_2m_season_mean_C ?? weather?.temperature_c ?? r.temperature_2m_season_mean_C ?? r.temperature_c ?? r.temp
+    const precipRaw = weather?.precipitation_season_sum_mm ?? weather?.precipitation_mm ?? r.precipitation_season_sum_mm ?? r.precipitation_mm ?? r.precip
     const reasoningRaw = r.reasoning ?? r.explanation ?? r.llm_explanation
 
     const yield_score = normalizeYieldScore(yieldRaw)
@@ -85,7 +109,7 @@ export function adaptBackendResponse(raw) {
     subsidyAmounts.push(subsidy_amount)
 
     const farm_size_ha = typeof farmSizeHa === 'number' && !Number.isNaN(farmSizeHa) ? farmSizeHa : null
-    const is_small = r.is_small != null ? toBoolean(r.is_small) : (farm_size_ha != null && farm_size_ha < 25)
+    const is_small = r.Small != null ? toBoolean(r.Small) : (r.is_small != null ? toBoolean(r.is_small) : (farm_size_ha != null && farm_size_ha < 25))
 
     const crop = r.crop != null && String(r.crop).trim() !== '' ? String(r.crop) : 'Mixed'
     const region = r.region != null && String(r.region).trim() !== '' ? String(r.region) : deriveRegion(lat)
@@ -94,6 +118,7 @@ export function adaptBackendResponse(raw) {
     const precipitation_mm = typeof precipRaw === 'number' && !Number.isNaN(precipRaw) ? precipRaw : (precipRaw != null ? Number(precipRaw) : 50)
     const baseline_need = r.baseline_need != null ? Number(r.baseline_need) : null
 
+    const subsidy_before = typeof subsidyBeforeRaw === 'number' && !Number.isNaN(subsidyBeforeRaw) ? subsidyBeforeRaw : null
     return {
       farm_id: String(farmId),
       crop,
@@ -103,7 +128,8 @@ export function adaptBackendResponse(raw) {
       yield_score,
       climate_risk_score,
       subsidy_amount,
-      subsidy_eligible: r.subsidy_eligible != null ? toBoolean(r.subsidy_eligible) : is_small,
+      subsidy_before,
+      subsidy_eligible: r.subsidy_eligible != null ? toBoolean(r.subsidy_eligible) : (raw.fairness_on === true || is_small),
       gini_coefficient: r.gini_coefficient != null ? Number(r.gini_coefficient) : null,
       small_farm_share_pct: r.small_farm_share_pct != null ? Number(r.small_farm_share_pct) : null,
       reasoning,
@@ -140,7 +166,14 @@ export function adaptBackendResponse(raw) {
       }
     : undefined
 
-  return { farms, fairness_metrics, benchmark }
+  return {
+    farms,
+    fairness_metrics,
+    benchmark,
+    budget: typeof raw.budget === 'number' ? raw.budget : undefined,
+    fairness_on: raw.fairness_on === true,
+    constraints: raw.constraints && typeof raw.constraints === 'object' ? raw.constraints : undefined,
+  }
 }
 
 /**

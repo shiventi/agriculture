@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import YieldCard from '@/components/YieldCard'
 import ClimateRiskCard from '@/components/ClimateRiskCard'
 import SubsidyCard from '@/components/SubsidyCard'
@@ -46,12 +47,14 @@ export default function FarmGrid({ results, isLoading, onBack }) {
   const farms = results?.farms ?? []
   const [viewMode, setViewMode] = useState('table')
 
-  const { summary, maxAllocation, benchmark } = useMemo(() => {
+  const { summary, maxAllocation, benchmark, budgetUsed, fairnessOn } = useMemo(() => {
     if (!farms.length) {
       return {
         summary: { totalFarms: 0, totalBudget: 0, avgExpectedYieldHa: 0, smallFarmShare: 0, gini: null },
         maxAllocation: 0,
         benchmark: results?.benchmark,
+        budgetUsed: typeof results?.budget === 'number' ? results.budget : null,
+        fairnessOn: results?.fairness_on === true,
       }
     }
     const totalBudget = farms.reduce((sum, f) => sum + (f?.subsidy_amount ?? 0), 0)
@@ -72,8 +75,10 @@ export default function FarmGrid({ results, isLoading, onBack }) {
       },
       maxAllocation,
       benchmark: results?.benchmark,
+      budgetUsed: typeof results?.budget === 'number' ? results.budget : null,
+      fairnessOn: results?.fairness_on === true,
     }
-  }, [farms, results?.fairness_metrics, results?.benchmark])
+  }, [farms, results?.fairness_metrics, results?.benchmark, results?.budget, results?.fairness_on])
 
   if (farms.length === 0) {
     return (
@@ -94,7 +99,10 @@ export default function FarmGrid({ results, isLoading, onBack }) {
           </span>
           <Separator orientation="vertical" className="hidden h-5 bg-border sm:block" />
           <span className="summary-bar-text text-sm text-muted-foreground">
-            <span className="font-semibold text-primary">{formatUSD(summary.totalBudget)}</span> total budget
+            <span className="font-semibold text-primary">{formatUSD(summary.totalBudget)}</span> allocated
+            {budgetUsed != null && !Number.isNaN(budgetUsed) && (
+              <span className="ml-0.5">/ {formatUSD(budgetUsed)} budget</span>
+            )}
           </span>
           <Separator orientation="vertical" className="hidden h-5 bg-border sm:block" />
           <span className="summary-bar-text text-sm text-muted-foreground">
@@ -145,17 +153,19 @@ export default function FarmGrid({ results, isLoading, onBack }) {
               Table
             </Button>
           </div>
-          <Badge className="fairness-active-badge rounded-full border-primary/40 bg-primary/20 py-1.5 text-primary sm:ml-0">
-            <Check className="mr-1 h-3.5 w-3.5" aria-hidden />
-            Fairness active
-          </Badge>
+          {(fairnessOn !== false) && (
+            <Badge className="fairness-active-badge rounded-full border-primary/40 bg-primary/20 py-1.5 text-primary sm:ml-0">
+              <Check className="mr-1 h-3.5 w-3.5" aria-hidden />
+              Fairness {fairnessOn ? 'active' : 'off'}
+            </Badge>
+          )}
         </CardContent>
       </Card>
 
       {viewMode === 'table' ? (
         <Card className="farms-table-card overflow-hidden rounded-2xl border border-border bg-card">
           <div className="overflow-x-auto">
-            <table className="farms-table w-full min-w-[720px] border-collapse text-sm">
+            <table className="farms-table w-full min-w-[800px] border-collapse text-sm">
               <thead>
                 <tr className="farms-table-header border-b border-border bg-muted/50">
                   <th className="px-4 py-3 text-left font-semibold text-foreground">Farm</th>
@@ -163,8 +173,9 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                   <th className="px-4 py-3 text-center font-semibold text-foreground">Small</th>
                   <th className="px-4 py-3 text-right font-semibold text-foreground">Expected Yield (ha)</th>
                   <th className="px-4 py-3 text-right font-semibold text-foreground">Climate risk</th>
-                  <th className="px-4 py-3 text-right font-semibold text-foreground">Subsidy</th>
-                  <th className="max-w-[280px] px-4 py-3 text-left font-semibold text-foreground">Reasoning</th>
+                  <th className="px-4 py-3 text-right font-semibold text-foreground">Subsidy (before)</th>
+                  <th className="px-4 py-3 text-right font-semibold text-foreground">Subsidy (after)</th>
+                  <th className="max-w-[220px] px-4 py-3 text-left font-semibold text-foreground">Reasoning</th>
                 </tr>
               </thead>
               <tbody>
@@ -183,9 +194,19 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                       <td className="px-4 py-2.5 text-center">{farm?.is_small ? 'Yes' : 'No'}</td>
                       <td className="px-4 py-2.5 text-right text-foreground">{formatHa(expectedYieldHa)}</td>
                       <td className="px-4 py-2.5 text-right text-muted-foreground">{riskNum}</td>
+                      <td className="px-4 py-2.5 text-right text-muted-foreground">{formatUSD(farm?.subsidy_before)}</td>
                       <td className="px-4 py-2.5 text-right font-medium text-primary">{formatUSD(farm?.subsidy_amount)}</td>
-                      <td className="max-w-[280px] px-4 py-2.5 text-sm leading-relaxed text-muted-foreground" title={farm?.reasoning ?? ''}>
-                        <span className="line-clamp-3">{farm?.reasoning ?? '—'}</span>
+                      <td className="max-w-[220px] px-4 py-2.5 text-sm leading-relaxed text-muted-foreground">
+                        <TooltipProvider delayDuration={200}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="line-clamp-2 cursor-help">{farm?.reasoning ?? '—'}</span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="max-w-sm whitespace-pre-wrap p-3 text-xs" sideOffset={8}>
+                              {farm?.reasoning ?? '—'}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </td>
                     </tr>
                   )
@@ -242,6 +263,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                   />
                   <SubsidyCard
                     subsidy_amount={farm?.subsidy_amount}
+                    subsidy_before={farm?.subsidy_before}
                     subsidy_eligible={farm?.subsidy_eligible}
                     is_small={farm?.is_small}
                     gini_coefficient={farm?.gini_coefficient}

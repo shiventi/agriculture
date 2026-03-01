@@ -2,8 +2,12 @@
 
 import { Sparkles } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 export default function ReasoningCard({ reasoning, animationDelay = 0 }) {
+  const text = reasoning ?? '—'
+  const isLong = text.length > 200
+
   return (
     <Card
       className="reasoning-card h-[160px] overflow-hidden rounded-2xl border border-border border-l-4 border-l-[#d4a843] bg-card"
@@ -22,9 +26,24 @@ export default function ReasoningCard({ reasoning, animationDelay = 0 }) {
         </div>
       </CardHeader>
       <CardContent className="p-3 pt-2">
-        <p className="line-clamp-4 text-xs leading-relaxed text-muted-foreground">
-          {reasoning ?? '—'}
-        </p>
+        {isLong ? (
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <p className="line-clamp-4 cursor-help text-xs leading-relaxed text-muted-foreground">
+                  {text}
+                </p>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-sm whitespace-pre-wrap p-3 text-xs" sideOffset={8}>
+                {text}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          <p className="line-clamp-4 text-xs leading-relaxed text-muted-foreground">
+            {text}
+          </p>
+        )}
       </CardContent>
     </Card>
   )
