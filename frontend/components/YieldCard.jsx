@@ -26,14 +26,14 @@ export default function YieldCard({
   const ringColor = getRingColor(s)
 
   return (
-    <Card className="h-[200px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 transition-shadow duration-200 hover:shadow-lg hover:shadow-black/20 dark:border-[hsl(84,8%,22%)] dark:bg-[#1F211C]">
+    <Card className="h-[200px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 transition-shadow duration-200 hover:shadow-lg hover:shadow-black/20 dark:border-[hsl(84,8%,30%)] dark:bg-[#323b22]">
       <CardHeader className="space-y-1 p-4 pb-0">
         <div className="flex flex-wrap items-center gap-2">
           <CardTitle className="text-base font-semibold text-zinc-900 dark:text-[hsl(0,0%,98%)]">
             {farm_id ?? '—'}
           </CardTitle>
           {region && (
-            <Badge variant="outline" className="rounded-full border-zinc-300 text-[10px] text-zinc-500 dark:border-[hsl(84,8%,22%)] dark:text-[hsl(84,8%,58%)]">
+            <Badge variant="outline" className="rounded-full border-zinc-300 text-[10px] text-zinc-500 dark:border-[hsl(84,8%,30%)] dark:text-[hsl(84,8%,68%)]">
               {region}
             </Badge>
           )}
@@ -43,7 +43,7 @@ export default function YieldCard({
             </Badge>
           )}
         </div>
-        <p className="text-xs text-zinc-500 dark:text-[hsl(84,8%,58%)]">{crop ?? '—'}</p>
+        <p className="text-xs text-zinc-500 dark:text-[hsl(84,8%,68%)]">{crop ?? '—'}</p>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-4 pt-2">
         <div className="flex items-center gap-3">
@@ -56,7 +56,7 @@ export default function YieldCard({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="5"
-                className="stroke-zinc-200 dark:stroke-[hsl(84,8%,22%)]"
+                className="stroke-zinc-200 dark:stroke-[hsl(84,8%,30%)]"
               />
               <circle
                 cx="40"
@@ -80,11 +80,11 @@ export default function YieldCard({
           </div>
           <div className="min-w-0 flex-1">
             {farm_size_ha != null && (
-              <p className="text-[11px] text-zinc-500 dark:text-[hsl(84,8%,58%)]">{farm_size_ha} ha</p>
+              <p className="text-[11px] text-zinc-500 dark:text-[hsl(84,8%,68%)]">{farm_size_ha} ha</p>
             )}
           </div>
         </div>
-        <Progress value={s * 100} className="h-1.5 rounded-full bg-zinc-200 dark:bg-[hsl(84,8%,22%)] [&>div]:rounded-full [&>div]:bg-primary [&>div]:dark:bg-[hsl(82,50%,32%)]" />
+        <Progress value={s * 100} className="h-1.5 rounded-full bg-zinc-200 dark:bg-[hsl(84,8%,30%)] [&>div]:rounded-full [&>div]:bg-primary [&>div]:dark:bg-[hsl(82,50%,32%)]" />
       </CardContent>
     </Card>
   )

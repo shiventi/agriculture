@@ -33,7 +33,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 h-14 w-full border-b border-zinc-200 bg-white dark:border-[hsl(84,8%,22%)] dark:bg-[#1F211C]/90 dark:backdrop-blur-xl sm:h-16 transition-colors duration-200">
+      <header className="sticky top-0 z-50 h-14 w-full border-b border-zinc-200 bg-white dark:border-[hsl(84,8%,30%)] dark:bg-[#2a2e24]/90 dark:backdrop-blur-xl sm:h-16 transition-colors duration-200">
         <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-2 px-4 sm:px-6">
           <a
             href="/"
@@ -53,7 +53,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-300 bg-zinc-100 text-zinc-600 transition-colors duration-200 hover:bg-zinc-200 dark:border-[hsl(84,8%,22%)] dark:bg-[hsl(84,5%,15%)] dark:text-[hsl(84,8%,58%)] dark:hover:bg-[hsl(84,8%,22%)] dark:hover:text-[hsl(0,0%,98%)]"
+              className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-300 bg-zinc-100 text-zinc-600 transition-colors duration-200 hover:bg-zinc-200 dark:border-[hsl(84,8%,30%)] dark:bg-[#2e3420] dark:text-[hsl(84,8%,68%)] dark:hover:bg-[hsl(84,8%,30%)] dark:hover:text-[hsl(0,0%,98%)]"
               aria-label={mounted && theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {!mounted ? (
@@ -64,10 +64,10 @@ export default function Header() {
                 <Moon className="h-4 w-4" aria-hidden />
               )}
             </button>
-            <Separator orientation="vertical" className="mx-1.5 h-4 bg-zinc-300 dark:bg-[hsl(84,8%,22%)] sm:mx-2 sm:h-5" />
+            <Separator orientation="vertical" className="mx-1.5 h-4 bg-zinc-300 dark:bg-[hsl(84,8%,30%)] sm:mx-2 sm:h-5" />
             <Badge
               variant="outline"
-              className="rounded-full border-zinc-300 bg-zinc-100 px-2.5 py-1 text-xs text-zinc-600 transition-colors duration-200 dark:border-[hsl(84,8%,22%)] dark:bg-[hsl(84,5%,15%)] dark:text-[hsl(84,8%,58%)] dark:hover:text-[hsl(0,0%,98%)] sm:px-3"
+              className="rounded-full border-zinc-300 bg-zinc-100 px-2.5 py-1 text-xs text-zinc-600 transition-colors duration-200 dark:border-[hsl(84,8%,30%)] dark:bg-[#2e3420] dark:text-[hsl(84,8%,68%)] dark:hover:text-[hsl(0,0%,98%)] sm:px-3"
             >
               <Cpu className="mr-1.5 h-3 w-3" aria-hidden />
               AMD ROCm
@@ -78,30 +78,30 @@ export default function Header() {
 
       {hasResults && (
         <section
-          className="border-b border-zinc-200 bg-zinc-50 dark:border-[hsl(84,8%,22%)] dark:bg-[#243010] transition-colors duration-200"
+          className="border-b border-zinc-200 bg-zinc-50 dark:border-[hsl(84,8%,30%)] dark:bg-[#323b22] transition-colors duration-200"
           aria-label="Summary"
         >
           <div className="mx-auto max-w-7xl px-4 py-6 text-center sm:px-6 sm:py-8">
             <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-[hsl(0,0%,98%)] sm:text-2xl">
               AI-powered farm intelligence
             </h2>
-            <p className="mt-1 text-sm text-zinc-500 dark:text-[hsl(84,8%,58%)]">
+            <p className="mt-1 text-sm text-zinc-500 dark:text-[hsl(84,8%,68%)]">
               Yield prediction · Climate risk · Fair subsidy allocation
             </p>
             <div className="mx-auto mt-4 grid max-w-lg grid-cols-3 gap-4 sm:mt-6 sm:gap-8">
-              <div className="border-r border-zinc-300 pr-4 last:border-r-0 last:pr-0 dark:border-[hsl(84,8%,22%)] sm:pr-8">
+              <div className="border-r border-zinc-300 pr-4 last:border-r-0 last:pr-0 dark:border-[hsl(84,8%,30%)] sm:pr-8">
                 <p className="text-xl font-bold text-emerald-600 dark:text-[#00ff87] sm:text-2xl">
                   {summary.totalFarms}
                 </p>
-                <p className="mt-1 text-xs text-zinc-500 dark:text-[hsl(84,8%,58%)]">
+                <p className="mt-1 text-xs text-zinc-500 dark:text-[hsl(84,8%,68%)]">
                   Farms
                 </p>
               </div>
-              <div className="border-r border-zinc-300 pr-4 last:border-r-0 last:pr-0 dark:border-[hsl(84,8%,22%)] sm:pr-8">
+              <div className="border-r border-zinc-300 pr-4 last:border-r-0 last:pr-0 dark:border-[hsl(84,8%,30%)] sm:pr-8">
                 <p className="text-xl font-bold text-emerald-600 dark:text-[#00ff87] sm:text-2xl">
                   {formatUSD(summary.totalBudget)}
                 </p>
-                <p className="mt-1 text-xs text-zinc-500 dark:text-[hsl(84,8%,58%)]">
+                <p className="mt-1 text-xs text-zinc-500 dark:text-[hsl(84,8%,68%)]">
                   Allocated
                 </p>
               </div>
@@ -109,7 +109,7 @@ export default function Header() {
                 <p className="text-xl font-bold text-emerald-600 dark:text-[#00ff87] sm:text-2xl">
                   {summary.smallFarmShare}%
                 </p>
-                <p className="mt-1 text-xs text-zinc-500 dark:text-[hsl(84,8%,58%)]">
+                <p className="mt-1 text-xs text-zinc-500 dark:text-[hsl(84,8%,68%)]">
                   Small farm share
                 </p>
               </div>

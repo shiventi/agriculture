@@ -30,7 +30,7 @@ export default function ClimateRiskCard({
   const gaugeColor = score < 0.4 ? '#14b8a6' : score <= 0.7 ? '#f59e0b' : '#ef4444'
 
   return (
-    <Card className="h-[200px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 transition-shadow duration-200 hover:shadow-lg hover:shadow-black/20 dark:border-[hsl(84,8%,22%)] dark:bg-[#1F211C]">
+    <Card className="h-[200px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 transition-shadow duration-200 hover:shadow-lg hover:shadow-black/20 dark:border-[hsl(84,8%,30%)] dark:bg-[#323b22]">
       <CardHeader className="flex flex-row items-center gap-2 space-y-0 p-4 pb-0">
         <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" aria-hidden />
         <CardTitle className="text-sm font-semibold text-zinc-900 dark:text-[hsl(0,0%,98%)]">Climate risk</CardTitle>
@@ -45,7 +45,7 @@ export default function ClimateRiskCard({
                 stroke="currentColor"
                 strokeWidth="5"
                 strokeLinecap="round"
-                className="stroke-zinc-200 dark:stroke-[hsl(84,8%,22%)]"
+                className="stroke-zinc-200 dark:stroke-[hsl(84,8%,30%)]"
               />
               <path
                 d="M 10 50 A 40 40 0 0 1 90 50"
@@ -70,15 +70,15 @@ export default function ClimateRiskCard({
           </div>
           <Badge className={level.className}>{level.label}</Badge>
         </div>
-        <Separator className="bg-zinc-200 dark:bg-[hsl(84,8%,22%)]" />
-        <div className="flex items-center gap-4 text-[12px] text-zinc-700 dark:text-[hsl(84,8%,58%)]">
+        <Separator className="bg-zinc-200 dark:bg-[hsl(84,8%,30%)]" />
+        <div className="flex items-center gap-4 text-[12px] text-zinc-700 dark:text-[hsl(84,8%,68%)]">
           <span className="flex items-center gap-1">
-            <Thermometer className="h-3.5 w-3.5 shrink-0 text-zinc-400 dark:text-[hsl(84,8%,58%)]" aria-hidden />
+            <Thermometer className="h-3.5 w-3.5 shrink-0 text-zinc-400 dark:text-[hsl(84,8%,68%)]" aria-hidden />
             {temperature_c != null ? `${temperature_c}°C` : '—'}
           </span>
-          <Separator orientation="vertical" className="h-4 bg-zinc-200 dark:bg-[hsl(84,8%,22%)]" />
+          <Separator orientation="vertical" className="h-4 bg-zinc-200 dark:bg-[hsl(84,8%,30%)]" />
           <span className="flex items-center gap-1">
-            <CloudRain className="h-3.5 w-3.5 shrink-0 text-zinc-400 dark:text-[hsl(84,8%,58%)]" aria-hidden />
+            <CloudRain className="h-3.5 w-3.5 shrink-0 text-zinc-400 dark:text-[hsl(84,8%,68%)]" aria-hidden />
             {precipitation_mm != null ? `${precipitation_mm} mm` : '—'}
           </span>
         </div>

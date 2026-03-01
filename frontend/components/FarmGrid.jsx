@@ -46,8 +46,8 @@ export default function FarmGrid({ results, isLoading, onBack }) {
 
   if (farms.length === 0) {
     return (
-      <Card className="farm-card rounded-2xl border-zinc-200 bg-white shadow-sm dark:border-[hsl(84,8%,22%)] dark:bg-[hsl(84,5%,15%)] transition-colors duration-200">
-        <CardContent className="py-12 text-center text-zinc-500 dark:text-[hsl(84,8%,58%)]">
+      <Card className="farm-card rounded-2xl border-zinc-200 bg-white shadow-sm dark:border-[hsl(84,8%,30%)] dark:bg-[#323b22] transition-colors duration-200">
+        <CardContent className="py-12 text-center text-zinc-500 dark:text-[hsl(84,8%,68%)]">
           {isLoading ? 'Loading...' : 'No farm data to display.'}
         </CardContent>
       </Card>
@@ -56,21 +56,21 @@ export default function FarmGrid({ results, isLoading, onBack }) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <Card className="farm-card rounded-2xl border-zinc-200 bg-white shadow-sm dark:border-[hsl(84,8%,22%)] dark:bg-[hsl(84,5%,15%)] sm:mb-2 transition-colors duration-200">
+      <Card className="farm-card rounded-2xl border-zinc-200 bg-white shadow-sm dark:border-[hsl(84,8%,30%)] dark:bg-[#323b22] sm:mb-2 transition-colors duration-200">
         <CardContent className="flex flex-row flex-wrap items-center justify-center gap-3 py-4 sm:justify-start sm:gap-4">
-          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,58%)]">
+          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,68%)]">
             <span className="font-semibold text-emerald-600 dark:text-[#00ff87]">{summary.totalFarms}</span> farms
           </span>
-          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[hsl(84,8%,22%)] sm:block" />
-          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,58%)]">
+          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[hsl(84,8%,30%)] sm:block" />
+          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,68%)]">
             <span className="font-semibold text-emerald-600 dark:text-[#00ff87]">{formatUSD(summary.totalBudget)}</span> total budget
           </span>
-          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[hsl(84,8%,22%)] sm:block" />
-          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,58%)]">
+          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[hsl(84,8%,30%)] sm:block" />
+          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,68%)]">
             <span className="font-semibold text-emerald-600 dark:text-[#00ff87]">{formatPercent(summary.avgYield)}</span> avg yield
           </span>
-          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[hsl(84,8%,22%)] sm:block" />
-          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,58%)]">
+          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[hsl(84,8%,30%)] sm:block" />
+          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,68%)]">
             <span className="font-semibold text-zinc-900 dark:text-[hsl(0,0%,98%)]">{summary.smallFarmShare}%</span> small farm share
           </span>
           <Badge className="ml-auto w-full justify-center rounded-full border-emerald-200 bg-emerald-50 py-1.5 text-emerald-700 dark:border-[hsl(82,50%,32%)]/30 dark:bg-[hsl(82,50%,32%)]/20 dark:text-[hsl(82,50%,60%)] sm:w-auto sm:justify-start">
@@ -87,7 +87,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
           return (
             <Card
               key={farmId}
-              className={`farm-card relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-300 dark:border-[hsl(84,8%,22%)] dark:bg-[hsl(84,5%,15%)] dark:hover:shadow-[0_0_20px_rgba(0,255,135,0.08)] sm:rounded-3xl ${accent.border} border-t-4`}
+              className={`farm-card relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-300 dark:border-[hsl(84,8%,30%)] dark:bg-[#323b22] dark:hover:shadow-[0_0_20px_rgba(0,255,135,0.08)] sm:rounded-3xl ${accent.border} border-t-4`}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = `0 10px 40px -10px ${accent.shadow}`
               }}
@@ -110,9 +110,9 @@ export default function FarmGrid({ results, isLoading, onBack }) {
               <div className="relative mb-4 flex flex-wrap items-center gap-2">
                 <span className={`h-2 w-2 shrink-0 rounded-full ${accent.dot}`} aria-hidden />
                 <span className="font-bold text-zinc-900 dark:text-[hsl(0,0%,98%)]">{farmId}</span>
-                <span className="text-zinc-500 dark:text-[hsl(84,8%,58%)]">{farm.crop ?? '—'}</span>
+                <span className="text-zinc-500 dark:text-[hsl(84,8%,68%)]">{farm.crop ?? '—'}</span>
                 {farm.region && (
-                  <Badge variant="outline" className="rounded-full border-zinc-300 text-[10px] text-zinc-500 dark:border-[hsl(84,8%,22%)] dark:text-[hsl(84,8%,58%)]">
+                  <Badge variant="outline" className="rounded-full border-zinc-300 text-[10px] text-zinc-500 dark:border-[hsl(84,8%,30%)] dark:text-[hsl(84,8%,68%)]">
                     {farm.region}
                   </Badge>
                 )}

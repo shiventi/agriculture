@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
           <div className="grain-overlay" aria-hidden />
           <ResultsProvider>
             <Header />
-            <main className="page-bg relative z-10 flex-1 bg-zinc-50 dark:bg-[#1F211C] transition-colors duration-200">
+            <main className="page-bg relative z-10 flex-1 bg-zinc-50 dark:bg-[#2a2e24] transition-colors duration-200">
               {children}
             </main>
             <footer className="site-footer">
