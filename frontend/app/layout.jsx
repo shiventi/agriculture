@@ -1,23 +1,25 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { DM_Sans } from 'next/font/google'
 import { ResultsProvider } from '@/contexts/ResultsContext'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import { ThemeClassSync } from '@/components/ThemeClassSync'
 import Header from '@/components/Header'
 
-const inter = Inter({
+const dmSans = DM_Sans({
   subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
+  variable: '--font-dm-sans',
 })
 
 export const metadata = {
-  title: 'AgriEquity AI',
+  title: 'PitchFork',
   description: 'AI-powered farm yield · Climate risk · Fair subsidies',
 }
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={inter.className} suppressHydrationWarning>
+    <html lang="en" className={`${dmSans.variable} ${dmSans.className}`} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

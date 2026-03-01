@@ -22,7 +22,7 @@
 }
 
 body {
-  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
   background: hsl(var(--background));
   color: hsl(var(--foreground));
   min-height: 100vh;
@@ -61,10 +61,6 @@ html.theme-light .logo-agri {
 }
 html.theme-light .logo-ai {
   color: #588157;
-}
-html.theme-light .header-ping-dot .rounded-full.bg-primary,
-html.theme-light .header-ping-dot .animate-ping {
-  background-color: #588157 !important;
 }
 html.theme-light .theme-toggle-btn,
 html.theme-light .header-amd-badge {

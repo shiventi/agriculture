@@ -36,15 +36,10 @@ export default function Header() {
           <a
             href="/"
             className="flex min-w-0 shrink items-center gap-2 text-inherit no-underline"
-            aria-label="AgriEquity AI home"
+            aria-label="PitchFork home"
           >
             <Wheat className="h-5 w-5 shrink-0 text-primary sm:h-6 sm:w-6 logo-icon" aria-hidden />
-            <span className="logo-agri truncate text-base font-bold text-foreground sm:text-lg">AgriEquity</span>
-            <span className="logo-ai truncate text-base font-bold text-primary sm:text-lg">AI</span>
-            <span className="header-ping-dot relative ml-1.5 flex h-2 w-2 shrink-0 sm:ml-2" aria-hidden title="Live">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-            </span>
+            <span className="logo-agri truncate text-base font-bold text-foreground sm:text-lg">PitchFork</span>
           </a>
 
           <div className="flex shrink-0 items-center gap-2">
