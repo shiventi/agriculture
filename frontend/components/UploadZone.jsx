@@ -214,7 +214,7 @@ export default function UploadZone({
                   className="max-w-sm p-4 text-xs font-mono dark:bg-[#1a2e1a] dark:border-[#588157]/40 dark:text-[#f0f4ee] bg-white border border-[#d4e0cc] text-[#1a2e1a] shadow-xl rounded-xl z-50"
                 >
                   <div className="font-semibold text-sm non-mono mb-2 dark:text-[#76a874] text-[#588157]">
-                    📋 Required CSV Format
+                    Required CSV Format
                   </div>
                   <pre className="bg-black/20 dark:bg-black/30 rounded-lg p-2 text-xs overflow-x-auto mb-3 dark:text-[#a8bfa8] text-[#3a5a40] font-mono">
 {`farm_id,lat,lon,farm_size_ha,is_small,baseline_need
