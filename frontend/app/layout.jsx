@@ -15,6 +15,13 @@ const dmSans = DM_Sans({
 export const metadata = {
   title: 'PitchFork',
   description: 'AI-powered farm yield · Climate risk · Fair subsidies',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/fork.png', sizes: '32x32', type: 'image/png' },
+      { url: '/fork.png', sizes: '48x48', type: 'image/png' },
+    ],
+  },
 }
 
 export default function RootLayout({ children }) {
