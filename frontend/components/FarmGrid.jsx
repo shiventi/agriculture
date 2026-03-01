@@ -46,8 +46,8 @@ export default function FarmGrid({ results, isLoading, onBack }) {
 
   if (farms.length === 0) {
     return (
-      <Card className="farm-card rounded-2xl border-zinc-200 bg-white shadow-sm dark:border-[hsl(84,8%,30%)] dark:bg-[#323b22] transition-colors duration-200">
-        <CardContent className="py-12 text-center text-zinc-500 dark:text-[hsl(84,8%,68%)]">
+      <Card className="farm-card rounded-2xl border-zinc-200 bg-white shadow-sm dark:border-[#588157]/30 dark:bg-[#3a5a40] transition-colors duration-200">
+        <CardContent className="py-12 text-center text-zinc-500 dark:text-[#a8bfa8]">
           {isLoading ? 'Loading...' : 'No farm data to display.'}
         </CardContent>
       </Card>
@@ -56,24 +56,24 @@ export default function FarmGrid({ results, isLoading, onBack }) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <Card className="farm-card rounded-2xl border-zinc-200 bg-white shadow-sm dark:border-[hsl(84,8%,30%)] dark:bg-[#323b22] sm:mb-2 transition-colors duration-200">
+      <Card className="farm-card rounded-2xl border-zinc-200 bg-white shadow-sm dark:border-[#588157]/30 dark:bg-[#3a5a40] sm:mb-2 transition-colors duration-200">
         <CardContent className="flex flex-row flex-wrap items-center justify-center gap-3 py-4 sm:justify-start sm:gap-4">
-          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,68%)]">
-            <span className="font-semibold text-emerald-600 dark:text-[#00ff87]">{summary.totalFarms}</span> farms
+          <span className="text-sm text-zinc-500 dark:text-[#a8bfa8]">
+            <span className="font-semibold text-emerald-600 dark:text-[#76a874]">{summary.totalFarms}</span> farms
           </span>
-          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[hsl(84,8%,30%)] sm:block" />
-          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,68%)]">
-            <span className="font-semibold text-emerald-600 dark:text-[#00ff87]">{formatUSD(summary.totalBudget)}</span> total budget
+          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[#588157]/30 sm:block" />
+          <span className="text-sm text-zinc-500 dark:text-[#a8bfa8]">
+            <span className="font-semibold text-emerald-600 dark:text-[#76a874]">{formatUSD(summary.totalBudget)}</span> total budget
           </span>
-          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[hsl(84,8%,30%)] sm:block" />
-          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,68%)]">
-            <span className="font-semibold text-emerald-600 dark:text-[#00ff87]">{formatPercent(summary.avgYield)}</span> avg yield
+          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[#588157]/30 sm:block" />
+          <span className="text-sm text-zinc-500 dark:text-[#a8bfa8]">
+            <span className="font-semibold text-emerald-600 dark:text-[#76a874]">{formatPercent(summary.avgYield)}</span> avg yield
           </span>
-          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[hsl(84,8%,30%)] sm:block" />
-          <span className="text-sm text-zinc-500 dark:text-[hsl(84,8%,68%)]">
-            <span className="font-semibold text-zinc-900 dark:text-[hsl(0,0%,98%)]">{summary.smallFarmShare}%</span> small farm share
+          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-[#588157]/30 sm:block" />
+          <span className="text-sm text-zinc-500 dark:text-[#a8bfa8]">
+            <span className="font-semibold text-zinc-900 dark:text-[#f0f4ee]">{summary.smallFarmShare}%</span> small farm share
           </span>
-          <Badge className="ml-auto w-full justify-center rounded-full border-emerald-200 bg-emerald-50 py-1.5 text-emerald-700 dark:border-[hsl(82,50%,32%)]/30 dark:bg-[hsl(82,50%,32%)]/20 dark:text-[hsl(82,50%,60%)] sm:w-auto sm:justify-start">
+          <Badge className="ml-auto w-full justify-center rounded-full border-emerald-200 bg-emerald-50 py-1.5 text-emerald-700 dark:border-[#588157]/30 dark:bg-[#588157]/20 dark:text-[#76a874] sm:w-auto sm:justify-start">
             <Check className="mr-1 h-3.5 w-3.5" aria-hidden />
             Fairness active
           </Badge>
@@ -87,7 +87,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
           return (
             <Card
               key={farmId}
-              className={`farm-card relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-300 dark:border-[hsl(84,8%,30%)] dark:bg-[#323b22] dark:hover:shadow-[0_0_20px_rgba(0,255,135,0.08)] sm:rounded-3xl ${accent.border} border-t-4`}
+              className={`farm-card relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-300 dark:border-[#588157]/30 dark:bg-[#3a5a40] dark:hover:shadow-[0_0_24px_rgba(88,129,87,0.2)] sm:rounded-3xl ${accent.border} border-t-4`}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = `0 10px 40px -10px ${accent.shadow}`
               }}
@@ -109,10 +109,10 @@ export default function FarmGrid({ results, isLoading, onBack }) {
               </span>
               <div className="relative mb-4 flex flex-wrap items-center gap-2">
                 <span className={`h-2 w-2 shrink-0 rounded-full ${accent.dot}`} aria-hidden />
-                <span className="font-bold text-zinc-900 dark:text-[hsl(0,0%,98%)]">{farmId}</span>
-                <span className="text-zinc-500 dark:text-[hsl(84,8%,68%)]">{farm.crop ?? '—'}</span>
+                <span className="font-bold text-zinc-900 dark:text-[#f0f4ee]">{farmId}</span>
+                <span className="text-zinc-500 dark:text-[#a8bfa8]">{farm.crop ?? '—'}</span>
                 {farm.region && (
-                  <Badge variant="outline" className="rounded-full border-zinc-300 text-[10px] text-zinc-500 dark:border-[hsl(84,8%,30%)] dark:text-[hsl(84,8%,68%)]">
+                  <Badge variant="outline" className="rounded-full border-zinc-300 text-[10px] text-zinc-500 dark:border-[#588157]/30 dark:text-[#a8bfa8]">
                     {farm.region}
                   </Badge>
                 )}

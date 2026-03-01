@@ -28,7 +28,7 @@ html {
 }
 
 .dark .page-bg {
-  background: radial-gradient(ellipse at center, #323b22 0%, #2a2e24 60%, #1f2319 100%);
+  background: radial-gradient(ellipse at center, #3a5a40 0%, #2d4433 60%, #243629 100%);
 }
 
 body {
@@ -171,8 +171,8 @@ body {
   color: #71717a;
 }
 .dark .site-footer {
-  border-top-color: hsl(84 8% 30%);
-  color: hsl(84 8% 68%);
+  border-top-color: rgba(88, 129, 87, 0.35);
+  color: #a8bfa8;
 }
 
 /* Farm panel slide-up */

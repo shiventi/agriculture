@@ -137,21 +137,21 @@ export default function UploadZone({
   }
 
   return (
-    <div className="min-h-[50vh] bg-zinc-50 dark:bg-[#2a2e24] sm:min-h-[60vh] transition-colors duration-200">
+    <div className="min-h-[50vh] bg-zinc-50 dark:bg-[#2d4433] sm:min-h-[60vh] transition-colors duration-200">
       <div className="mx-auto mt-8 max-w-2xl px-4 sm:mt-12 sm:px-6 md:mt-16 md:max-w-3xl md:p-8 lg:mt-24 lg:p-12">
-        <div className="upload-zone rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-[hsl(84,8%,30%)] dark:bg-[#323b22] sm:p-8 md:p-10 transition-colors duration-200">
+        <div className="upload-zone rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-[#588157]/30 dark:bg-[#3a5a40] sm:p-8 md:p-10 transition-colors duration-200">
           <div className="flex flex-col items-center text-center">
-            <Wheat className="h-10 w-10 shrink-0 text-emerald-600 dark:text-[#00ff87] sm:h-12 sm:w-12" aria-hidden />
-            <h1 className="mt-3 text-xl font-bold text-zinc-900 dark:text-[hsl(0,0%,98%)] sm:mt-4 sm:text-2xl">AgriEquity AI</h1>
-            <p className="mt-2 text-sm text-zinc-500 dark:text-[hsl(84,8%,68%)]">
+            <Wheat className="h-10 w-10 shrink-0 text-emerald-600 dark:text-[#76a874] sm:h-12 sm:w-12" aria-hidden />
+            <h1 className="mt-3 text-xl font-bold text-zinc-900 dark:text-[#f0f4ee] sm:mt-4 sm:text-2xl">AgriEquity AI</h1>
+            <p className="mt-2 text-sm text-zinc-500 dark:text-[#a8bfa8]">
               Upload your farms CSV to begin analysis
             </p>
 
             <div
-              className={`mt-4 w-full cursor-pointer rounded-2xl border-2 border-dashed bg-zinc-50 p-6 text-center transition-colors duration-200 hover:border-emerald-500 dark:bg-[#2a2e24] dark:hover:border-[#00ff87] sm:mt-6 sm:p-8 md:p-10 ${
+              className={`mt-4 w-full cursor-pointer rounded-2xl border-2 border-dashed bg-zinc-50 p-6 text-center transition-colors duration-200 hover:border-emerald-500 dark:border-[#588157]/40 dark:bg-[#2d4433] dark:hover:border-[#76a874] dark:hover:bg-[#344d3a] sm:mt-6 sm:p-8 md:p-10 ${
                 isDragging
-                  ? 'border-emerald-500 bg-emerald-50 dark:border-[#00ff87] dark:bg-[hsl(82,50%,32%)]/10'
-                  : 'border-zinc-300 dark:border-[hsl(84,8%,30%)]'
+                  ? 'border-emerald-500 bg-emerald-50 dark:border-[#76a874] dark:bg-[#344d3a]'
+                  : 'border-zinc-300'
               }`}
               onDrop={onDrop}
               onDragOver={onDragOver}
@@ -175,11 +175,11 @@ export default function UploadZone({
                 onChange={onInputChange}
                 disabled={uploading}
               />
-              <FileSpreadsheet className="mx-auto h-8 w-8 text-zinc-600 dark:text-[hsl(0,0%,98%)] sm:h-10 sm:w-10" aria-hidden />
-              <p className="mt-2 text-zinc-600 dark:text-[hsl(0,0%,98%)] sm:mt-3">Drop CSV here</p>
-              <p className="mt-1 text-sm text-zinc-500 dark:text-[hsl(84,8%,68%)]">or click to browse</p>
+              <FileSpreadsheet className="mx-auto h-8 w-8 text-zinc-600 dark:text-[#f0f4ee] sm:h-10 sm:w-10" aria-hidden />
+              <p className="mt-2 text-zinc-600 dark:text-[#f0f4ee] sm:mt-3">Drop CSV here</p>
+              <p className="mt-1 text-sm text-zinc-500 dark:text-[#a8bfa8]">or click to browse</p>
               {selectedFile && (
-                <p className="mt-2 text-xs text-emerald-600 dark:text-[#00ff87]">
+                <p className="mt-2 text-xs text-emerald-600 dark:text-[#76a874]">
                   Selected: {selectedFile.name}
                 </p>
               )}
@@ -199,17 +199,17 @@ export default function UploadZone({
             )}
 
             <div className="mt-6 w-full text-left sm:mt-8">
-              <p className="text-xs text-zinc-500 dark:text-[hsl(84,8%,68%)]">
+              <p className="text-xs text-zinc-500 dark:text-[#a8bfa8]">
                 Configuration
               </p>
-              <Separator className="mb-4 mt-2 bg-zinc-200 dark:bg-[#2e3420]" />
+              <Separator className="mb-4 mt-2 bg-zinc-200 dark:bg-[#588157]/30" />
 
               <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-zinc-700 dark:text-[hsl(84,8%,68%)]">
+                <label className="text-sm font-medium text-zinc-700 dark:text-[#a8bfa8]">
                   Total budget
                 </label>
                 <div className="relative mt-1">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 dark:text-[hsl(84,8%,68%)]">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 dark:text-[#a8bfa8]">
                     $
                   </span>
                   <Input
@@ -217,27 +217,27 @@ export default function UploadZone({
                     placeholder="1000000"
                     value={budget}
                     onChange={(e) => setBudget(e.target.value)}
-                    className="h-9 border-zinc-300 bg-white pl-8 text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:ring-emerald-500/20 dark:border-[hsl(84,8%,30%)] dark:bg-[#2e3420] dark:text-[hsl(0,0%,98%)] dark:placeholder:text-[hsl(84,8%,68%)]"
+                    className="h-9 border-zinc-300 bg-white pl-8 text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:ring-emerald-500/20 dark:border-[#588157]/30 dark:bg-[#2d4433] dark:text-[#f0f4ee] dark:placeholder:text-[#a8bfa8]"
                   />
                 </div>
-                <span className="mt-1 text-xs text-zinc-400 dark:text-[hsl(84,8%,68%)]/50">
+                <span className="mt-1 text-xs text-zinc-400 dark:text-[#a8bfa8]/60">
                   Default: $1,000,000
                 </span>
               </div>
 
               <div className="mt-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-zinc-700 dark:text-[hsl(84,8%,68%)]">
+                  <span className="text-sm font-medium text-zinc-700 dark:text-[#a8bfa8]">
                     Fairness constraints
                   </span>
                   <Badge
                     variant="outline"
-                    className="rounded-full border-zinc-300 bg-zinc-100 text-xs text-zinc-500 dark:border-[hsl(84,8%,30%)] dark:bg-[#2e3420] dark:text-[hsl(84,8%,68%)]"
+                    className="rounded-full border-zinc-300 bg-zinc-100 text-xs text-zinc-500 dark:border-[#588157]/30 dark:bg-[#3a5a40] dark:text-[#a8bfa8]"
                   >
                     All optional
                   </Badge>
                 </div>
-                <p className="mt-1 mb-3 text-xs text-zinc-400 dark:text-[hsl(84,8%,68%)]/50">
+                <p className="mt-1 mb-3 text-xs text-zinc-400 dark:text-[#a8bfa8]/60">
                   Leave blank to use default values
                 </p>
 
@@ -246,7 +246,7 @@ export default function UploadZone({
                   variant="ghost"
                   size="sm"
                   onClick={() => setConstraintsExpanded((v) => !v)}
-                  className="w-full justify-start text-xs text-zinc-500 hover:text-zinc-900 dark:text-[hsl(84,8%,68%)] dark:hover:text-[hsl(0,0%,98%)]"
+                  className="w-full justify-start text-xs text-zinc-500 hover:text-zinc-900 dark:text-[#a8bfa8] dark:hover:text-[#f0f4ee]"
                 >
                   <ChevronDown
                     className={`h-4 w-4 shrink-0 transition-transform duration-200 ${constraintsExpanded ? 'rotate-180' : ''}`}
@@ -259,19 +259,19 @@ export default function UploadZone({
                   className="overflow-hidden transition-all duration-300 ease-in-out"
                   style={{ maxHeight: constraintsExpanded ? 400 : 0 }}
                 >
-                  <div className="mt-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-3 dark:border-[hsl(84,8%,30%)] dark:bg-[#2e3420]">
+                  <div className="mt-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-3 dark:border-[#588157]/25 dark:bg-[#2d4433]">
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {CONSTRAINT_FIELDS.map(({ key, label, placeholder, hint }) => (
                         <div key={key} className="flex flex-col gap-1">
-                          <label className="text-xs text-zinc-500 dark:text-[hsl(84,8%,68%)]">{label}</label>
+                          <label className="text-xs text-zinc-500 dark:text-[#a8bfa8]">{label}</label>
                           <Input
                             type="number"
                             placeholder={placeholder}
                             value={constraints[key] ?? ''}
                             onChange={(e) => updateConstraint(key, e.target.value)}
-                            className="h-8 border-zinc-300 bg-white text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 dark:border-[hsl(84,8%,30%)] dark:bg-[#2e3420] dark:text-[hsl(0,0%,98%)] dark:placeholder:text-[hsl(84,8%,68%)]"
+                            className="h-8 border-zinc-300 bg-white text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 dark:border-[#588157]/30 dark:bg-[#2d4433] dark:text-[#f0f4ee] dark:placeholder:text-[#a8bfa8]"
                           />
-                          <span className="text-xs text-zinc-400 dark:text-[hsl(84,8%,68%)]/50">{hint}</span>
+                          <span className="text-xs text-zinc-400 dark:text-[#a8bfa8]/60">{hint}</span>
                         </div>
                       ))}
                     </div>
@@ -283,7 +283,7 @@ export default function UploadZone({
                 type="button"
                 onClick={submitAnalysis}
                 disabled={!selectedFile || uploading}
-                className="mt-4 h-10 w-full bg-emerald-600 text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[hsl(82,50%,32%)] dark:hover:bg-[hsl(82,50%,38%)] dark:text-[hsl(0,0%,98%)]"
+                className="mt-4 h-10 w-full bg-emerald-600 text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#588157] dark:hover:bg-[#6a9868] dark:text-[#f0f4ee]"
               >
                 {uploading ? (
                   <>
@@ -304,7 +304,7 @@ export default function UploadZone({
                 <Badge
                   key={label}
                   variant="outline"
-                  className="cursor-default rounded-full border-zinc-300 bg-zinc-100 px-3 py-1.5 text-xs font-medium text-zinc-600 dark:border-[hsl(84,8%,30%)] dark:bg-[#2e3420] dark:text-[hsl(84,8%,68%)] dark:hover:text-[hsl(0,0%,98%)] sm:px-4"
+                  className="cursor-default rounded-full border-zinc-300 bg-zinc-100 px-3 py-1.5 text-xs font-medium text-zinc-600 dark:border-[#588157]/30 dark:bg-[#3a5a40] dark:text-[#a8bfa8] dark:hover:text-[#f0f4ee] sm:px-4"
                 >
                   <Icon className="h-3.5 w-3.5" aria-hidden />
                   {label}
@@ -317,7 +317,7 @@ export default function UploadZone({
               variant="link"
               size="sm"
               onClick={loadMockData}
-              className="mt-6 text-xs text-zinc-500 hover:text-zinc-900 dark:text-[hsl(84,8%,68%)] dark:hover:text-[hsl(0,0%,98%)]"
+              className="mt-6 text-xs text-zinc-500 hover:text-zinc-900 dark:text-[#a8bfa8] dark:hover:text-[#f0f4ee]"
             >
               Load sample data
             </Button>
@@ -327,12 +327,12 @@ export default function UploadZone({
 
       {uploading && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-zinc-50/95 text-zinc-900 dark:bg-[#2a2e24]/95 dark:text-[hsl(0,0%,98%)]"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-zinc-50/95 text-zinc-900 dark:bg-[#2d4433]/95 dark:text-[#f0f4ee]"
           role="status"
           aria-live="polite"
           aria-label="Analyzing farms"
         >
-          <Loader2 className="h-10 w-10 animate-spin text-emerald-600 dark:text-[#00ff87]" aria-hidden />
+          <Loader2 className="h-10 w-10 animate-spin text-emerald-600 dark:text-[#76a874]" aria-hidden />
           <p className="text-base font-medium sm:text-lg">Analyzing farms...</p>
         </div>
       )}

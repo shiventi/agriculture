@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <>
       {isLoading && <LoadingState />}
-      <div className="relative z-10 mx-auto min-h-[50vh] max-w-7xl bg-zinc-50 px-4 py-4 dark:bg-[#2a2e24] sm:min-h-[60vh] sm:px-6 sm:py-6 transition-colors duration-200">
+      <div className="relative z-10 mx-auto min-h-[50vh] max-w-7xl bg-zinc-50 px-4 py-4 dark:bg-[#2d4433] sm:min-h-[60vh] sm:px-6 sm:py-6 transition-colors duration-200">
         {results == null ? (
           <UploadZone
             results={results}
@@ -51,9 +51,9 @@ export default function Home() {
               <button
                 type="button"
                 onClick={handleBackToUpload}
-                className="mb-6 flex items-center gap-2 text-sm text-zinc-500 transition-colors duration-200 hover:text-zinc-900 dark:text-[hsl(84,8%,68%)] dark:hover:text-[hsl(0,0%,98%)] group"
+                className="mb-6 flex items-center gap-2 text-sm text-zinc-500 transition-colors duration-200 hover:text-zinc-900 dark:text-[#a8bfa8] dark:hover:text-[#f0f4ee] group"
               >
-                <ChevronLeft className="h-4 w-4 text-zinc-500 transition-colors duration-200 dark:group-hover:text-[#00ff87]" aria-hidden />
+                <ChevronLeft className="h-4 w-4 text-zinc-500 transition-colors duration-200 dark:group-hover:text-[#76a874]" aria-hidden />
                 Back to Upload
               </button>
             </div>
