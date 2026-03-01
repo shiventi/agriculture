@@ -1,6 +1,7 @@
 import csv
 import io
 import os
+import math
 import numpy as np
 from flask import Flask, jsonify, request
 
@@ -126,9 +127,22 @@ def analyze():
     except ValueError:
         return jsonify({"error": "budget must be a number"}), 400
 
-    # ── 2. Parse constraints (all optional, fall back to defaults) ────
+    # ── 2. Parse fairness toggle + constraints ────────────────────────
+    fairness_raw = (
+        request.args.get("fairness_on")
+        or request.form.get("fairness_on")
+        or (request.get_json(silent=True) or {}).get("fairness_on")
+    )
+    fairness_on = True
+    if fairness_raw is not None:
+        fairness_on = str(fairness_raw).strip().lower() in {"1", "true", "yes", "on"}
+
     def _float_param(name, default):
-        val = request.args.get(name) or (request.get_json(silent=True) or {}).get(name)
+        val = request.args.get(name)
+        if val is None:
+            val = request.form.get(name)
+        if val is None:
+            val = (request.get_json(silent=True) or {}).get(name)
         try:
             return float(val) if val is not None else default
         except (ValueError, TypeError):
@@ -142,6 +156,16 @@ def analyze():
         "high_risk_floor_threshold": _float_param("high_risk_floor_threshold", 75),
         "high_risk_floor_amount":    _float_param("high_risk_floor_amount",    25000),
     }
+    if not fairness_on:
+        constraints = {
+            "small_farm_min_share": 0.0,
+            "per_capita_ratio": 0.0,
+            "need_floor_dollars": 0.0,
+            "max_single_farm_share": 0.0,
+            "high_risk_floor_threshold": 0.0,
+            "high_risk_floor_amount": 0.0,
+        }
+    print(f"[analyze] fairness_on={fairness_on} constraints={constraints}")
 
     # ── 3. Parse CSV ──────────────────────────────────────────────────
     if "file" not in request.files or not request.files["file"].filename:
@@ -151,6 +175,7 @@ def analyze():
     rows = list(csv.DictReader(io.StringIO(text)))
     if not rows:
         return jsonify({"error": "CSV file is empty"}), 400
+    print(f"[analyze] start farms={len(rows)} budget={budget}")
 
     required_cols = {"farm_id", "lat", "lon", "farm_size_ha", "is_small", "baseline_need"}
     missing = required_cols - set(rows[0].keys())
@@ -165,33 +190,36 @@ def analyze():
     weather_data = []
 
     for row in rows:
+        farm_id = row["farm_id"]
         try:
             lat = float(row["lat"])
             lon = float(row["lon"])
         except ValueError:
-            return jsonify({"error": f"Invalid lat/lon for farm {row['farm_id']}"}), 400
+            return jsonify({"error": f"Invalid lat/lon for farm {farm_id}"}), 400
+        print(f"[farm:{farm_id}] input lat={lat} lon={lon}")
 
         try:
             metrics = fetch_open_meteo_metrics(lat, lon, start_date, end_date)
         except Exception as e:
-            return jsonify({"error": f"Weather fetch failed for {row['farm_id']}: {str(e)}"}), 502
+            return jsonify({"error": f"Weather fetch failed for {farm_id}: {str(e)}"}), 502
 
         # Pull the 11 features out in the exact order the model was trained on
         feature_vec = [metrics.get(k) for k in FEATURE_KEYS]
         if any(v is None for v in feature_vec):
             missing_keys = [FEATURE_KEYS[i] for i, v in enumerate(feature_vec) if v is None]
-            return jsonify({"error": f"Missing weather features for {row['farm_id']}: {missing_keys}"}), 500
+            return jsonify({"error": f"Missing weather features for {farm_id}: {missing_keys}"}), 500
+        print(f"[farm:{farm_id}] features={feature_vec}")
 
         feature_rows.append(feature_vec)
 
         farms.append({
-            "farm_id":       row["farm_id"],
+            "farm_id":       farm_id,
             "is_small":      int(row["is_small"]),
             "baseline_need": float(row["baseline_need"]),
         })
 
         weather_data.append({
-            "farm_id": row["farm_id"],
+            "farm_id": farm_id,
             "metrics": metrics,
         })
 
@@ -204,6 +232,11 @@ def analyze():
         )
     except Exception as e:
         return jsonify({"error": f"ML prediction failed: {str(e)}"}), 500
+    for i, farm in enumerate(farms):
+        print(
+            f"[farm:{farm['farm_id']}] predicted_yield_t_ha={round(float(yield_scores[i]), 4)} "
+            f"predicted_risk_score={round(float(risk_scores[i]), 4)}"
+        )
 
     # ── 6. Allocate subsidies ─────────────────────────────────────────
     # risk_scores already come out of ml.predict as 0-100
@@ -218,12 +251,43 @@ def analyze():
     except Exception as e:
         return jsonify({"error": f"Allocation failed: {str(e)}"}), 500
 
+    # Diagnostics: expose allocation driver math for transparency.
+    risk_norm = np.array(risk_scores, dtype=float) / 100.0
+    yield_arr = np.array(yield_scores, dtype=float)
+    raw_weights = yield_arr * (1.0 - 0.5 * risk_norm)
+    raw_weights = np.clip(raw_weights, 1e-6, None)
+    norm_weights = raw_weights / raw_weights.sum()
+    alloc_by_farm = {a["farm_id"]: a for a in allocation}
+    for farm in farms:
+        farm_id = farm["farm_id"]
+        alloc = alloc_by_farm.get(farm_id, {})
+        print(
+            f"[farm:{farm_id}] allocation_before={alloc.get('before')} "
+            f"allocation_after={alloc.get('after')}"
+        )
+    print("[analyze] completed")
+
+    
+
     # ── 7. Return to frontend ─────────────────────────────────────────
     return jsonify({
         "budget":      budget,
+        "fairness_on": fairness_on,
         "constraints": constraints,
         "results":     allocation,    # [{ farm_id, before, after }, ...]
         "weather":     weather_data,  # per-farm climate metrics
+        "diagnostics": {
+            "farms": [
+                {
+                    "farm_id": farms[i]["farm_id"],
+                    "predicted_yield_t_ha": round(float(yield_scores[i]), 6),
+                    "predicted_risk_score_0_100": round(float(risk_scores[i]), 6),
+                    "raw_weight": round(float(raw_weights[i]), 6),
+                    "normalized_weight": round(float(norm_weights[i]), 6),
+                }
+                for i in range(len(farms))
+            ]
+        },
     })
 
 
