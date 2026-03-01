@@ -8,7 +8,10 @@ INPUTS:
   farms         — list of dicts, each needs:
                     "farm_id"       str
                     "is_small"      int  (1 = small farm, 0 = large)
-                    "baseline_need" float 0–1
+                    "baseline_need" float
+                      - If 0–1, treated as normalized need and multiplied by
+                        need_floor_dollars.
+                      - If >1, treated as an absolute dollar floor.
   constraints   - dict of user inputted constraints
 
 OUTPUT from allocate():
@@ -112,7 +115,21 @@ def _apply_fairness(alloc, farms, risk_scores, total_budget, c):
     # Floor 1: need-based minimum per farm
     if c.get("need_floor_dollars"):
         for i, farm in enumerate(farms):
-            floor = farm.get("baseline_need", 0) * c["need_floor_dollars"]
+            baseline_need = farm.get("baseline_need", 0)
+            # Auto-handle both formats:
+            # - normalized [0,1] need score
+            # - absolute dollar floor (>1)
+            if baseline_need is None:
+                baseline_need = 0
+            try:
+                baseline_need = float(baseline_need)
+            except (TypeError, ValueError):
+                baseline_need = 0
+
+            if baseline_need <= 1.0:
+                floor = baseline_need * c["need_floor_dollars"]
+            else:
+                floor = baseline_need
             alloc[i] = max(alloc[i], floor)
 
     # Floor 2: high-risk safety net (threshold is 1-100)
