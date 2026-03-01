@@ -12,11 +12,10 @@ print(f"Using device: {DEVICE}")
 
 
 # ── Data loading ─────────────────────────────────────────────────────
-def load_training_data(filepath: str) -> np.ndarray:
+def load_training_data(filepath: str, expected_cols: int = 11) -> np.ndarray:
     """
-    Load training data from fake_data.txt.
+    Load data from a generated .py file containing a list of floats.
     Handles Python-style list format — skips headers, brackets, comments.
-    Only accepts lines that parse into exactly 11 floats.
     """
     data = []
     with open(filepath, "r") as f:
@@ -34,7 +33,7 @@ def load_training_data(filepath: str) -> np.ndarray:
                 continue
             try:
                 values = [float(x.strip()) for x in line.split(",") if x.strip()]
-                if len(values) == 11:
+                if len(values) == expected_cols:
                     data.append(values)
             except ValueError:
                 continue
@@ -82,7 +81,7 @@ def compute_targets(X: np.ndarray, crop_type: str = "wheat") -> np.ndarray:
       , 0, 1) * 100
     """
     Xf = X.astype(float)
-
+    temp_mean = Xf[:, 0]
     temp_max  = Xf[:, 1]
     temp_min  = Xf[:, 2]
     precip    = Xf[:, 3]
@@ -98,6 +97,7 @@ def compute_targets(X: np.ndarray, crop_type: str = "wheat") -> np.ndarray:
     def norm(arr, lo, hi):
         return np.clip((arr - lo) / (hi - lo), 0, 1)
 
+    temp_mean_n = norm(temp_mean, 15.0,   25.0)
     temp_max_n  = norm(temp_max,  30.0,   48.0)
     temp_min_n  = norm(temp_min,   1.0,    8.0)
     precip_n    = norm(precip,   140.0,  325.0)
@@ -109,33 +109,35 @@ def compute_targets(X: np.ndarray, crop_type: str = "wheat") -> np.ndarray:
     wind_n      = norm(wind,      16.0,   29.5)
     et0_n       = norm(et0,      785.0,  1145.0)
 
-    # Water deficit: how much more water crops demand vs what fell
-    water_deficit = np.clip(et0_n - precip_n, 0, 1)
+    # ── Risk (0-100) ─────────────────────────────────────────────────
+    risk = (
+        # Water and Moisture Availability (40%)
+          0.20 * (1.0 - sm_min_n)
+        + 0.15 * (1.0 - precip_n)
+        + 0.05 * (1.0 - sm_mean_n)
+        
+        # Temperature Extremes (30%)
+        + 0.15 * temp_max_n
+        + 0.10 * (1.0 - temp_min_n)
+        + 0.05 * temp_mean_n
+        
+        # Atmospheric Stress (15%)
+        + 0.10 * vpd_max_n
+        + 0.05 * vpd_mean_n
+        + 0.00 * et0_n
+        
+        # Energy and Physical Damage (15%)
+        + 0.10 * wind_n
+        + 0.05 * radiation_n
+    )
+    risk_score = (np.clip(risk, 0, 1) * 100).astype(np.float32)
 
     # ── Yield ────────────────────────────────────────────────────────
-    climate_score = (
-        0.30 * sm_mean_n
-        + 0.20 * precip_n
-        + 0.20 * radiation_n
-        - 0.20 * vpd_mean_n
-        - 0.10 * water_deficit
-    )
-    climate_score = np.clip(climate_score, 0, 1)
+    # Yield is inversely proportional to risk
+    climate_score = np.clip(1.0 - risk, 0, 1)
 
     base       = CROP_BASE_YIELD.get(crop_type, 5.0)
     yield_pred = (base * (0.4 + climate_score * 1.0)).astype(np.float32)
-
-    # ── Risk (0-100) ─────────────────────────────────────────────────
-    risk = (
-        0.30 * (1 - sm_min_n)      # drought vulnerability
-        + 0.20 * vpd_max_n         # peak heat + dryness event
-        + 0.15 * temp_max_n        # extreme heat damage
-        + 0.10 * (1 - temp_min_n)  # frost risk
-        + 0.10 * wind_n            # wind damage
-        + 0.10 * (1 - precip_n)    # low rainfall risk
-        - 0.05 * sm_mean_n         # moisture buffer reduces risk
-    )
-    risk_score = (np.clip(risk, 0, 1) * 100).astype(np.float32)
 
     return np.vstack([yield_pred, risk_score]).T
 
@@ -222,18 +224,38 @@ def train_model(
 
 
 # ── Save / Load ───────────────────────────────────────────────────────
-def save_model(model: nn.Module, path: str):
+def save_model(
+    model: nn.Module,
+    path: str,
+    X_min: np.ndarray,
+    X_max: np.ndarray,
+    y_min: np.ndarray,
+    y_max: np.ndarray
+):
     dir_name = os.path.dirname(path)
     if dir_name:
         os.makedirs(dir_name, exist_ok=True)
-    torch.save(model.state_dict(), path)
+        
+    state = {
+        "model_state": model.state_dict(),
+        "X_min": X_min,
+        "X_max": X_max,
+        "y_min": y_min,
+        "y_max": y_max,
+        "input_size": model.net[0].in_features,
+        "output_size": model.net[-1].out_features
+    }
+    torch.save(state, path)
 
 
-def load_model(path: str, input_size: int, output_size: int = 2) -> nn.Module:
-    model = FarmModel(input_size, output_size=output_size)
-    model.load_state_dict(torch.load(path, map_location="cpu"))
+def load_model(path: str) -> Tuple[nn.Module, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    state = torch.load(path, map_location="cpu", weights_only=False)
+    
+    model = FarmModel(state["input_size"], output_size=state["output_size"])
+    model.load_state_dict(state["model_state"])
     model.eval()
-    return model
+    
+    return model, state["X_min"], state["X_max"], state["y_min"], state["y_max"]
 
 
 # ── Inference ─────────────────────────────────────────────────────────
@@ -269,37 +291,40 @@ def predict(
 # ── Entry point ───────────────────────────────────────────────────────
 if __name__ == "__main__":
     base       = os.path.dirname(__file__)
-    data_path  = os.path.normpath(os.path.join(base, "..", "fake_data.txt"))
+    train_path = os.path.normpath(os.path.join(base, "training_data.txt"))
+    test_path  = os.path.normpath(os.path.join(base, "testing_data.txt"))
     model_path = os.path.normpath(os.path.join(base, "farm_model.pth"))
 
     # ── Load ─────────────────────────────────────────────────────────
-    if not os.path.exists(data_path):
-        print(f"ERROR: data file not found at: {data_path}")
+    if not os.path.exists(train_path) or not os.path.exists(test_path):
+        print("ERROR: training or testing data file not found.")
         exit(1)
 
-    print(f"Loading data from: {data_path}")
-    X = load_training_data(data_path)
-
-    if X.shape[0] == 0:
-        print("ERROR: no rows loaded — check file format")
+    print(f"Loading training data from: {train_path}")
+    train_data = load_training_data(train_path, expected_cols=13)
+    
+    if train_data.shape[0] == 0:
+        print("ERROR: no training rows loaded.")
         exit(1)
 
-    if X.shape[1] != 11:
-        print(f"ERROR: expected 11 columns, got {X.shape[1]}")
+    # Training data already contains the outputs
+    X_train = train_data[:, :11]
+    y_train = train_data[:, 11:]
+
+    print(f"Loading testing data from: {test_path}")
+    X_test = load_training_data(test_path, expected_cols=11)
+    
+    if X_test.shape[0] == 0:
+        print("ERROR: no testing rows loaded.")
         exit(1)
 
-    y = compute_targets(X)
+    # Calculate actual targets for the test set solely for final evaluation reporting
+    y_test = compute_targets(X_test)
 
-    print(f"Data shape  — X: {X.shape}, y: {y.shape}")
-    print(f"Yield range — min: {y[:,0].min():.2f}, max: {y[:,0].max():.2f} t/ha")
-    print(f"Risk range  — min: {y[:,1].min():.1f},  max: {y[:,1].max():.1f} /100")
+    print(f"Data shape  — X_train: {X_train.shape}, y_train: {y_train.shape}")
+    print(f"Yield range — min: {y_train[:,0].min():.2f}, max: {y_train[:,0].max():.2f} t/ha")
+    print(f"Risk range  — min: {y_train[:,1].min():.1f},  max: {y_train[:,1].max():.1f} /100")
 
-    # ── Split 80% train / 20% test BEFORE training ───────────────────
-    split   = int(len(X) * 0.8)
-    X_train = X[:split]
-    X_test  = X[split:]
-    y_train = y[:split]
-    y_test  = y[split:]
     print(f"\nTrain rows: {len(X_train)} | Test rows: {len(X_test)}")
 
     # ── Train on training set only ────────────────────────────────────
@@ -307,98 +332,5 @@ if __name__ == "__main__":
     model, X_min, X_max, y_min, y_max = train_model(X_train, y_train, epochs=800, lr=5e-3)
 
     # ── Save ──────────────────────────────────────────────────────────
-    save_model(model, model_path)
+    save_model(model, model_path, X_min, X_max, y_min, y_max)
     print(f"Model saved to: {model_path}")
-
-    # ════════════════════════════════════════════════════════════════
-    # LEVEL 1 — Sanity check: do best/worst/mid give different outputs?
-    # ════════════════════════════════════════════════════════════════
-    best_farm  = X[X[:, 7].argmax()]  # highest soil moisture = best
-    worst_farm = X[X[:, 7].argmin()]  # lowest soil moisture  = worst
-    mid_farm   = X[len(X) // 2]       # middle of dataset
-
-    test_farms = np.array([best_farm, worst_farm, mid_farm])
-    yields, risks = predict(model, test_farms, X_min, X_max, y_min, y_max)
-
-    print("\n── Level 1: Sanity Check ──────────────────────────────────────")
-    print(f"  {'Farm':<6} {'Soil Moisture':<16} {'Yield (t/ha)':<15} {'Risk /100'}")
-    print(f"  {'-'*52}")
-    labels      = ["best ", "worst", "mid  "]
-    soil_values = [best_farm[7], worst_farm[7], mid_farm[7]]
-    for i, (yld, risk) in enumerate(zip(yields, risks)):
-        print(f"  {labels[i]}  sm={soil_values[i]:.3f}          {yld:.2f}           {risk:.1f}")
-
-    # ════════════════════════════════════════════════════════════════
-    # LEVEL 2 — Direction check: did the model learn the right direction?
-    # ════════════════════════════════════════════════════════════════
-    print("\n── Level 2: Direction Check ───────────────────────────────────")
-    print("  best farm  → yield should be HIGH, risk should be LOW")
-    print("  worst farm → yield should be LOW,  risk should be HIGH")
-
-    yield_ok = yields[0] > yields[1]   # best yield > worst yield
-    risk_ok  = risks[0]  < risks[1]    # best risk  < worst risk
-
-    print(f"\n  Yield: best={yields[0]:.2f}, worst={yields[1]:.2f} → {'✓ PASS' if yield_ok else '✗ FAIL'}")
-    print(f"  Risk:  best={risks[0]:.1f},  worst={risks[1]:.1f}  → {'✓ PASS' if risk_ok else '✗ FAIL'}")
-
-    if yield_ok and risk_ok:
-        print("\n  ✓ Model learned the correct relationships")
-    else:
-        print("\n  ✗ Model learned backwards — try more epochs or lower lr")
-
-    # ════════════════════════════════════════════════════════════════
-    # LEVEL 3 — Test set evaluation: how accurate on unseen farms?
-    # ════════════════════════════════════════════════════════════════
-    print("\n── Level 3: Test Set Evaluation ───────────────────────────────")
-
-    yields_pred, risks_pred = predict(model, X_test, X_min, X_max, y_min, y_max)
-    yields_actual = y_test[:, 0].tolist()
-    risks_actual  = y_test[:, 1].tolist()
-
-    yields_pred_arr   = np.array(yields_pred)
-    risks_pred_arr    = np.array(risks_pred)
-    yields_actual_arr = np.array(yields_actual)
-    risks_actual_arr  = np.array(risks_actual)
-
-    # Mean Absolute Percentage Error — error as % of actual value
-    yield_mape = float(np.mean(np.abs((yields_pred_arr - yields_actual_arr) / (yields_actual_arr + 1e-8))) * 100)
-    risk_mape  = float(np.mean(np.abs((risks_pred_arr  - risks_actual_arr)  / (risks_actual_arr  + 1e-8))) * 100)
-
-    # R² score — converted to percentage (1.0 = 100% = perfect)
-    def r2(actual, pred):
-        ss_res = np.sum((actual - pred) ** 2)
-        ss_tot = np.sum((actual - np.mean(actual)) ** 2)
-        return (1 - (ss_res / (ss_tot + 1e-8))) * 100
-
-    yield_r2 = r2(yields_actual_arr, yields_pred_arr)
-    risk_r2  = r2(risks_actual_arr,  risks_pred_arr)
-
-    # Accuracy — how often prediction is within 10% of actual value
-    yield_within_10 = float(np.mean(np.abs((yields_pred_arr - yields_actual_arr) / (yields_actual_arr + 1e-8)) < 0.10) * 100)
-    risk_within_10  = float(np.mean(np.abs((risks_pred_arr  - risks_actual_arr)  / (risks_actual_arr  + 1e-8)) < 0.10) * 100)
-
-    print(f"\n  Test farms: {len(X_test)}")
-    print(f"\n  {'Metric':<35} {'Yield':<20} {'Risk'}")
-    print(f"  {'-'*70}")
-    print(f"  {'Avg prediction error (MAPE)':<35} {yield_mape:.2f}%              {risk_mape:.2f}%")
-    print(f"  {'Variance explained (R²)':<35} {yield_r2:.2f}%              {risk_r2:.2f}%")
-    print(f"  {'Predictions within 10% of actual':<35} {yield_within_10:.1f}%              {risk_within_10:.1f}%")
-
-    # Show first 5 test farms side by side
-    print(f"\n  First 5 test farms (actual vs predicted):")
-    print(f"  {'Actual Yield':<15} {'Pred Yield':<15} {'Actual Risk':<14} {'Pred Risk'}")
-    print(f"  {'-'*57}")
-    for i in range(min(5, len(X_test))):
-        print(f"  {yields_actual[i]:<15.2f} {yields_pred[i]:<15.2f} {risks_actual[i]:<14.1f} {risks_pred[i]:.1f}")
-
-    # ── Final verdict ─────────────────────────────────────────────────
-    print("\n── Final Verdict ──────────────────────────────────────────────")
-    all_pass = yield_ok and risk_ok and yield_mape < 10.0 and risk_mape < 10.0
-    if all_pass:
-        print("  ✓ Model is working correctly and ready to use")
-    else:
-        print("  ✗ Model needs improvement — check failures above")
-        if not yield_ok or not risk_ok:
-            print("    → Try increasing epochs to 800")
-        if yield_mape >= 10.0 or risk_mape >= 10.0:
-            print("    → Try lowering lr to 1e-3 or adding more training data")
