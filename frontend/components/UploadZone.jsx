@@ -27,8 +27,8 @@ const CONSTRAINT_FIELDS = [
   { key: 'per_capita_ratio', label: 'Per capita ratio', placeholder: 'default: 0.7', hint: 'small avg ÷ large avg' },
   { key: 'need_floor_dollars', label: 'Need floor (dollars)', placeholder: 'default: 50000', hint: 'baseline_need × this' },
   { key: 'max_single_farm_share', label: 'Max single farm share', placeholder: 'default: 30', hint: '% max per farm' },
-  { key: 'high_risk_floor_threshold', label: 'High risk threshold', placeholder: 'default: 70', hint: 'risk score out of 100' },
-  { key: 'high_risk_floor_amount', label: 'High risk floor', placeholder: 'default: 25000', hint: 'guaranteed floor $' },
+  { key: 'high_risk_floor_threshold', label: 'High risk threshold (%)', placeholder: 'default: 70', hint: 'If a farm’s climate risk score is ≥ this % (0–100), they receive the high-risk floor amount' },
+  { key: 'high_risk_floor_amount', label: 'High risk floor ($)', placeholder: 'default: 25000', hint: 'Guaranteed minimum $ allocated to farms that meet the high-risk threshold' },
 ]
 
 export default function UploadZone({
