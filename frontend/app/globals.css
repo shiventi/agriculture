@@ -75,6 +75,7 @@ html.theme-light .header-amd-badge {
 html.theme-light .theme-toggle-btn:hover,
 html.theme-light .header-amd-badge:hover {
   color: #1a2e1a;
+  background-color: #e8f0e4;
 }
 
 /* Hero banner */
@@ -137,6 +138,19 @@ html.theme-light .upload-card button.bg-primary:hover:not(:disabled) {
 }
 html.theme-light .upload-card .text-primary {
   color: #588157;
+}
+html.theme-light .advanced-constraints-btn:hover {
+  background-color: #f0f4ec !important;
+  color: #1a2e1a !important;
+}
+html.theme-light .load-sample-data-btn:hover {
+  color: #1a2e1a !important;
+  text-decoration: none;
+}
+html.theme-light .upload-card button[class*="ghost"]:hover,
+html.theme-light .upload-card button[class*="link"]:hover {
+  background-color: #f0f4ec;
+  color: #1a2e1a;
 }
 html.theme-light .output-pills [class*="rounded-full"] {
   background-color: #f0f4ec !important;

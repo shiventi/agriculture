@@ -51,7 +51,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="theme-toggle-btn relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-colors hover:text-foreground"
+              className="theme-toggle-btn relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:text-foreground"
               aria-label={mounted && theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {!mounted ? <span className="h-4 w-4" aria-hidden /> : theme === 'dark' ? <Sun className="h-4 w-4" aria-hidden /> : <Moon className="h-4 w-4" aria-hidden />}
@@ -59,9 +59,9 @@ export default function Header() {
             <Separator orientation="vertical" className="mx-1.5 h-4 bg-border sm:mx-2 sm:h-5" />
             <Badge
               variant="outline"
-              className="header-amd-badge rounded-full border-border bg-card px-2.5 py-1 text-xs text-muted-foreground sm:px-3 hover:text-foreground transition-colors"
+              className="header-amd-badge flex items-center gap-2 rounded-full border-border bg-card px-2.5 py-1 text-xs text-muted-foreground sm:px-3 hover:text-foreground transition-colors"
             >
-              <Cpu className="mr-1.5 h-3 w-3" aria-hidden />
+              <Cpu className="h-3 w-3 shrink-0" aria-hidden />
               AMD ROCm
             </Badge>
           </div>

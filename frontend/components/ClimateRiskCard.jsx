@@ -30,7 +30,7 @@ export default function ClimateRiskCard({
   const gaugeColor = score < 0.4 ? '#14b8a6' : score <= 0.7 ? '#f59e0b' : '#ef4444'
 
   return (
-    <Card className="climate-card h-[200px] overflow-hidden rounded-2xl border-border bg-card transition-shadow hover:shadow-lg hover:shadow-black/20">
+    <Card className="climate-card h-[200px] overflow-hidden rounded-2xl border-border bg-card">
       <CardHeader className="flex flex-row items-center gap-2 space-y-0 p-4 pb-0">
         <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" aria-hidden />
         <CardTitle className="text-sm font-semibold text-foreground">Climate risk</CardTitle>

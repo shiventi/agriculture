@@ -26,7 +26,7 @@ export default function YieldCard({
   const ringColor = getRingColor(s)
 
   return (
-    <Card className="yield-card h-[200px] overflow-hidden rounded-2xl border-border bg-card transition-shadow hover:shadow-lg hover:shadow-black/20">
+    <Card className="yield-card h-[200px] overflow-hidden rounded-2xl border-border bg-card">
       <CardHeader className="space-y-1 p-4 pb-0">
         <div className="flex flex-wrap items-center gap-2">
           <CardTitle className="text-base font-semibold text-foreground">

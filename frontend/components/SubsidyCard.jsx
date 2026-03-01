@@ -19,7 +19,7 @@ export default function SubsidyCard({
   const pct = maxAmount > 0 ? Math.min(100, (amount / maxAmount) * 100) : 0
 
   return (
-    <Card className="subsidy-card h-[180px] overflow-hidden rounded-2xl border-primary/30 bg-background transition-shadow hover:shadow-lg hover:shadow-black/20">
+    <Card className="subsidy-card h-[180px] overflow-hidden rounded-2xl border-primary/30 bg-background">
       <CardHeader className="space-y-0 p-4 pb-0">
         <CardTitle className="text-sm font-semibold text-foreground">
           Subsidy allocation

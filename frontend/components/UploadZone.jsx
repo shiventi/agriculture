@@ -246,10 +246,10 @@ export default function UploadZone({
                   variant="ghost"
                   size="sm"
                   onClick={() => setConstraintsExpanded((v) => !v)}
-                  className="w-full justify-start text-xs text-muted-foreground hover:text-foreground"
+                  className="advanced-constraints-btn w-full justify-start gap-2 text-xs text-muted-foreground hover:text-foreground"
                 >
                   <ChevronDown
-                    className={`h-4 w-4 shrink-0 transition-transform duration-200 ${constraintsExpanded ? 'rotate-180' : ''}`}
+                    className={`h-4 w-4 shrink-0 ${constraintsExpanded ? 'rotate-180' : ''}`}
                     aria-hidden
                   />
                   Advanced constraints
@@ -317,7 +317,7 @@ export default function UploadZone({
               variant="link"
               size="sm"
               onClick={loadMockData}
-              className="mt-6 text-xs text-muted-foreground hover:text-foreground"
+              className="load-sample-data-btn mt-6 text-xs text-muted-foreground hover:text-foreground"
             >
               Load sample data
             </Button>
