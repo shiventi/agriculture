@@ -10,18 +10,18 @@ function getRiskStyle(score) {
     return {
       label: 'LOW',
       fill: '#588157',
-      badgeClass: 'dark:bg-[#588157]/20 dark:text-[#76a874] bg-[#e8f0e4] text-[#588157] border-[#c4d4bc]',
+      badgeClass: 'risk-badge-low border border-primary/30 bg-primary/20 text-primary',
     }
   if (score <= 0.7)
     return {
       label: 'MODERATE',
       fill: '#d4a843',
-      badgeClass: 'dark:bg-[#d4a843]/20 dark:text-[#d4a843] bg-[#fdf3dc] text-[#a07820] border-[#e8d080]',
+      badgeClass: 'risk-badge-moderate border border-amber-500/30 bg-amber-500/20 text-amber-600 dark:text-amber-400',
     }
   return {
     label: 'HIGH',
     fill: '#c0392b',
-    badgeClass: 'dark:bg-[#c0392b]/20 dark:text-[#e07060] bg-[#fdecea] text-[#c0392b] border-[#f0b0a8]',
+    badgeClass: 'risk-badge-high border border-red-500/30 bg-red-500/20 text-red-600 dark:text-red-400',
   }
 }
 
@@ -47,11 +47,11 @@ export default function ClimateRiskCard({
   const heatStress = temperature_c != null && temperature_c > 35
 
   return (
-    <Card className="climate-card h-[220px] overflow-hidden rounded-2xl border dark:border-[#588157]/30 dark:bg-[#2d4433] border-[#d4e0cc] bg-[#f0f4ec]">
+    <Card className="climate-card h-[220px] overflow-hidden rounded-2xl border border-border bg-card">
       <CardHeader className="space-y-0 p-3 pb-0">
         <div className="flex items-center gap-2">
-          <CloudRain className="h-3.5 w-3.5 shrink-0 dark:text-[#a8bfa8] text-[#5a7a5a" aria-hidden />
-          <span className="text-xs font-medium uppercase tracking-widest dark:text-[#a8bfa8] text-[#5a7a5a]">
+          <CloudRain className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+          <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
             Climate Risk
           </span>
         </div>
@@ -64,7 +64,7 @@ export default function ClimateRiskCard({
               fill="none"
               strokeWidth="6"
               strokeLinecap="round"
-              className="dark:stroke-[#588157]/20 stroke-[#d4e0cc]"
+              className="stroke-border"
             />
             <path
               d={`M 10 48 A 48 48 0 0 1 100 48`}
@@ -90,8 +90,8 @@ export default function ClimateRiskCard({
             {style.label}
           </Badge>
         </div>
-        <Separator className="dark:bg-[#588157]/20 bg-[#d4e0cc]" />
-        <div className="space-y-1 text-xs dark:text-[#a8bfa8] text-[#5a7a5a]">
+        <Separator className="bg-border" />
+        <div className="space-y-1 text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <span aria-hidden>🌡</span>
             <span>{temperature_c != null ? `${temperature_c}°C avg temperature` : '—'}</span>

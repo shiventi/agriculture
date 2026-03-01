@@ -27,39 +27,39 @@ export default function SubsidyCard({
   const showEquity = subsidy_eligible || is_small
 
   return (
-    <Card className="subsidy-card h-[200px] overflow-hidden rounded-2xl border dark:border-[#588157]/40 dark:bg-[#3a5a40] border-[#c4d4bc] bg-[#edf5e8]">
+    <Card className="subsidy-card h-[200px] overflow-hidden rounded-2xl border border-border bg-card">
       <CardHeader className="space-y-0 p-3 pb-0">
         <div className="flex items-center gap-2">
-          <Coins className="h-3.5 w-3.5 shrink-0 dark:text-[#a8bfa8] text-[#5a7a5a" aria-hidden />
-          <span className="text-xs font-medium uppercase tracking-widest dark:text-[#a8bfa8] text-[#5a7a5a]">
+          <Coins className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+          <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
             Subsidy Allocation
           </span>
         </div>
       </CardHeader>
       <CardContent className="space-y-2 p-3 pt-2">
-        <p className="text-[28px] font-bold tabular-nums dark:text-[#d4a843] text-[#c49a30]">
+        <p className="subsidy-amount text-[28px] font-bold tabular-nums text-primary">
           {formatUSD(amount)}
         </p>
         <Progress
           value={pct}
-          className="mt-2 h-2 w-full dark:[&>div]:bg-[#588157] [&>div]:bg-[#588157]"
+          className="mt-2 h-2 w-full [&>div]:bg-primary"
         />
         {showEquity && (
-          <div className="flex items-center gap-1.5 rounded-lg border py-1.5 px-2 dark:bg-[#588157]/20 dark:text-[#76a874] dark:border-[#588157]/30 bg-[#e8f0e4] text-[#588157] border-[#c4d4bc]">
+          <div className="equity-banner flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/20 py-1.5 px-2 text-primary">
             <Check className="h-3.5 w-3.5 shrink-0" aria-hidden />
             <span className="text-xs font-medium">Equity constraints applied</span>
           </div>
         )}
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <div className="rounded-lg border p-2 dark:bg-[#2d4433] dark:border-[#588157]/25 bg-[#f4f7f0] border-[#d4e0cc]">
-            <p className="text-xs dark:text-[#a8bfa8] text-[#5a7a5a]">Gini Index</p>
-            <p className="text-sm font-bold tabular-nums dark:text-[#f0f4ee] text-[#1a2e1a]">
+          <div className="subsidy-stat-box rounded-lg border border-border bg-muted/50 p-2">
+            <p className="text-xs text-muted-foreground">Gini Index</p>
+            <p className="text-sm font-bold tabular-nums text-foreground">
               {gini_coefficient != null ? gini_coefficient.toFixed(2) : '—'}
             </p>
           </div>
-          <div className="rounded-lg border p-2 dark:bg-[#2d4433] dark:border-[#588157]/25 bg-[#f4f7f0] border-[#d4e0cc]">
-            <p className="text-xs dark:text-[#a8bfa8] text-[#5a7a5a]">Small Farm Share</p>
-            <p className="text-sm font-bold tabular-nums dark:text-[#f0f4ee] text-[#1a2e1a]">
+          <div className="subsidy-stat-box rounded-lg border border-border bg-muted/50 p-2">
+            <p className="text-xs text-muted-foreground">Small Farm Share</p>
+            <p className="text-sm font-bold tabular-nums text-foreground">
               {small_farm_share_pct != null ? `${small_farm_share_pct}%` : '—'}
             </p>
           </div>

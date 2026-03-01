@@ -287,10 +287,11 @@ html.theme-light .yield-card .relative.overflow-hidden.rounded-full > div {
   background: #588157 !important;
 }
 html.theme-light .yield-card .bg-primary\/20.text-primary,
-html.theme-light .yield-card .border-0.bg-primary\/20 {
+html.theme-light .yield-card .border-0.bg-primary\/20,
+html.theme-light .yield-card .small-farm-badge {
   background: #e8f0e4 !important;
   color: #588157 !important;
-  border: 1px solid #c4d4bc !important;
+  border-color: #c4d4bc !important;
 }
 
 /* Climate card */
@@ -338,7 +339,8 @@ html.theme-light .subsidy-card {
 html.theme-light .subsidy-card .text-foreground {
   color: #1a2e1a;
 }
-html.theme-light .subsidy-card .text-2xl.font-bold.text-primary {
+html.theme-light .subsidy-card .text-2xl.font-bold.text-primary,
+html.theme-light .subsidy-card .subsidy-amount {
   color: #c49a30 !important;
 }
 html.theme-light .subsidy-card .text-muted-foreground {
@@ -351,10 +353,21 @@ html.theme-light .subsidy-card .relative.overflow-hidden.rounded-full > div {
   background: #588157 !important;
 }
 html.theme-light .subsidy-card .border-primary\/50.bg-primary\/20,
-html.theme-light .subsidy-card .w-fit.rounded-full.border.border-primary\/50.bg-primary\/20 {
+html.theme-light .subsidy-card .w-fit.rounded-full.border.border-primary\/50.bg-primary\/20,
+html.theme-light .subsidy-card .equity-banner {
   background: #e8f0e4 !important;
   color: #588157 !important;
   border-color: #c4d4bc !important;
+}
+html.theme-light .subsidy-card .subsidy-stat-box {
+  background-color: #f4f7f0;
+  border-color: #d4e0cc;
+}
+html.theme-light .subsidy-card .subsidy-stat-box .text-foreground {
+  color: #1a2e1a;
+}
+html.theme-light .subsidy-card .subsidy-stat-box .text-muted-foreground {
+  color: #5a7a5a;
 }
 
 /* Reasoning card */

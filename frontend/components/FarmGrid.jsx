@@ -180,7 +180,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
             return (
               <Card
                 key={farmId}
-                className={`farm-panel relative overflow-hidden rounded-3xl border-t-4 p-4 transition-all duration-200 dark:bg-[#3a5a40] dark:border-[#588157]/30 dark:hover:shadow-[0_4px_24px_rgba(88,129,87,0.15)] border border-[#d4e0cc] bg-white hover:shadow-[0_4px_24px_rgba(88,129,87,0.15)]`}
+                className={`farm-panel relative overflow-hidden rounded-3xl border border-border border-t-4 p-4 transition-all duration-200 bg-card hover:shadow-[0_4px_24px_rgba(88,129,87,0.15)]`}
                 style={{
                   animation: 'panel-slide-up 0.4s ease-out both',
                   animationDelay: `${index * 100}ms`,
@@ -194,12 +194,12 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                 </span>
                 <div className="relative mb-3 flex flex-wrap items-center gap-2">
                   <span className={`h-2 w-2 shrink-0 rounded-full ${accent.dot}`} aria-hidden />
-                  <span className="text-lg font-bold dark:text-[#f0f4ee] text-[#1a2e1a]">{farmId}</span>
+                  <span className="text-lg font-bold text-foreground">{farmId}</span>
                   {farm.crop != null && (
-                    <span className="text-sm dark:text-[#a8bfa8] text-[#5a7a5a]">{farm.crop}</span>
+                    <span className="text-sm text-muted-foreground">{farm.crop}</span>
                   )}
                   {farm.region != null && (
-                    <Badge variant="outline" className="rounded-full border dark:border-[#588157]/30 border-[#d4e0cc] text-[10px] dark:text-[#a8bfa8] text-[#5a7a5a]">
+                    <Badge variant="outline" className="rounded-full border-border text-[10px] text-muted-foreground">
                       {farm.region}
                     </Badge>
                   )}

@@ -19,7 +19,7 @@ function Stars({ score }) {
       {[1, 2, 3, 4, 5].map((i) => (
         <Star
           key={i}
-          className={`h-3.5 w-3.5 ${i <= filled ? 'fill-[#d4a843] text-[#d4a843]' : 'fill-[#588157]/20 text-[#588157]/20 dark:fill-[#588157]/20 dark:text-[#588157]/20'}`}
+          className={`h-3.5 w-3.5 ${i <= filled ? 'fill-[#d4a843] text-[#d4a843]' : 'fill-primary/20 text-primary/20'}`}
           aria-hidden
         />
       ))}
@@ -42,26 +42,26 @@ export default function YieldCard({
   const ringColor = getRingColor(score)
 
   return (
-    <Card className="yield-card h-[220px] overflow-hidden rounded-2xl border dark:border-[#588157]/30 dark:bg-[#2d4433] border-[#d4e0cc] bg-[#f0f4ec]">
+    <Card className="yield-card h-[220px] overflow-hidden rounded-2xl border border-border bg-card">
       <CardHeader className="space-y-1 p-3 pb-0">
         <div className="flex items-center gap-2">
-          <Wheat className="h-3.5 w-3.5 shrink-0 dark:text-[#a8bfa8] text-[#5a7a5a" aria-hidden />
-          <span className="text-xs font-medium uppercase tracking-widest dark:text-[#a8bfa8] text-[#5a7a5a">
+          <Wheat className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+          <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
             Yield Forecast
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[16px] font-bold dark:text-[#f0f4ee] text-[#1a2e1a]">{farm_id ?? '—'}</span>
+          <span className="text-[16px] font-bold text-foreground">{farm_id ?? '—'}</span>
           {crop != null && (
-            <span className="text-xs dark:text-[#a8bfa8] text-[#5a7a5a]">{crop}</span>
+            <span className="text-xs text-muted-foreground">{crop}</span>
           )}
           {region != null && (
-            <Badge variant="outline" className="rounded-full border dark:border-[#588157]/30 border-[#c4d4bc] text-[10px] dark:text-[#a8bfa8] text-[#5a7a5a]">
+            <Badge variant="outline" className="rounded-full border-border text-[10px] text-muted-foreground">
               {region}
             </Badge>
           )}
           {is_small && (
-            <Badge className="rounded-full border dark:bg-[#588157]/20 dark:text-[#76a874] dark:border-[#588157]/30 bg-[#e8f0e4] text-[#588157] border-[#c4d4bc] text-[10px]">
+            <Badge className="small-farm-badge rounded-full border border-primary/30 bg-primary/20 text-[10px] text-primary">
               Small Farm
             </Badge>
           )}
@@ -76,7 +76,7 @@ export default function YieldCard({
               r={radius}
               strokeWidth="7"
               fill="none"
-              className="dark:stroke-[#588157]/20 stroke-[#d4e0cc]"
+              className="stroke-border"
             />
             <circle
               cx="40"
@@ -100,7 +100,7 @@ export default function YieldCard({
         </div>
         <Progress
           value={score * 100}
-          className="mt-2 h-1.5 w-full max-w-[140px] dark:[&>div]:bg-[#588157] [&>div]:bg-[#588157]"
+          className="mt-2 h-1.5 w-full max-w-[140px] [&>div]:bg-primary"
         />
         <div className="mt-1.5">
           <Stars score={score} />

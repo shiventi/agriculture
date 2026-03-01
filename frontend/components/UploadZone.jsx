@@ -41,7 +41,7 @@ export default function UploadZone({
   constraints,
   updateConstraint,
 }) {
-  const API_BASE = 'https://592e-129-210-115-104.ngrok-free.app'
+  const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL ?? ''
 
   const [isDragging, setIsDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -56,6 +56,10 @@ export default function UploadZone({
     if (!selectedFile.name?.toLowerCase().endsWith('.csv')) {
       setError('Please select a CSV file.')
       setErrorDetail(null)
+      return
+    }
+    if (!API_BASE?.trim()) {
+      setError('Backend URL not set. Add NEXT_PUBLIC_BACKEND_URL to your .env file.')
       return
     }
     setError(null)
