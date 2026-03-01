@@ -3,9 +3,11 @@
 @tailwind utilities;
 
 :root {
-  /* Palette: background #1F211C, green #243010 */
+  /* Palette: background #1F211C, green #243010 (dark mode) */
   --palette-background: #1F211C;
   --palette-green: #243010;
+  --palette-border-dark: #2e332c;
+  --palette-surface-dark: #252822;
   --deep-green: #1a3a2a;
   --cream: #f5f0e8;
   --gold: #d4a843;
@@ -23,6 +25,10 @@
 
 html {
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dark .page-bg {
+  background: radial-gradient(ellipse at center, #243010 0%, #1F211C 60%, #161810 100%);
 }
 
 body {
@@ -165,8 +171,8 @@ body {
   color: #71717a;
 }
 .dark .site-footer {
-  border-top-color: hsl(var(--border));
-  color: hsl(var(--muted-foreground));
+  border-top-color: hsl(84 8% 22%);
+  color: hsl(84 8% 58%);
 }
 
 /* Farm panel slide-up */
@@ -195,14 +201,13 @@ body {
 
 @layer base {
   :root {
-    /* Background #1F211C, green #243010 – shadcn semantic order */
+    /* Light mode uses defaults; dark overrides below */
     --background: 84 6% 12%;
     --foreground: 0 0% 98%;
     --card: 84 5% 15%;
     --card-foreground: 0 0% 98%;
     --popover: 84 5% 15%;
     --popover-foreground: 0 0% 98%;
-    /* Primary: lighter tint of #243010 for visibility on dark */
     --primary: 82 50% 32%;
     --primary-foreground: 0 0% 98%;
     --secondary: 84 6% 18%;
@@ -222,5 +227,15 @@ body {
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
     --radius: 0.5rem;
+  }
+  /* Dark mode: #1F211C background, #243010 green */
+  .dark {
+    --background: 84 6% 12%;
+    --foreground: 0 0% 98%;
+    --card: 84 5% 15%;
+    --primary: 82 50% 13%;
+    --border: 84 8% 22%;
+    --input: 84 6% 18%;
+    --ring: 82 50% 13%;
   }
 }
