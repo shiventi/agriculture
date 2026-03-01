@@ -11,6 +11,8 @@ module.exports = {
   			'palette-background': 'var(--palette-background)',
   			'palette-green': 'var(--palette-green)',
   			'deep-green': '#1a3a2a',
+  			'dark-edge': '#0d1f15',
+  			'climate-dark': '#1e2d26',
   			cream: '#f5f0e8',
   			gold: '#d4a843',
   			'soft-red': '#c0392b',

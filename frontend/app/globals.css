@@ -3,11 +3,9 @@
 @tailwind utilities;
 
 :root {
-  /* Palette: background #1F211C, green #243010 (dark mode) */
+  /* Palette: background #1F211C, green #243010 */
   --palette-background: #1F211C;
   --palette-green: #243010;
-  --palette-border-dark: #2e332c;
-  --palette-surface-dark: #252822;
   --deep-green: #1a3a2a;
   --cream: #f5f0e8;
   --gold: #d4a843;
@@ -23,20 +21,25 @@
   box-sizing: border-box;
 }
 
-html {
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.dark .page-bg {
-  background: radial-gradient(ellipse at center, #3a5a40 0%, #2d4433 60%, #243629 100%);
-}
-
 body {
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Light theme */
+html.theme-light body {
+  @apply text-deep-green;
+  background: radial-gradient(ellipse 100% 100% at 50% 50%, #f5f0e8 0%, #e8e0d5 100%);
+}
+html.theme-light .page-bg {
+  background: transparent;
+}
+html.theme-light .grain-overlay {
+  opacity: 0.06;
 }
 
 .grain-overlay {
@@ -60,6 +63,9 @@ body {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px -8px rgb(0 0 0 / 0.2), 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
+html.theme-light .dashboard-card {
+  border-color: rgba(26, 58, 42, 0.1);
+}
 
 .card-header-label {
   font-size: 11px;
@@ -78,6 +84,9 @@ body {
 .card-muted {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.5);
+}
+html.theme-light .card-muted {
+  color: rgba(26, 58, 42, 0.5);
 }
 
 /* YieldCard ring colors */
@@ -164,15 +173,11 @@ body {
 .site-footer {
   position: relative;
   z-index: 10;
-  border-top: 1px solid #e4e4e7;
+  border-top: 1px solid hsl(var(--border));
   padding: 0.75rem;
   text-align: center;
   font-size: 0.75rem;
-  color: #71717a;
-}
-.dark .site-footer {
-  border-top-color: rgba(88, 129, 87, 0.35);
-  color: #a8bfa8;
+  color: hsl(var(--muted-foreground));
 }
 
 /* Farm panel slide-up */
@@ -201,13 +206,14 @@ body {
 
 @layer base {
   :root {
-    /* Light mode uses defaults; dark overrides below */
+    /* Background #1F211C, green #243010 – shadcn semantic order */
     --background: 84 6% 12%;
     --foreground: 0 0% 98%;
     --card: 84 5% 15%;
     --card-foreground: 0 0% 98%;
     --popover: 84 5% 15%;
     --popover-foreground: 0 0% 98%;
+    /* Primary: lighter tint of #243010 for visibility on dark */
     --primary: 82 50% 32%;
     --primary-foreground: 0 0% 98%;
     --secondary: 84 6% 18%;
@@ -228,14 +234,27 @@ body {
     --chart-5: 340 75% 55%;
     --radius: 0.5rem;
   }
-  /* Dark mode: #1F211C background, #243010 green */
-  .dark {
-    --background: 84 6% 12%;
-    --foreground: 0 0% 98%;
-    --card: 84 5% 15%;
-    --primary: 82 50% 13%;
-    --border: 84 8% 22%;
-    --input: 84 6% 18%;
-    --ring: 82 50% 13%;
+
+  /* Light theme: cream background, deep-green text */
+  html.theme-light {
+    --background: 40 33% 95%;
+    --foreground: 150 38% 17%;
+    --card: 40 25% 98%;
+    --card-foreground: 150 38% 17%;
+    --popover: 40 25% 98%;
+    --popover-foreground: 150 38% 17%;
+    --primary: 82 45% 28%;
+    --primary-foreground: 40 33% 95%;
+    --secondary: 40 20% 92%;
+    --secondary-foreground: 150 38% 17%;
+    --muted: 40 20% 92%;
+    --muted-foreground: 150 20% 40%;
+    --accent: 82 35% 88%;
+    --accent-foreground: 150 38% 17%;
+    --destructive: 0 62.8% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 15% 85%;
+    --input: 150 15% 85%;
+    --ring: 82 45% 28%;
   }
 }

@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import { ResultsProvider } from '@/contexts/ResultsContext'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import { ThemeClassSync } from '@/components/ThemeClassSync'
 import Header from '@/components/Header'
 
 const inter = Inter({
@@ -17,12 +18,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
-      <body className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-palette-background dark:text-foreground antialiased flex flex-col transition-colors duration-200">
+      <body className="min-h-screen bg-background text-foreground antialiased flex flex-col transition-colors duration-200">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <ThemeClassSync />
           <div className="grain-overlay" aria-hidden />
           <ResultsProvider>
             <Header />
-            <main className="page-bg relative z-10 flex-1 bg-zinc-50 dark:bg-[#2d4433] transition-colors duration-200">
+            <main className="page-bg relative z-10 flex-1 bg-background transition-colors duration-200">
               {children}
             </main>
             <footer className="site-footer">
