@@ -217,6 +217,9 @@ html.theme-light .farm-panel {
 html.theme-light .farm-panel .font-bold.text-foreground {
   color: #1a2e1a;
 }
+html.theme-light .farm-panel .farm-panel-watermark {
+  color: rgba(26, 46, 26, 0.12);
+}
 html.theme-light .farm-panel .text-muted-foreground {
   color: #5a7a5a;
 }

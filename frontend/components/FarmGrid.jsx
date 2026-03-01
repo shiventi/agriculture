@@ -133,7 +133,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                       key={farmId}
                       className={`farms-table-row border-b border-border ${index % 2 === 0 ? 'bg-card' : 'bg-muted/20'}`}
                     >
-                      <td className="px-4 py-2.5 font-medium text-foreground">{farmId}</td>
+                      <td className="px-4 py-2.5 text-base font-medium text-foreground">{farmId}</td>
                       <td className="px-4 py-2.5 text-right text-muted-foreground">{farm.farm_size_ha ?? '—'}</td>
                       <td className="px-4 py-2.5 text-center">{farm.is_small ? 'Yes' : 'No'}</td>
                       <td className="px-4 py-2.5 text-right text-foreground">{formatHa(expectedYieldHa)}</td>
@@ -160,14 +160,14 @@ export default function FarmGrid({ results, isLoading, onBack }) {
               className={`farm-panel relative overflow-hidden rounded-2xl border border-border bg-card p-4 sm:rounded-3xl ${accent.border} border-t-4`}
             >
               <span
-                className="pointer-events-none absolute right-3 top-2 select-none text-5xl font-black text-white/5 sm:text-6xl"
+                className="farm-panel-watermark pointer-events-none absolute right-3 top-2 select-none text-5xl font-black text-white/5 sm:text-6xl"
                 aria-hidden
               >
                 {farmId}
               </span>
               <div className="relative mb-4 flex flex-wrap items-center gap-2">
                 <span className={`h-2 w-2 shrink-0 rounded-full ${accent.dot}`} aria-hidden />
-                <span className="font-bold text-foreground">{farmId}</span>
+                <span className="text-lg font-bold text-foreground">{farmId}</span>
               </div>
               <div className="relative flex flex-col gap-3 sm:gap-4">
                 <YieldCard
