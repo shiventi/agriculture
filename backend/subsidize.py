@@ -42,17 +42,17 @@ def allocate(yield_scores, risk_scores, total_budget, farms, constraints):
     Returns:
         list of dicts: [{ "farm_id", "before", "after" }, ...]
     """
-    if not constraints["small_farm_min_share"]:
+    if constraints.get("small_farm_min_share") is None:
         constraints["small_farm_min_share"] = defaultCONSTRAINTS["small_farm_min_share"]
-    if not constraints["per_capita_ratio"]:
+    if constraints.get("per_capita_ratio") is None:
         constraints["per_capita_ratio"] = defaultCONSTRAINTS["per_capita_ratio"]
-    if not constraints["need_floor_dollars"]:
+    if constraints.get("need_floor_dollars") is None:
         constraints["need_floor_dollars"] = defaultCONSTRAINTS["need_floor_dollars"]
-    if not constraints["max_single_farm_share"]:
+    if constraints.get("max_single_farm_share") is None:
         constraints["max_single_farm_share"] = defaultCONSTRAINTS["max_single_farm_share"]
-    if not constraints["high_risk_floor_threshold"]:
+    if constraints.get("high_risk_floor_threshold") is None:
         constraints["high_risk_floor_threshold"] = defaultCONSTRAINTS["high_risk_floor_threshold"]
-    if not constraints["small_farm_min_share"]:
+    if constraints.get("high_risk_floor_amount") is None:
         constraints["high_risk_floor_amount"] = defaultCONSTRAINTS["high_risk_floor_amount"]
     
     n = len(farms)
