@@ -31,6 +31,61 @@ _model_path = os.path.join(os.path.dirname(__file__), "farm_model.pth")
 _model, _X_min, _X_max, _y_min, _y_max = load_model(_model_path)
 
 
+def _clamp(value, lo, hi):
+    return max(lo, min(hi, value))
+
+
+def _fallback_climate_risk_score(metrics):
+    score = 0.0
+    tmax = metrics.get("temperature_2m_max_season_max_C")
+    tmin = metrics.get("temperature_2m_min_season_min_C")
+    precip = metrics.get("precipitation_season_sum_mm")
+    et0 = metrics.get("et0_fao_evapotranspiration_season_sum_mm")
+    vpd_max = metrics.get("vapour_pressure_deficit_season_max_kPa")
+    soil_min = metrics.get("soil_moisture_rootzone_min_m3m3")
+    gust = metrics.get("wind_gusts_10m_season_max_mps")
+
+    if isinstance(tmax, (int, float)):
+        score += _clamp((tmax - 34.0) / 10.0, 0.0, 1.0) * 0.25
+    if isinstance(tmin, (int, float)):
+        score += _clamp((2.0 - tmin) / 8.0, 0.0, 1.0) * 0.15
+    if isinstance(precip, (int, float)) and isinstance(et0, (int, float)) and et0 > 0:
+        dryness = _clamp((et0 - precip) / et0, 0.0, 1.0)
+        score += dryness * 0.2
+    if isinstance(vpd_max, (int, float)):
+        score += _clamp((vpd_max - 2.0) / 2.5, 0.0, 1.0) * 0.15
+    if isinstance(soil_min, (int, float)):
+        score += _clamp((0.18 - soil_min) / 0.18, 0.0, 1.0) * 0.15
+    if isinstance(gust, (int, float)):
+        score += _clamp((gust - 18.0) / 20.0, 0.0, 1.0) * 0.1
+
+    return round(_clamp(score, 0.0, 1.0), 3)
+
+
+def _fallback_projected_yield_t_ha(metrics, risk_score):
+    baseline = 4.0
+    temp_mean = metrics.get("temperature_2m_season_mean_C")
+    precip = metrics.get("precipitation_season_sum_mm")
+    et0 = metrics.get("et0_fao_evapotranspiration_season_sum_mm")
+    soil_mean = metrics.get("soil_moisture_rootzone_mean_m3m3")
+    shortwave = metrics.get("shortwave_radiation_season_sum_MJ_m2")
+
+    adj = 0.0
+    if isinstance(temp_mean, (int, float)):
+        adj += -abs(temp_mean - 22.0) * 0.04
+    if isinstance(precip, (int, float)) and isinstance(et0, (int, float)) and et0 > 0:
+        water_ratio = precip / et0
+        adj += -abs(water_ratio - 0.9) * 0.8
+    if isinstance(soil_mean, (int, float)):
+        adj += -abs(soil_mean - 0.28) * 3.0
+    if isinstance(shortwave, (int, float)):
+        adj += math.log(max(shortwave, 1.0), 10) * 0.25
+    if isinstance(risk_score, (int, float)):
+        adj += -risk_score * 1.8
+
+    return round(max(0.5, baseline + adj), 3)
+
+
 @app.after_request
 def add_cors_headers(response):
     origin = request.headers.get("Origin")

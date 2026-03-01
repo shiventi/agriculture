@@ -239,8 +239,7 @@ def fetch_open_meteo_metrics(latitude, longitude, start_date, end_date, timezone
         "wind_gusts_10m_season_max_mps": _safe_max(filtered["wind_gusts_10m"]),
     }
 
-    metrics["climate_risk_score"] = _compute_climate_risk_score(metrics)
-    metrics["projected_yield_t_ha"] = _compute_projected_yield_t_ha(metrics)
+
 
     # Return exactly the requested schema and key order.
     ordered_keys = [
@@ -255,8 +254,6 @@ def fetch_open_meteo_metrics(latitude, longitude, start_date, end_date, timezone
         "soil_moisture_rootzone_min_m3m3",
         "shortwave_radiation_season_sum_MJ_m2",
         "wind_gusts_10m_season_max_mps",
-        "projected_yield_t_ha",
-        "climate_risk_score",
     ]
     return {key: _round_or_none(metrics.get(key)) for key in ordered_keys}
 
