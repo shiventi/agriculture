@@ -1,4 +1,149 @@
 /**
+ * Computes Gini coefficient from an array of non-negative numbers.
+ * Returns a number between 0 and 1, or 0 if invalid.
+ */
+function computeGiniFromAmounts(amounts) {
+  const arr = (amounts || []).filter((a) => typeof a === 'number' && !Number.isNaN(a) && a >= 0)
+  if (arr.length === 0) return 0
+  arr.sort((a, b) => a - b)
+  const n = arr.length
+  const sum = arr.reduce((s, x) => s + x, 0)
+  if (sum === 0) return 0
+  let weightedSum = 0
+  for (let i = 0; i < n; i++) weightedSum += (i + 1) * arr[i]
+  return (2 * weightedSum - (n + 1) * sum) / (n * sum)
+}
+
+function deriveRegion(lat) {
+  if (lat == null || Number.isNaN(Number(lat))) return '—'
+  const n = Number(lat)
+  if (n > 45) return 'North'
+  if (n > 35) return 'Central'
+  return 'South'
+}
+
+function normalizeYieldScore(value) {
+  if (value == null || Number.isNaN(Number(value))) return 0
+  let v = Number(value)
+  if (v > 1) v = v / 30
+  return Math.min(1, Math.max(0, v))
+}
+
+function normalizeRiskScore(value) {
+  if (value == null || Number.isNaN(Number(value))) return 0
+  let v = Number(value)
+  if (v > 1) v = v / 100
+  return Math.min(1, Math.max(0, v))
+}
+
+function toBoolean(value) {
+  if (typeof value === 'boolean') return value
+  if (value === 1 || value === '1' || value === 'true') return true
+  return false
+}
+
+/**
+ * Adapts raw backend JSON into the shape our components expect.
+ * Handles: (A) raw.farms, (B) raw.columns + raw.data, (C) raw.results.farms / raw.output.farms.
+ */
+export function adaptBackendResponse(raw) {
+  if (!raw || typeof raw !== 'object') throw new Error('Invalid response: not an object')
+
+  let rows = []
+
+  if (Array.isArray(raw.farms)) {
+    rows = raw.farms
+  } else if (raw.results?.farms && Array.isArray(raw.results.farms)) {
+    rows = raw.results.farms
+  } else if (raw.output?.farms && Array.isArray(raw.output.farms)) {
+    rows = raw.output.farms
+  } else if (Array.isArray(raw.columns) && Array.isArray(raw.data)) {
+    const cols = raw.columns
+    rows = raw.data.map((row) => {
+      const obj = {}
+      cols.forEach((col, i) => { obj[col] = row[i] })
+      return obj
+    })
+  }
+
+  const subsidyAmounts = []
+  const farms = rows.map((r, i) => {
+    const farmId = r.farm_id ?? r.id ?? r.FARM_ID ?? `F${i + 1}`
+    const lat = r.lat ?? r.latitude
+    const lon = r.lon ?? r.longitude
+    const farmSizeHa = r.farm_size_ha ?? r.farm_size ?? r.size_ha
+    const yieldRaw = r.projected_yield_t_ha ?? r.yield_score ?? r.yield
+    const riskRaw = r.climate_risk_score ?? r.risk_score ?? r.risk
+    const subsidyRaw = r.subsidy_amount ?? r.subsidy_allocated ?? r.allocation ?? r.subsidy
+    const tempRaw = r.temperature_2m_season_mean_C ?? r.temperature_c ?? r.temp
+    const precipRaw = r.precipitation_season_sum_mm ?? r.precipitation_mm ?? r.precip
+    const reasoningRaw = r.reasoning ?? r.explanation ?? r.llm_explanation
+
+    const yield_score = normalizeYieldScore(yieldRaw)
+    const climate_risk_score = normalizeRiskScore(riskRaw)
+    const subsidy_amount = typeof subsidyRaw === 'number' && !Number.isNaN(subsidyRaw) ? subsidyRaw : 0
+    subsidyAmounts.push(subsidy_amount)
+
+    const farm_size_ha = typeof farmSizeHa === 'number' && !Number.isNaN(farmSizeHa) ? farmSizeHa : null
+    const is_small = r.is_small != null ? toBoolean(r.is_small) : (farm_size_ha != null && farm_size_ha < 25)
+
+    const crop = r.crop != null && String(r.crop).trim() !== '' ? String(r.crop) : 'Mixed'
+    const region = r.region != null && String(r.region).trim() !== '' ? String(r.region) : deriveRegion(lat)
+    const reasoning = reasoningRaw != null && String(reasoningRaw).trim() !== '' ? String(reasoningRaw) : 'Analysis complete. See metrics for details.'
+    const temperature_c = typeof tempRaw === 'number' && !Number.isNaN(tempRaw) ? tempRaw : (tempRaw != null ? Number(tempRaw) : 20)
+    const precipitation_mm = typeof precipRaw === 'number' && !Number.isNaN(precipRaw) ? precipRaw : (precipRaw != null ? Number(precipRaw) : 50)
+    const baseline_need = r.baseline_need != null ? Number(r.baseline_need) : null
+
+    return {
+      farm_id: String(farmId),
+      crop,
+      region,
+      farm_size_ha,
+      is_small,
+      yield_score,
+      climate_risk_score,
+      subsidy_amount,
+      subsidy_eligible: r.subsidy_eligible != null ? toBoolean(r.subsidy_eligible) : is_small,
+      gini_coefficient: r.gini_coefficient != null ? Number(r.gini_coefficient) : null,
+      small_farm_share_pct: r.small_farm_share_pct != null ? Number(r.small_farm_share_pct) : null,
+      reasoning,
+      temperature_c: Number.isNaN(temperature_c) ? 20 : temperature_c,
+      precipitation_mm: Number.isNaN(precipitation_mm) ? 50 : precipitation_mm,
+      baseline_need,
+    }
+  })
+
+  const smallCount = farms.filter((f) => f.is_small).length
+  const computedSmallShare = farms.length > 0 ? (smallCount / farms.length) * 100 : 0
+  const computedGini = computeGiniFromAmounts(subsidyAmounts)
+  const smallSubsidies = farms.filter((f) => f.is_small).map((f) => f.subsidy_amount)
+  const largeSubsidies = farms.filter((f) => !f.is_small).map((f) => f.subsidy_amount)
+  const avgSmall = smallSubsidies.length ? smallSubsidies.reduce((a, b) => a + b, 0) / smallSubsidies.length : 0
+  const avgLarge = largeSubsidies.length ? largeSubsidies.reduce((a, b) => a + b, 0) / largeSubsidies.length : 0
+  const smallToLargeRatio = avgLarge > 0 ? avgSmall / avgLarge : 0
+
+  const fairness_metrics = {
+    gini_coefficient: raw.fairness_metrics?.gini_coefficient ?? raw.results?.fairness_metrics?.gini_coefficient ?? computedGini,
+    avg_small_farm_subsidy: raw.fairness_metrics?.avg_small_farm_subsidy ?? raw.results?.fairness_metrics?.avg_small_farm_subsidy ?? avgSmall,
+    avg_large_farm_subsidy: raw.fairness_metrics?.avg_large_farm_subsidy ?? raw.results?.fairness_metrics?.avg_large_farm_subsidy ?? avgLarge,
+    small_farm_share_pct: raw.fairness_metrics?.small_farm_share_pct ?? raw.results?.fairness_metrics?.small_farm_share_pct ?? computedSmallShare,
+    small_to_large_ratio: raw.fairness_metrics?.small_to_large_ratio ?? raw.results?.fairness_metrics?.small_to_large_ratio ?? smallToLargeRatio,
+  }
+
+  const bench = raw.benchmark ?? raw.results?.benchmark ?? raw.output?.benchmark
+  const benchmark = bench && typeof bench === 'object'
+    ? {
+        cpu_ms: bench.cpu_ms ?? bench.cpu_ms_sec,
+        gpu_ms: bench.gpu_ms ?? bench.gpu_ms_sec,
+        speedup: bench.speedup ?? (bench.cpu_ms && bench.gpu_ms ? bench.cpu_ms / bench.gpu_ms : null),
+        device_name: bench.device_name ?? bench.device ?? 'Unknown',
+      }
+    : undefined
+
+  return { farms, fairness_metrics, benchmark }
+}
+
+/**
  * Mock results matching the exact shape from fake_data.txt
  * (columns array + data array of row arrays).
  * farms array is derived from data for dashboard cards.

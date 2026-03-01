@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { MOCK_RESULTS } from '@/lib/mockData'
+import { MOCK_RESULTS, adaptBackendResponse } from '@/lib/mockData'
 
 const SAMPLE_CSV = `farm_id,lat,lon,farm_size_ha,is_small,baseline_need
 FARM_001,37.7749,-122.4194,12.5,1,85000
@@ -122,8 +122,16 @@ export default function UploadZone({
       }
 
       const data = await response.json()
-      console.log('Analyze response:', data)
-      onResult?.(data)
+      console.log('RAW BACKEND RESPONSE:', JSON.stringify(data, null, 2))
+      try {
+        const adapted = adaptBackendResponse(data)
+        console.log('ADAPTED RESPONSE:', adapted)
+        onResult?.(adapted)
+      } catch (adaptErr) {
+        console.error('Adapter error. Raw response:', data, adaptErr)
+        setError('Unexpected response format from backend. Please check the console for details.')
+        setErrorDetail(adaptErr?.message ?? String(adaptErr))
+      }
     } catch (e) {
       const isNetwork = e?.name === 'TypeError' && (e?.message?.includes('fetch') || e?.message?.includes('Failed to fetch'))
       setError(isNetwork ? 'Could not connect to backend. Make sure the server is running.' : (e?.message || 'Upload failed.'))

@@ -46,35 +46,40 @@ export default function FarmGrid({ results, isLoading, onBack }) {
   const farms = results?.farms ?? []
   const [viewMode, setViewMode] = useState('table')
 
-  const { summary, maxAllocation } = useMemo(() => {
+  const { summary, maxAllocation, benchmark } = useMemo(() => {
     if (!farms.length) {
       return {
-        summary: { totalFarms: 0, totalBudget: 0, avgExpectedYieldHa: 0, smallFarmShare: 0 },
+        summary: { totalFarms: 0, totalBudget: 0, avgExpectedYieldHa: 0, smallFarmShare: 0, gini: null },
         maxAllocation: 0,
+        benchmark: results?.benchmark,
       }
     }
-    const totalBudget = farms.reduce((sum, f) => sum + (f.subsidy_amount ?? 0), 0)
-    const expectedYieldsHa = farms.map((f) => f.expected_yield_ha ?? (f.yield_score != null ? f.yield_score * 15 : 0))
+    const totalBudget = farms.reduce((sum, f) => sum + (f?.subsidy_amount ?? 0), 0)
+    const expectedYieldsHa = farms.map((f) => f?.expected_yield_ha ?? (f?.yield_score != null ? f.yield_score * 15 : 0))
     const avgExpectedYieldHa = expectedYieldsHa.length ? expectedYieldsHa.reduce((a, b) => a + b, 0) / expectedYieldsHa.length : 0
-    const smallCount = farms.filter((f) => f.is_small).length
-    const smallFarmShare = farms.length ? (smallCount / farms.length) * 100 : 0
-    const maxAllocation = Math.max(...farms.map((f) => f.subsidy_amount ?? 0), 0)
+    const smallCount = farms.filter((f) => f?.is_small).length
+    const computedSmallShare = farms.length ? (smallCount / farms.length) * 100 : 0
+    const smallFarmShare = results?.fairness_metrics?.small_farm_share_pct ?? computedSmallShare
+    const maxAllocation = Math.max(...farms.map((f) => f?.subsidy_amount ?? 0), 0)
+    const gini = results?.fairness_metrics?.gini_coefficient ?? null
     return {
       summary: {
         totalFarms: farms.length,
         totalBudget,
         avgExpectedYieldHa,
-        smallFarmShare: Math.round(smallFarmShare * 10) / 10,
+        smallFarmShare: Math.round(Number(smallFarmShare) * 10) / 10,
+        gini: gini != null ? Number(gini) : null,
       },
       maxAllocation,
+      benchmark: results?.benchmark,
     }
-  }, [farms])
+  }, [farms, results?.fairness_metrics, results?.benchmark])
 
   if (farms.length === 0) {
     return (
       <Card className="rounded-2xl border-border bg-card">
         <CardContent className="py-12 text-center text-muted-foreground">
-          {isLoading ? 'Loading...' : 'No farm data to display.'}
+          {isLoading ? 'Loading...' : 'No farm data returned. Check your CSV format.'}
         </CardContent>
       </Card>
     )
@@ -99,6 +104,23 @@ export default function FarmGrid({ results, isLoading, onBack }) {
           <span className="summary-bar-text text-sm text-muted-foreground">
             <span className="font-semibold text-foreground">{summary.smallFarmShare}%</span> small farm share
           </span>
+          {summary.gini != null && !Number.isNaN(summary.gini) && (
+            <>
+              <Separator orientation="vertical" className="hidden h-5 bg-border sm:block" />
+              <span className="summary-bar-text text-sm text-muted-foreground">
+                <span className="font-semibold text-foreground">Gini {summary.gini.toFixed(2)}</span>
+              </span>
+            </>
+          )}
+          {benchmark && (benchmark.device_name || benchmark.speedup != null) && (
+            <>
+              <Separator orientation="vertical" className="hidden h-5 bg-border sm:block" />
+              <span className="benchmark-pill rounded-full border border-primary/30 bg-primary/20 px-2.5 py-1 text-xs font-medium text-primary dark:border-[#588157]/30 dark:bg-[#588157]/20 dark:text-[#76a874]">
+                AMD {benchmark.device_name ?? 'GPU'}
+                {benchmark.speedup != null && !Number.isNaN(Number(benchmark.speedup)) ? ` · ${Number(benchmark.speedup).toFixed(1)}x faster` : ''}
+              </span>
+            </>
+          )}
           <div className="view-toggle-group ml-auto flex w-full items-center justify-end gap-2 sm:w-auto">
             <Button
               type="button"
@@ -147,23 +169,23 @@ export default function FarmGrid({ results, isLoading, onBack }) {
               </thead>
               <tbody>
                 {farms.map((farm, index) => {
-                  const farmId = farm.farm_id ?? farm.id
-                  const riskScore = farm.climate_risk_score
-                  const riskNum = riskScore != null ? (riskScore * 100).toFixed(0) : '—'
-                  const expectedYieldHa = farm.expected_yield_ha ?? (farm.yield_score != null ? farm.yield_score * 15 : null)
+                  const farmId = farm?.farm_id ?? farm?.id ?? '—'
+                  const riskScore = farm?.climate_risk_score
+                  const riskNum = riskScore != null ? (Number(riskScore) * 100).toFixed(0) : '—'
+                  const expectedYieldHa = farm?.expected_yield_ha ?? (farm?.yield_score != null ? farm.yield_score * 15 : null)
                   return (
                     <tr
                       key={farmId}
                       className={`farms-table-row border-b border-border ${index % 2 === 0 ? 'bg-card' : 'bg-muted/20'}`}
                     >
                       <td className="px-4 py-2.5 text-base font-medium text-foreground">{farmId}</td>
-                      <td className="px-4 py-2.5 text-right text-muted-foreground">{farm.farm_size_ha ?? '—'}</td>
-                      <td className="px-4 py-2.5 text-center">{farm.is_small ? 'Yes' : 'No'}</td>
+                      <td className="px-4 py-2.5 text-right text-muted-foreground">{farm?.farm_size_ha ?? '—'}</td>
+                      <td className="px-4 py-2.5 text-center">{farm?.is_small ? 'Yes' : 'No'}</td>
                       <td className="px-4 py-2.5 text-right text-foreground">{formatHa(expectedYieldHa)}</td>
                       <td className="px-4 py-2.5 text-right text-muted-foreground">{riskNum}</td>
-                      <td className="px-4 py-2.5 text-right font-medium text-primary">{formatUSD(farm.subsidy_amount)}</td>
-                      <td className="max-w-[280px] px-4 py-2.5 text-sm leading-relaxed text-muted-foreground" title={farm.reasoning ?? ''}>
-                        <span className="line-clamp-3">{farm.reasoning ?? '—'}</span>
+                      <td className="px-4 py-2.5 text-right font-medium text-primary">{formatUSD(farm?.subsidy_amount)}</td>
+                      <td className="max-w-[280px] px-4 py-2.5 text-sm leading-relaxed text-muted-foreground" title={farm?.reasoning ?? ''}>
+                        <span className="line-clamp-3">{farm?.reasoning ?? '—'}</span>
                       </td>
                     </tr>
                   )
@@ -176,7 +198,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {farms.map((farm, index) => {
             const accent = getAccent(index)
-            const farmId = farm.farm_id ?? farm.id
+            const farmId = farm?.farm_id ?? farm?.id ?? '—'
             return (
               <Card
                 key={farmId}
@@ -195,10 +217,10 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                 <div className="relative mb-3 flex flex-wrap items-center gap-2">
                   <span className={`h-2 w-2 shrink-0 rounded-full ${accent.dot}`} aria-hidden />
                   <span className="text-lg font-bold text-foreground">{farmId}</span>
-                  {farm.crop != null && (
+                  {farm?.crop != null && (
                     <span className="text-sm text-muted-foreground">{farm.crop}</span>
                   )}
-                  {farm.region != null && (
+                  {farm?.region != null && (
                     <Badge variant="outline" className="rounded-full border-border text-[10px] text-muted-foreground">
                       {farm.region}
                     </Badge>
@@ -206,28 +228,28 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                 </div>
                 <div className="relative flex flex-col gap-3">
                   <YieldCard
-                    farm_id={farm.farm_id}
-                    crop={farm.crop}
-                    region={farm.region}
-                    farm_size_ha={farm.farm_size_ha}
-                    is_small={farm.is_small}
-                    yield_score={farm.yield_score}
+                    farm_id={farm?.farm_id}
+                    crop={farm?.crop}
+                    region={farm?.region}
+                    farm_size_ha={farm?.farm_size_ha}
+                    is_small={farm?.is_small}
+                    yield_score={farm?.yield_score ?? 0}
                   />
                   <ClimateRiskCard
-                    climate_risk_score={farm.climate_risk_score}
-                    temperature_c={farm.temperature_c}
-                    precipitation_mm={farm.precipitation_mm}
+                    climate_risk_score={farm?.climate_risk_score ?? 0}
+                    temperature_c={farm?.temperature_c}
+                    precipitation_mm={farm?.precipitation_mm}
                   />
                   <SubsidyCard
-                    subsidy_amount={farm.subsidy_amount}
-                    subsidy_eligible={farm.subsidy_eligible}
-                    is_small={farm.is_small}
-                    gini_coefficient={farm.gini_coefficient}
-                    small_farm_share_pct={farm.small_farm_share_pct}
+                    subsidy_amount={farm?.subsidy_amount}
+                    subsidy_eligible={farm?.subsidy_eligible}
+                    is_small={farm?.is_small}
+                    gini_coefficient={farm?.gini_coefficient}
+                    small_farm_share_pct={farm?.small_farm_share_pct}
                     maxAllocation={maxAllocation}
                   />
                   <ReasoningCard
-                    reasoning={farm.reasoning}
+                    reasoning={farm?.reasoning ?? '—'}
                     animationDelay={index * 100 + 200}
                   />
                 </div>
