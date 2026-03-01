@@ -70,7 +70,7 @@ export default function Header() {
         >
           <div className="mx-auto max-w-7xl px-4 py-6 text-center sm:px-6 sm:py-8">
             <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-              AI-powered farm intelligence
+              Here is your results
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               Yield prediction · Climate risk · Fair subsidy allocation

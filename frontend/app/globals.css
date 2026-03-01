@@ -231,9 +231,16 @@ html.theme-light .climate-card .text-muted-foreground {
   color: #5a7a5a;
 }
 html.theme-light .risk-badge-low {
-  background: #e8f0e4 !important;
-  color: #3a7a3a !important;
-  border-color: #b8d4b8 !important;
+  background: #d4e8d0 !important;
+  color: #1e5c1e !important;
+  border-color: #588157 !important;
+  font-weight: 600 !important;
+}
+html.dark .risk-badge-low {
+  background: #1e3d1e !important;
+  color: #86ef86 !important;
+  border-color: #4ade80 !important;
+  font-weight: 600 !important;
 }
 html.theme-light .risk-badge-moderate {
   background: #fdf3dc !important;
