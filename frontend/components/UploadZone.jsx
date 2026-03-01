@@ -67,13 +67,28 @@ export default function UploadZone({
 
       const params = new URLSearchParams()
       params.append('fairness_on', 'true')
-      if (budget) params.append('budget', budget)
-      if (constraints?.small_farm_min_share) params.append('small_farm_min_share', constraints.small_farm_min_share)
-      if (constraints?.per_capita_ratio) params.append('per_capita_ratio', constraints.per_capita_ratio)
-      if (constraints?.need_floor_dollars) params.append('need_floor_dollars', constraints.need_floor_dollars)
-      if (constraints?.max_single_farm_share) params.append('max_single_farm_share', constraints.max_single_farm_share)
-      if (constraints?.high_risk_floor_threshold) params.append('high_risk_floor_threshold', constraints.high_risk_floor_threshold)
-      if (constraints?.high_risk_floor_amount) params.append('high_risk_floor_amount', constraints.high_risk_floor_amount)
+
+      if (budget) {
+        params.append('budget', budget)
+        formData.append('budget', budget)
+      }
+
+      const constraintKeys = [
+        'small_farm_min_share',
+        'per_capita_ratio',
+        'need_floor_dollars',
+        'max_single_farm_share',
+        'high_risk_floor_threshold',
+        'high_risk_floor_amount',
+      ]
+      for (const key of constraintKeys) {
+        const value = constraints?.[key]
+        const hasValue = value !== undefined && value !== null && value !== ''
+        if (hasValue) {
+          params.append(key, String(value))
+          formData.append(key, String(value))
+        }
+      }
 
       const response = await fetch(`${API_BASE}/analyze?${params.toString()}`, {
         method: 'POST',
