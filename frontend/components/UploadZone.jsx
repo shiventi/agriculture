@@ -137,7 +137,7 @@ export default function UploadZone({
   }
 
   return (
-    <div className="min-h-[50vh] bg-background sm:min-h-[60vh]">
+    <div className="upload-zone-root min-h-[50vh] bg-[#f4f7f0] sm:min-h-[60vh] dark:bg-background">
       <div className="mx-auto mt-8 max-w-2xl px-4 sm:mt-12 sm:px-6 md:mt-16 md:max-w-3xl md:p-8 lg:mt-24 lg:p-12">
         <div className="upload-card rounded-3xl border border-border bg-card p-6 sm:p-8 md:p-10">
           <div className="flex flex-col items-center text-center">
@@ -327,7 +327,7 @@ export default function UploadZone({
 
       {uploading && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-background/95 text-foreground"
+          className="uploading-overlay fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-background/95 text-foreground"
           role="status"
           aria-live="polite"
           aria-label="Analyzing farms"

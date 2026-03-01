@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <>
       {isLoading && <LoadingState />}
-      <div className="relative z-10 mx-auto min-h-[50vh] max-w-7xl px-4 py-4 sm:min-h-[60vh] sm:px-6 sm:py-6">
+      <div className="page-content-wrapper relative z-10 mx-auto min-h-[50vh] max-w-7xl bg-[#f4f7f0] px-4 py-4 dark:bg-[#2d4433] sm:min-h-[60vh] sm:px-6 sm:py-6">
         {results == null ? (
           <UploadZone
             results={results}

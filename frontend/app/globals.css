@@ -85,7 +85,7 @@ html.theme-light .header-amd-badge:hover {
 
 /* Hero banner */
 html.theme-light .hero-banner {
-  background-color: #e8f0e4;
+  background-color: #e8f0e4 !important;
   border-bottom: 1px solid #d4e0cc;
 }
 html.theme-light .hero-banner h2 {
@@ -147,7 +147,7 @@ html.theme-light .upload-card .text-primary {
 
 /* Farm grid */
 html.theme-light .farm-grid-wrapper {
-  background-color: transparent;
+  background-color: #f4f7f0;
 }
 html.theme-light .summary-bar {
   background-color: #ffffff;
@@ -436,6 +436,34 @@ html.theme-light .card-muted {
 }
 .reasoning-text {
   animation: typewriter 0.6s ease-out forwards;
+}
+
+/* ========== Light mode catch-all: remove any dark box, force sage/white ========== */
+html.theme-light,
+html.theme-light body,
+html.theme-light main,
+html.theme-light .main-content,
+html.theme-light .page-content-wrapper,
+html.theme-light #__next,
+html.theme-light [data-nextjs-scroll-focus-boundary] {
+  background-color: #f4f7f0 !important;
+  color: #1a2e1a !important;
+}
+html.theme-light .upload-zone-root {
+  background-color: #f4f7f0 !important;
+}
+html.theme-light .loading-overlay,
+html.theme-light .uploading-overlay {
+  background-color: rgba(244, 247, 240, 0.95) !important;
+  color: #1a2e1a !important;
+}
+html.theme-light div:not([class*="dark"]) {
+  --tw-bg-opacity: 1;
+}
+/* ThemeProvider / next-themes wrapper if any */
+html.theme-light [data-theme],
+html.theme-light [data-nextjs-dialog] {
+  background-color: transparent !important;
 }
 
 @layer base {

@@ -24,7 +24,7 @@ export default function RootLayout({ children }) {
           <div className="grain-overlay" aria-hidden />
           <ResultsProvider>
             <Header />
-            <main className="relative z-10 flex-1">
+            <main className="main-content relative z-10 flex-1">
               {children}
             </main>
             <footer className="site-footer">
