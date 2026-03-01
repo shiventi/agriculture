@@ -44,7 +44,7 @@ export default function Header() {
               alt="AgriEquity AI Logo"
               width={36}
               height={36}
-              className="rounded-full opacity-95 dark:opacity-80 object-cover shrink-0 logo-icon h-9 w-9 sm:h-9 sm:w-9"
+              className="rounded-full opacity-95 dark:opacity-80 object-cover shrink-0 logo-icon h-9 w-9 sm:h-9 sm:w-9 border-0 ring-0"
             />
             <span className="logo-agri truncate text-base font-bold text-foreground sm:text-lg">PitchFork</span>
           </a>

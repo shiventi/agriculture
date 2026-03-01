@@ -165,7 +165,7 @@ export default function UploadZone({
               alt="AgriEquity AI"
               width={80}
               height={80}
-              className="rounded-full mx-auto mb-4 opacity-90 dark:opacity-75 object-cover ring-2 ring-[#588157]/30 shadow-lg"
+              className="rounded-full mx-auto mb-4 opacity-90 dark:opacity-75 object-cover shadow-lg"
             />
             <h1 className="mt-3 text-xl font-bold text-foreground sm:mt-4 sm:text-2xl">PitchFork</h1>
             <p className="mt-2 text-sm text-muted-foreground">

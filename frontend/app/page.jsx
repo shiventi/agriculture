@@ -41,7 +41,7 @@ export default function Home() {
           alt=""
           width={300}
           height={300}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.04] dark:opacity-[0.06] rounded-full pointer-events-none select-none z-0"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.04] dark:opacity-[0.06] rounded-full pointer-events-none select-none z-0 border-0 ring-0"
           aria-hidden
         />
         <div className="page-content-wrapper relative z-10 mx-auto max-w-7xl bg-[#f4f7f0] px-4 py-4 dark:bg-background sm:px-6 sm:py-6">
