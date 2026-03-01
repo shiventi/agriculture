@@ -6,7 +6,15 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { MOCK_RESULTS } from '@/lib/mockData'
+
+const SAMPLE_CSV = `farm_id,lat,lon,farm_size_ha,is_small,baseline_need
+FARM_001,37.7749,-122.4194,12.5,1,85000
+FARM_002,36.7783,-119.4179,45.0,0,210000
+FARM_003,34.0522,-118.2437,8.2,1,60000
+FARM_004,32.7157,-117.1611,25.4,0,140000
+FARM_005,38.5816,-121.4944,15.8,1,92000`
 
 const OUTPUT_PILLS = [
   { Icon: BarChart3, label: 'Yield forecast' },
@@ -136,6 +144,16 @@ export default function UploadZone({
     onResult?.(MOCK_RESULTS)
   }
 
+  const downloadSampleCsv = () => {
+    const blob = new Blob([SAMPLE_CSV], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'sample_farms.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="upload-zone-root min-h-[50vh] bg-[#f4f7f0] sm:min-h-[60vh] dark:bg-background">
       <div className="mx-auto mt-4 max-w-2xl px-4 sm:mt-6 sm:px-6 md:max-w-3xl md:mt-8 md:p-8 lg:mt-10 lg:p-12">
@@ -147,43 +165,99 @@ export default function UploadZone({
               Upload your farms CSV to begin analysis
             </p>
 
-            <div
-              className={`drop-zone mt-4 w-full cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-colors sm:mt-6 sm:p-8 md:p-10 ${
-                isDragging
-                  ? 'border-primary bg-primary/10'
-                  : 'border-input hover:border-primary'
-              }`}
-              onDrop={onDrop}
-              onDragOver={onDragOver}
-              onDragLeave={onDragLeave}
-              onClick={() => inputRef.current?.click()}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  inputRef.current?.click()
-                }
-              }}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div
+                    className={`drop-zone mt-4 w-full cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-colors sm:mt-6 sm:p-8 md:p-10 ${
+                      isDragging
+                        ? 'border-primary bg-primary/10'
+                        : 'border-input hover:border-primary'
+                    }`}
+                    onDrop={onDrop}
+                    onDragOver={onDragOver}
+                    onDragLeave={onDragLeave}
+                    onClick={() => inputRef.current?.click()}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        inputRef.current?.click()
+                      }
+                    }}
+                  >
+                    <input
+                      ref={inputRef}
+                      type="file"
+                      accept=".csv"
+                      className="sr-only"
+                      aria-label="Select CSV file"
+                      onChange={onInputChange}
+                      disabled={uploading}
+                    />
+                    <FileSpreadsheet className="mx-auto h-8 w-8 text-muted-foreground sm:h-10 sm:w-10" aria-hidden />
+                    <p className="mt-2 text-foreground sm:mt-3 inline-flex items-center justify-center gap-1.5">
+                      Drop CSV here
+                      <span className="text-xs dark:text-[#588157]/60 text-[#588157]/50" aria-hidden>ⓘ</span>
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">or click to browse</p>
+                    {selectedFile && (
+                      <p className="mt-2 text-xs text-primary">
+                        Selected: {selectedFile.name}
+                      </p>
+                    )}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="top"
+                  className="max-w-sm p-4 text-xs font-mono dark:bg-[#1a2e1a] dark:border-[#588157]/40 dark:text-[#f0f4ee] bg-white border border-[#d4e0cc] text-[#1a2e1a] shadow-xl rounded-xl z-50"
+                >
+                  <div className="font-semibold text-sm non-mono mb-2 dark:text-[#76a874] text-[#588157]">
+                    📋 Required CSV Format
+                  </div>
+                  <pre className="bg-black/20 dark:bg-black/30 rounded-lg p-2 text-xs overflow-x-auto mb-3 dark:text-[#a8bfa8] text-[#3a5a40] font-mono">
+{`farm_id,lat,lon,farm_size_ha,is_small,baseline_need
+FARM_001,37.7749,-122.4194,12.5,1,85000
+FARM_002,36.7783,-119.4179,45.0,0,210000
+FARM_003,34.0522,-118.2437,8.2,1,60000`}
+                  </pre>
+                  <div className="space-y-1 mb-3">
+                    <div className="flex gap-2 items-start text-xs">
+                      <span className="font-mono shrink-0 dark:text-[#76a874] text-[#588157]">farm_id:</span>
+                      <span className="dark:text-[#a8bfa8] text-[#5a7a5a]">unique identifier (e.g. FARM_001)</span>
+                    </div>
+                    <div className="flex gap-2 items-start text-xs">
+                      <span className="font-mono shrink-0 dark:text-[#76a874] text-[#588157]">lat/lon:</span>
+                      <span className="dark:text-[#a8bfa8] text-[#5a7a5a]">GPS coordinates in decimal degrees</span>
+                    </div>
+                    <div className="flex gap-2 items-start text-xs">
+                      <span className="font-mono shrink-0 dark:text-[#76a874] text-[#588157]">farm_size_ha:</span>
+                      <span className="dark:text-[#a8bfa8] text-[#5a7a5a]">farm area in hectares</span>
+                    </div>
+                    <div className="flex gap-2 items-start text-xs">
+                      <span className="font-mono shrink-0 dark:text-[#76a874] text-[#588157]">is_small:</span>
+                      <span className="dark:text-[#a8bfa8] text-[#5a7a5a]">1 for small farm, 0 for large farm</span>
+                    </div>
+                    <div className="flex gap-2 items-start text-xs">
+                      <span className="font-mono shrink-0 dark:text-[#76a874] text-[#588157]">baseline_need:</span>
+                      <span className="dark:text-[#a8bfa8] text-[#5a7a5a]">minimum funding requirement in dollars</span>
+                    </div>
+                  </div>
+                  <p className="text-xs italic opacity-60 dark:text-[#a8bfa8] text-[#5a7a5a]">
+                    All columns required. First row must be header.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <button
+              type="button"
+              onClick={downloadSampleCsv}
+              className="mt-2 text-xs dark:text-[#588157] text-[#588157] hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
             >
-              <input
-                ref={inputRef}
-                type="file"
-                accept=".csv"
-                className="sr-only"
-                aria-label="Select CSV file"
-                onChange={onInputChange}
-                disabled={uploading}
-              />
-              <FileSpreadsheet className="mx-auto h-8 w-8 text-muted-foreground sm:h-10 sm:w-10" aria-hidden />
-              <p className="mt-2 text-foreground sm:mt-3">Drop CSV here</p>
-              <p className="mt-1 text-sm text-muted-foreground">or click to browse</p>
-              {selectedFile && (
-                <p className="mt-2 text-xs text-primary">
-                  Selected: {selectedFile.name}
-                </p>
-              )}
-            </div>
+              Need a template? Download sample CSV →
+            </button>
 
             {error && (
               <div className="mt-4 w-full rounded-2xl border border-destructive/50 bg-destructive/10 px-3 py-2 text-left">
