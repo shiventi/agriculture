@@ -12,38 +12,61 @@ import SubsidyCard from '@/components/SubsidyCard'
 import ReasoningCard from '@/components/ReasoningCard'
 import { formatUSD, formatHa } from '@/lib/format'
 
-const ACCENTS = [
-  { border: 'border-t-primary', dot: 'bg-primary', glow: 'hsl(var(--primary) / 0.12)', shadow: 'hsl(var(--primary) / 0.25)' },
-  { border: 'border-t-primary', dot: 'bg-primary', glow: 'hsl(var(--primary) / 0.12)', shadow: 'hsl(var(--primary) / 0.25)' },
-  { border: 'border-t-amber-500', dot: 'bg-amber-500', glow: 'rgba(245, 158, 11, 0.08)', shadow: 'rgba(245, 158, 11, 0.18)' },
-  { border: 'border-t-amber-500', dot: 'bg-amber-500', glow: 'rgba(245, 158, 11, 0.08)', shadow: 'rgba(245, 158, 11, 0.18)' },
-  { border: 'border-t-blue-500', dot: 'bg-blue-500', glow: 'rgba(59, 130, 246, 0.08)', shadow: 'rgba(59, 130, 246, 0.18)' },
-  { border: 'border-t-blue-500', dot: 'bg-blue-500', glow: 'rgba(59, 130, 246, 0.08)', shadow: 'rgba(59, 130, 246, 0.18)' },
-  { border: 'border-t-rose-500', dot: 'bg-rose-500', glow: 'rgba(244, 63, 94, 0.08)', shadow: 'rgba(244, 63, 94, 0.18)' },
-  { border: 'border-t-rose-500', dot: 'bg-rose-500', glow: 'rgba(244, 63, 94, 0.08)', shadow: 'rgba(244, 63, 94, 0.18)' },
+const ACCENT_BORDERS = [
+  'border-t-[#588157]',
+  'border-t-[#588157]',
+  'border-t-[#d4a843]',
+  'border-t-[#d4a843]',
+  'border-t-[#76a874]',
+  'border-t-[#76a874]',
+  'border-t-[#c0392b]',
+  'border-t-[#c0392b]',
 ]
-const FALLBACK_ACCENT = { border: 'border-t-primary', dot: 'bg-primary', glow: 'hsl(var(--primary) / 0.12)', shadow: 'hsl(var(--primary) / 0.25)' }
+const ACCENT_DOTS = [
+  'bg-[#588157]',
+  'bg-[#588157]',
+  'bg-[#d4a843]',
+  'bg-[#d4a843]',
+  'bg-[#76a874]',
+  'bg-[#76a874]',
+  'bg-[#c0392b]',
+  'bg-[#c0392b]',
+]
+const FALLBACK_BORDER = 'border-t-[#a8bfa8]'
+const FALLBACK_DOT = 'bg-[#a8bfa8]'
 
 function getAccent(index) {
-  return ACCENTS[index] ?? FALLBACK_ACCENT
+  return {
+    border: ACCENT_BORDERS[index] ?? FALLBACK_BORDER,
+    dot: ACCENT_DOTS[index] ?? FALLBACK_DOT,
+  }
 }
 
 export default function FarmGrid({ results, isLoading, onBack }) {
   const farms = results?.farms ?? []
   const [viewMode, setViewMode] = useState('table')
 
-  const summary = useMemo(() => {
-    if (!farms.length) return { totalFarms: 0, totalBudget: 0, avgExpectedYieldHa: 0, smallFarmShare: 0 }
+  const { summary, maxAllocation } = useMemo(() => {
+    if (!farms.length) {
+      return {
+        summary: { totalFarms: 0, totalBudget: 0, avgExpectedYieldHa: 0, smallFarmShare: 0 },
+        maxAllocation: 0,
+      }
+    }
     const totalBudget = farms.reduce((sum, f) => sum + (f.subsidy_amount ?? 0), 0)
     const expectedYieldsHa = farms.map((f) => f.expected_yield_ha ?? (f.yield_score != null ? f.yield_score * 15 : 0))
     const avgExpectedYieldHa = expectedYieldsHa.length ? expectedYieldsHa.reduce((a, b) => a + b, 0) / expectedYieldsHa.length : 0
     const smallCount = farms.filter((f) => f.is_small).length
     const smallFarmShare = farms.length ? (smallCount / farms.length) * 100 : 0
+    const maxAllocation = Math.max(...farms.map((f) => f.subsidy_amount ?? 0), 0)
     return {
-      totalFarms: farms.length,
-      totalBudget,
-      avgExpectedYieldHa,
-      smallFarmShare: Math.round(smallFarmShare * 10) / 10,
+      summary: {
+        totalFarms: farms.length,
+        totalBudget,
+        avgExpectedYieldHa,
+        smallFarmShare: Math.round(smallFarmShare * 10) / 10,
+      },
+      maxAllocation,
     }
   }, [farms])
 
@@ -150,52 +173,68 @@ export default function FarmGrid({ results, isLoading, onBack }) {
           </div>
         </Card>
       ) : (
-      <div className="grid w-full grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-        {farms.map((farm, index) => {
-          const accent = getAccent(index)
-          const farmId = farm.farm_id ?? farm.id
-          return (
-            <Card
-              key={farmId}
-              className={`farm-panel relative overflow-hidden rounded-2xl border border-border bg-card p-4 sm:rounded-3xl ${accent.border} border-t-4`}
-            >
-              <span
-                className="farm-panel-watermark pointer-events-none absolute right-3 top-2 select-none text-5xl font-black text-white/5 sm:text-6xl"
-                aria-hidden
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          {farms.map((farm, index) => {
+            const accent = getAccent(index)
+            const farmId = farm.farm_id ?? farm.id
+            return (
+              <Card
+                key={farmId}
+                className={`farm-panel relative overflow-hidden rounded-3xl border-t-4 p-4 transition-all duration-200 dark:bg-[#3a5a40] dark:border-[#588157]/30 dark:hover:shadow-[0_4px_24px_rgba(88,129,87,0.15)] border border-[#d4e0cc] bg-white hover:shadow-[0_4px_24px_rgba(88,129,87,0.15)]`}
+                style={{
+                  animation: 'panel-slide-up 0.4s ease-out both',
+                  animationDelay: `${index * 100}ms`,
+                }}
               >
-                {farmId}
-              </span>
-              <div className="relative mb-4 flex flex-wrap items-center gap-2">
-                <span className={`h-2 w-2 shrink-0 rounded-full ${accent.dot}`} aria-hidden />
-                <span className="text-lg font-bold text-foreground">{farmId}</span>
-              </div>
-              <div className="relative flex flex-col gap-3 sm:gap-4">
-                <YieldCard
-                  farm_size_ha={farm.farm_size_ha}
-                  is_small={farm.is_small}
-                  yield_score={farm.yield_score}
-                  expected_yield_ha={farm.expected_yield_ha}
-                />
-                <ClimateRiskCard
-                  climate_risk_score={farm.climate_risk_score}
-                />
-                <SubsidyCard
-                  farm_id={farm.farm_id}
-                  subsidy_amount={farm.subsidy_amount}
-                  subsidy_eligible={farm.subsidy_eligible}
-                  is_small={farm.is_small}
-                  gini_coefficient={farm.gini_coefficient}
-                  small_farm_share_pct={farm.small_farm_share_pct}
-                />
-                <ReasoningCard
-                  farm_id={farm.farm_id}
-                  reasoning={farm.reasoning}
-                />
-              </div>
-            </Card>
-          )
-        })}
-      </div>
+                <span
+                  className="farm-panel-watermark pointer-events-none absolute right-3 top-2 select-none text-6xl font-black dark:text-white/5 text-black/5"
+                  aria-hidden
+                >
+                  {farmId}
+                </span>
+                <div className="relative mb-3 flex flex-wrap items-center gap-2">
+                  <span className={`h-2 w-2 shrink-0 rounded-full ${accent.dot}`} aria-hidden />
+                  <span className="text-lg font-bold dark:text-[#f0f4ee] text-[#1a2e1a]">{farmId}</span>
+                  {farm.crop != null && (
+                    <span className="text-sm dark:text-[#a8bfa8] text-[#5a7a5a]">{farm.crop}</span>
+                  )}
+                  {farm.region != null && (
+                    <Badge variant="outline" className="rounded-full border dark:border-[#588157]/30 border-[#d4e0cc] text-[10px] dark:text-[#a8bfa8] text-[#5a7a5a]">
+                      {farm.region}
+                    </Badge>
+                  )}
+                </div>
+                <div className="relative flex flex-col gap-3">
+                  <YieldCard
+                    farm_id={farm.farm_id}
+                    crop={farm.crop}
+                    region={farm.region}
+                    farm_size_ha={farm.farm_size_ha}
+                    is_small={farm.is_small}
+                    yield_score={farm.yield_score}
+                  />
+                  <ClimateRiskCard
+                    climate_risk_score={farm.climate_risk_score}
+                    temperature_c={farm.temperature_c}
+                    precipitation_mm={farm.precipitation_mm}
+                  />
+                  <SubsidyCard
+                    subsidy_amount={farm.subsidy_amount}
+                    subsidy_eligible={farm.subsidy_eligible}
+                    is_small={farm.is_small}
+                    gini_coefficient={farm.gini_coefficient}
+                    small_farm_share_pct={farm.small_farm_share_pct}
+                    maxAllocation={maxAllocation}
+                  />
+                  <ReasoningCard
+                    reasoning={farm.reasoning}
+                    animationDelay={index * 100 + 200}
+                  />
+                </div>
+              </Card>
+            )
+          })}
+        </div>
       )}
     </div>
   )

@@ -1,38 +1,110 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Wheat, Star } from 'lucide-react'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { formatHa } from '@/lib/format'
+import { Progress } from '@/components/ui/progress'
+
+function getRingColor(score) {
+  if (score > 0.7) return '#588157'
+  if (score >= 0.4) return '#d4a843'
+  return '#c0392b'
+}
+
+function Stars({ score }) {
+  const s = score ?? 0
+  const filled = Math.round(s * 5)
+  return (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <Star
+          key={i}
+          className={`h-3.5 w-3.5 ${i <= filled ? 'fill-[#d4a843] text-[#d4a843]' : 'fill-[#588157]/20 text-[#588157]/20 dark:fill-[#588157]/20 dark:text-[#588157]/20'}`}
+          aria-hidden
+        />
+      ))}
+    </div>
+  )
+}
 
 export default function YieldCard({
+  farm_id,
+  crop,
+  region,
   farm_size_ha,
   is_small,
   yield_score,
-  expected_yield_ha,
 }) {
-  const valueHa = expected_yield_ha ?? (yield_score != null ? yield_score * 15 : null)
+  const score = yield_score ?? 0
+  const radius = 32
+  const circumference = 2 * Math.PI * radius
+  const offset = circumference - score * circumference
+  const ringColor = getRingColor(score)
 
   return (
-    <Card className="yield-card h-[200px] overflow-hidden rounded-2xl border-border bg-card">
-      <CardHeader className="space-y-1 p-4 pb-0">
+    <Card className="yield-card h-[220px] overflow-hidden rounded-2xl border dark:border-[#588157]/30 dark:bg-[#2d4433] border-[#d4e0cc] bg-[#f0f4ec]">
+      <CardHeader className="space-y-1 p-3 pb-0">
+        <div className="flex items-center gap-2">
+          <Wheat className="h-3.5 w-3.5 shrink-0 dark:text-[#a8bfa8] text-[#5a7a5a" aria-hidden />
+          <span className="text-xs font-medium uppercase tracking-widest dark:text-[#a8bfa8] text-[#5a7a5a">
+            Yield Forecast
+          </span>
+        </div>
         <div className="flex flex-wrap items-center gap-2">
-          <CardTitle className="text-base font-semibold text-foreground">
-            Expected Yield
-          </CardTitle>
+          <span className="text-[16px] font-bold dark:text-[#f0f4ee] text-[#1a2e1a]">{farm_id ?? '—'}</span>
+          {crop != null && (
+            <span className="text-xs dark:text-[#a8bfa8] text-[#5a7a5a]">{crop}</span>
+          )}
+          {region != null && (
+            <Badge variant="outline" className="rounded-full border dark:border-[#588157]/30 border-[#c4d4bc] text-[10px] dark:text-[#a8bfa8] text-[#5a7a5a]">
+              {region}
+            </Badge>
+          )}
           {is_small && (
-            <Badge className="rounded-full border-0 bg-primary/20 text-[10px] text-primary">
-              Small farm
+            <Badge className="rounded-full border dark:bg-[#588157]/20 dark:text-[#76a874] dark:border-[#588157]/30 bg-[#e8f0e4] text-[#588157] border-[#c4d4bc] text-[10px]">
+              Small Farm
             </Badge>
           )}
         </div>
-        {farm_size_ha != null && (
-          <p className="text-xs text-muted-foreground">{farm_size_ha} ha</p>
-        )}
       </CardHeader>
-      <CardContent className="flex flex-col gap-2 p-4 pt-2">
-        <p className="text-2xl font-bold tabular-nums text-foreground">
-          {formatHa(valueHa)}
-        </p>
+      <CardContent className="flex flex-col items-center p-3 pt-2">
+        <div className="relative flex items-center justify-center">
+          <svg width="80" height="80" className="-rotate-90 shrink-0" aria-hidden>
+            <circle
+              cx="40"
+              cy="40"
+              r={radius}
+              strokeWidth="7"
+              fill="none"
+              className="dark:stroke-[#588157]/20 stroke-[#d4e0cc]"
+            />
+            <circle
+              cx="40"
+              cy="40"
+              r={radius}
+              strokeWidth="7"
+              fill="none"
+              stroke={ringColor}
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+              strokeLinecap="round"
+              style={{ transition: 'stroke-dashoffset 1s ease' }}
+            />
+          </svg>
+          <span
+            className="absolute text-[20px] font-bold tabular-nums"
+            style={{ color: ringColor }}
+          >
+            {(score * 100).toFixed(0)}%
+          </span>
+        </div>
+        <Progress
+          value={score * 100}
+          className="mt-2 h-1.5 w-full max-w-[140px] dark:[&>div]:bg-[#588157] [&>div]:bg-[#588157]"
+        />
+        <div className="mt-1.5">
+          <Stars score={score} />
+        </div>
       </CardContent>
     </Card>
   )

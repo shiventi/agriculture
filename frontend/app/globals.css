@@ -531,6 +531,18 @@ html.theme-light .card-muted {
   animation: panel-slide-up 0.4s ease-out both;
 }
 
+/* Reasoning card fade-in-up */
+@keyframes reasoning-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Reasoning typewriter */
 @keyframes typewriter {
   from { opacity: 0; }

@@ -1,20 +1,120 @@
 'use client'
 
-import { AlertTriangle } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CloudRain } from 'lucide-react'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 
-export default function ClimateRiskCard({ climate_risk_score }) {
+function getRiskStyle(score) {
+  if (score < 0.4)
+    return {
+      label: 'LOW',
+      fill: '#588157',
+      badgeClass: 'dark:bg-[#588157]/20 dark:text-[#76a874] bg-[#e8f0e4] text-[#588157] border-[#c4d4bc]',
+    }
+  if (score <= 0.7)
+    return {
+      label: 'MODERATE',
+      fill: '#d4a843',
+      badgeClass: 'dark:bg-[#d4a843]/20 dark:text-[#d4a843] bg-[#fdf3dc] text-[#a07820] border-[#e8d080]',
+    }
+  return {
+    label: 'HIGH',
+    fill: '#c0392b',
+    badgeClass: 'dark:bg-[#c0392b]/20 dark:text-[#e07060] bg-[#fdecea] text-[#c0392b] border-[#f0b0a8]',
+  }
+}
+
+export default function ClimateRiskCard({
+  climate_risk_score,
+  temperature_c,
+  precipitation_mm,
+}) {
   const score = climate_risk_score ?? 0
-  const riskNum = score <= 1 ? (score * 100).toFixed(0) : String(Math.round(score))
+  const style = getRiskStyle(score)
+  const angle = score * 180
+  const angleRad = (angle * Math.PI) / 180
+  const cx = 55
+  const cy = 48
+  const r = 48
+  const needleLength = 36
+  const needleX = cx + needleLength * Math.cos(angleRad)
+  const needleY = cy - needleLength * Math.sin(angleRad)
+  const arcLength = Math.PI * r
+  const fillOffset = arcLength - score * arcLength
+
+  const droughtRisk = precipitation_mm != null && precipitation_mm < 10
+  const heatStress = temperature_c != null && temperature_c > 35
 
   return (
-    <Card className="climate-card h-[200px] overflow-hidden rounded-2xl border-border bg-card">
-      <CardHeader className="flex flex-row items-center gap-2 space-y-0 p-4 pb-0">
-        <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" aria-hidden />
-        <CardTitle className="text-sm font-semibold text-foreground">Climate risk</CardTitle>
+    <Card className="climate-card h-[220px] overflow-hidden rounded-2xl border dark:border-[#588157]/30 dark:bg-[#2d4433] border-[#d4e0cc] bg-[#f0f4ec]">
+      <CardHeader className="space-y-0 p-3 pb-0">
+        <div className="flex items-center gap-2">
+          <CloudRain className="h-3.5 w-3.5 shrink-0 dark:text-[#a8bfa8] text-[#5a7a5a" aria-hidden />
+          <span className="text-xs font-medium uppercase tracking-widest dark:text-[#a8bfa8] text-[#5a7a5a]">
+            Climate Risk
+          </span>
+        </div>
       </CardHeader>
-      <CardContent className="p-4 pt-2">
-        <p className="text-2xl font-bold tabular-nums text-foreground">{riskNum}</p>
+      <CardContent className="space-y-2 p-3 pt-2">
+        <div className="flex flex-col items-center">
+          <svg width="110" height="58" viewBox="0 0 110 58" className="shrink-0" aria-hidden>
+            <path
+              d={`M 10 48 A 48 48 0 0 1 100 48`}
+              fill="none"
+              strokeWidth="6"
+              strokeLinecap="round"
+              className="dark:stroke-[#588157]/20 stroke-[#d4e0cc]"
+            />
+            <path
+              d={`M 10 48 A 48 48 0 0 1 100 48`}
+              fill="none"
+              stroke={style.fill}
+              strokeWidth="6"
+              strokeLinecap="round"
+              strokeDasharray={arcLength}
+              strokeDashoffset={fillOffset}
+              style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+            />
+            <line
+              x1={cx}
+              y1={cy}
+              x2={needleX}
+              y2={needleY}
+              stroke={style.fill}
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+          <Badge variant="outline" className={`mt-1 rounded-full border text-[10px] font-medium ${style.badgeClass}`}>
+            {style.label}
+          </Badge>
+        </div>
+        <Separator className="dark:bg-[#588157]/20 bg-[#d4e0cc]" />
+        <div className="space-y-1 text-xs dark:text-[#a8bfa8] text-[#5a7a5a]">
+          <div className="flex items-center gap-1.5">
+            <span aria-hidden>🌡</span>
+            <span>{temperature_c != null ? `${temperature_c}°C avg temperature` : '—'}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span aria-hidden>💧</span>
+            <span>{precipitation_mm != null ? `${precipitation_mm}mm precipitation` : '—'}</span>
+          </div>
+        </div>
+        {(droughtRisk || heatStress) && (
+          <div className="flex flex-wrap gap-1.5 pt-0.5">
+            {droughtRisk && (
+              <Badge className="rounded-full border border-amber-500/50 bg-amber-500/20 text-[10px] text-amber-700 dark:text-[#d4a843]">
+                ⚠ Drought Risk
+              </Badge>
+            )}
+            {heatStress && (
+              <Badge className="rounded-full border border-red-500/50 bg-red-500/20 text-[10px] text-red-700 dark:text-[#e07060]">
+                ⚠ Heat Stress
+              </Badge>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   )
