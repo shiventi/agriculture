@@ -2,6 +2,8 @@
 /frontend/node_modules
 /frontend/.next
 /frontend/out
+node_modules
+**/node_modules/@next/swc-darwin-arm64/
 
 # misc
 .DS_Store

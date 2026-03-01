@@ -28,7 +28,34 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s, color 0.2s;
 }
+
+/* Light mode overrides (next-themes sets class="light" on html) */
+html.light body {
+  background-color: #f4f4f5; /* zinc-100 */
+  color: #18181b; /* zinc-900 */
+}
+
+html.light header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e4e4e7;
+}
+
+html.light .farm-card {
+  background-color: #ffffff;
+  border-color: #e4e4e7;
+}
+
+html.light .upload-zone {
+  background-color: #ffffff;
+  border-color: #e4e4e7;
+}
+
+html.light .text-zinc-400 { color: #52525b; }
+html.light .text-zinc-500 { color: #71717a; }
+html.light .text-white { color: #18181b; }
+html.light .text-zinc-300 { color: #3f3f46; }
 
 /* Light theme */
 html.theme-light body {

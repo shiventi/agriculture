@@ -1,7 +1,8 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Wheat, Cpu } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { Wheat, Cpu, Sun, Moon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { useResults } from '@/contexts/ResultsContext'
@@ -9,6 +10,7 @@ import { formatUSD } from '@/lib/format'
 
 export default function Header() {
   const { results } = useResults()
+  const { theme, setTheme } = useTheme()
   const hasResults = (results?.farms?.length ?? 0) > 0
   const summary = useMemo(() => {
     const farms = results?.farms ?? []
@@ -42,7 +44,19 @@ export default function Header() {
             </span>
           </a>
 
-          <div className="flex shrink-0 items-center">
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-4 w-4" aria-hidden />
+              ) : (
+                <Moon className="h-4 w-4" aria-hidden />
+              )}
+            </button>
             <Separator orientation="vertical" className="mx-1.5 h-4 bg-border sm:mx-2 sm:h-5" />
             <Badge
               variant="outline"

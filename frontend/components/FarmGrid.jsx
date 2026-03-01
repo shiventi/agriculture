@@ -1,8 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { ArrowLeft, Check } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Check } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -47,7 +46,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
 
   if (farms.length === 0) {
     return (
-      <Card className="rounded-2xl border-border bg-card">
+      <Card className="farm-card rounded-2xl border-border bg-card">
         <CardContent className="py-12 text-center text-muted-foreground">
           {isLoading ? 'Loading...' : 'No farm data to display.'}
         </CardContent>
@@ -57,20 +56,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {onBack && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onBack}
-          className="-ml-2 text-muted-foreground hover:bg-accent hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden />
-          Back
-        </Button>
-      )}
-
-      <Card className="rounded-2xl border-border bg-card sm:mb-2">
+      <Card className="farm-card rounded-2xl border-border bg-card sm:mb-2">
         <CardContent className="flex flex-row flex-wrap items-center justify-center gap-3 py-4 sm:justify-start sm:gap-4">
           <span className="text-sm text-muted-foreground">
             <span className="font-semibold text-foreground">{summary.totalFarms}</span> farms
@@ -101,7 +87,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
           return (
             <Card
               key={farmId}
-              className={`relative overflow-hidden rounded-2xl border border-border bg-card p-4 transition-all duration-300 sm:rounded-3xl ${accent.border} border-t-4`}
+              className={`farm-card relative overflow-hidden rounded-2xl border border-border bg-card p-4 transition-all duration-300 sm:rounded-3xl ${accent.border} border-t-4`}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = `0 10px 40px -10px ${accent.shadow}`
               }}

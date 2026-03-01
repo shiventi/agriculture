@@ -1,6 +1,7 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { ResultsProvider } from '@/contexts/ResultsContext'
+import { ThemeProvider } from '@/components/ThemeProvider'
 import Header from '@/components/Header'
 
 const inter = Inter({
@@ -15,18 +16,20 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={inter.className}>
-      <body className="min-h-screen bg-background text-foreground antialiased flex flex-col">
-        <div className="grain-overlay" aria-hidden />
-        <ResultsProvider>
-          <Header />
-          <main className="relative z-10 flex-1">
-            {children}
-          </main>
-          <footer className="site-footer">
-            Powered by PyTorch · OR-Tools
-          </footer>
-        </ResultsProvider>
+    <html lang="en" className={inter.className} suppressHydrationWarning>
+      <body className="min-h-screen bg-background text-foreground antialiased flex flex-col transition-colors duration-200">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <div className="grain-overlay" aria-hidden />
+          <ResultsProvider>
+            <Header />
+            <main className="relative z-10 flex-1">
+              {children}
+            </main>
+            <footer className="site-footer">
+              Powered by PyTorch · OR-Tools
+            </footer>
+          </ResultsProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

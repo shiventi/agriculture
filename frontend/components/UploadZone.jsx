@@ -139,7 +139,7 @@ export default function UploadZone({
   return (
     <div className="min-h-[50vh] bg-background sm:min-h-[60vh]">
       <div className="mx-auto mt-8 max-w-2xl px-4 sm:mt-12 sm:px-6 md:mt-16 md:max-w-3xl md:p-8 lg:mt-24 lg:p-12">
-        <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 md:p-10">
+        <div className="upload-zone rounded-3xl border border-border bg-card p-6 sm:p-8 md:p-10">
           <div className="flex flex-col items-center text-center">
             <Wheat className="h-10 w-10 shrink-0 text-primary sm:h-12 sm:w-12" aria-hidden />
             <h1 className="mt-3 text-xl font-bold text-foreground sm:mt-4 sm:text-2xl">AgriEquity AI</h1>

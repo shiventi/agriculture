@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { ChevronLeft } from 'lucide-react'
 import UploadZone from '@/components/UploadZone'
 import FarmGrid from '@/components/FarmGrid'
 import LoadingState from '@/components/LoadingState'
@@ -24,6 +25,12 @@ export default function Home() {
     })
   }, [])
 
+  const handleBackToUpload = () => {
+    setResults(null)
+    setBudget('')
+    setConstraints({})
+  }
+
   return (
     <>
       {isLoading && <LoadingState />}
@@ -39,11 +46,23 @@ export default function Home() {
             updateConstraint={updateConstraint}
           />
         ) : (
-          <FarmGrid
-            results={results}
-            isLoading={isLoading}
-            onBack={() => setResults(null)}
-          />
+          <>
+            <div className="mx-auto max-w-7xl px-6">
+              <button
+                type="button"
+                onClick={handleBackToUpload}
+                className="mb-6 flex items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-white group"
+              >
+                <ChevronLeft className="h-4 w-4 text-zinc-500 transition-colors group-hover:text-emerald-400" aria-hidden />
+                Back to Upload
+              </button>
+            </div>
+            <FarmGrid
+              results={results}
+              isLoading={isLoading}
+              onBack={handleBackToUpload}
+            />
+          </>
         )}
       </div>
     </>
