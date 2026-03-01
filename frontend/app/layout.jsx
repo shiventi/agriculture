@@ -10,13 +10,13 @@ const inter = Inter({
 
 export const metadata = {
   title: 'AgriEquity AI',
-  description: 'AI-Powered Farm Yield · Climate Risk · Fair Subsidies',
+  description: 'AI-powered farm yield · Climate risk · Fair subsidies',
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={inter.className}>
-      <body className="min-h-screen bg-zinc-950 text-zinc-100 antialiased flex flex-col">
+      <body className="min-h-screen bg-background text-foreground antialiased flex flex-col">
         <div className="grain-overlay" aria-hidden />
         <ResultsProvider>
           <Header />

@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 :root {
+  /* Palette: background #1F211C, green #243010 */
+  --palette-background: #1F211C;
+  --palette-green: #243010;
   --deep-green: #1a3a2a;
   --cream: #f5f0e8;
   --gold: #d4a843;
@@ -167,11 +170,11 @@ html.theme-light .card-muted {
 .site-footer {
   position: relative;
   z-index: 10;
-  border-top: 1px solid rgb(39 39 42);
+  border-top: 1px solid hsl(var(--border));
   padding: 0.75rem;
   text-align: center;
   font-size: 0.75rem;
-  color: rgb(113 113 122);
+  color: hsl(var(--muted-foreground));
 }
 
 /* Farm panel slide-up */
@@ -200,27 +203,28 @@ html.theme-light .card-muted {
 
 @layer base {
   :root {
-    /* Dark zinc theme (default) */
-    --background: 240 10% 3.9%;
+    /* Background #1F211C, green #243010 – shadcn semantic order */
+    --background: 84 6% 12%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 5%;
+    --card: 84 5% 15%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 5%;
+    --popover: 84 5% 15%;
     --popover-foreground: 0 0% 98%;
-    --primary: 160 100% 50%;
-    --primary-foreground: 240 10% 4%;
-    --secondary: 240 4% 16%;
+    /* Primary: lighter tint of #243010 for visibility on dark */
+    --primary: 82 50% 32%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 84 6% 18%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 4% 16%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 4% 16%;
+    --muted: 84 5% 18%;
+    --muted-foreground: 84 8% 58%;
+    --accent: 82 35% 20%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 4% 16%;
-    --input: 240 4% 16%;
-    --ring: 160 100% 50%;
-    --chart-1: 160 100% 50%;
+    --border: 84 8% 22%;
+    --input: 84 8% 22%;
+    --ring: 82 50% 32%;
+    --chart-1: 82 50% 35%;
     --chart-2: 43 74% 66%;
     --chart-3: 197 37% 24%;
     --chart-4: 280 65% 60%;

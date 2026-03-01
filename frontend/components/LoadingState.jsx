@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Loader2 } from 'lucide-react'
 
 const MESSAGES = [
   'Fetching weather & soil data...',
@@ -9,53 +10,6 @@ const MESSAGES = [
   'Generating AI explanations...',
   'Building your dashboard...',
 ]
-
-function WheatStalkSvg() {
-  return (
-    <svg
-      className="h-36 w-16"
-      viewBox="0 0 64 144"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden
-    >
-      <defs>
-        <linearGradient id="loading-stalk" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="#1a3a2a" />
-          <stop offset="100%" stopColor="#2d8a6e" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M32 144 V8"
-        stroke="url(#loading-stalk)"
-        strokeWidth="4"
-        strokeLinecap="round"
-        fill="none"
-        className="loading-stalk-draw"
-      />
-      <ellipse cx="32" cy="6" rx="10" ry="6" fill="#d4a843" className="loading-stalk-head" />
-    </svg>
-  )
-}
-
-function Particles() {
-  const count = 12
-  return (
-    <div className="loading-particles" aria-hidden>
-      {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          className="loading-particle"
-          style={{
-            left: `${5 + (i * 8) % 90}%`,
-            animationDelay: `${i * 0.8}s`,
-            animationDuration: `${8 + (i % 4)}s`,
-          }}
-        />
-      ))}
-    </div>
-  )
-}
 
 export default function LoadingState() {
   const [messageIndex, setMessageIndex] = useState(0)
@@ -69,20 +23,17 @@ export default function LoadingState() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-deep-green/95 text-cream"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-8 bg-background/95 text-foreground"
       role="status"
       aria-live="polite"
       aria-label="Loading"
     >
-      <Particles />
-      <div className="relative z-10 flex flex-col items-center gap-8">
-        <WheatStalkSvg />
-        <p className="min-h-[1.5em] text-center text-lg font-medium transition-opacity duration-300">
-          {MESSAGES[messageIndex]}
-        </p>
-        <div className="w-72 overflow-hidden rounded-full bg-cream/20">
-          <div className="loading-progress-bar h-2 rounded-full bg-gold" />
-        </div>
+      <Loader2 className="h-16 w-16 animate-spin text-primary sm:h-20 sm:w-20" aria-hidden />
+      <p className="min-h-[1.5em] max-w-xs px-4 text-center text-base font-medium transition-opacity duration-300 sm:text-lg">
+        {MESSAGES[messageIndex]}
+      </p>
+      <div className="w-56 overflow-hidden rounded-full bg-muted sm:w-72">
+        <div className="h-2 w-full animate-pulse rounded-full bg-primary/40" />
       </div>
     </div>
   )

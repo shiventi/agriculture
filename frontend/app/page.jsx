@@ -27,7 +27,7 @@ export default function Home() {
   return (
     <>
       {isLoading && <LoadingState />}
-      <div className="relative z-10 mx-auto min-h-[60vh] max-w-7xl px-6 py-6">
+      <div className="relative z-10 mx-auto min-h-[50vh] max-w-7xl px-4 py-4 sm:min-h-[60vh] sm:px-6 sm:py-6">
         {results == null ? (
           <UploadZone
             results={results}
@@ -39,7 +39,11 @@ export default function Home() {
             updateConstraint={updateConstraint}
           />
         ) : (
-          <FarmGrid results={results} isLoading={isLoading} />
+          <FarmGrid
+            results={results}
+            isLoading={isLoading}
+            onBack={() => setResults(null)}
+          />
         )}
       </div>
     </>

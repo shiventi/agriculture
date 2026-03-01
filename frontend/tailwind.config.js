@@ -8,6 +8,8 @@ module.exports = {
   theme: {
   	extend: {
   		colors: {
+  			'palette-background': 'var(--palette-background)',
+  			'palette-green': 'var(--palette-green)',
   			'deep-green': '#1a3a2a',
   			cream: '#f5f0e8',
   			gold: '#d4a843',

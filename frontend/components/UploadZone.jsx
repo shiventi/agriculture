@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { Wheat, ChevronDown, ArrowRight, Loader2, BarChart3, CloudRain, Scale, FileSpreadsheet } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,38 +9,19 @@ import { Separator } from '@/components/ui/separator'
 import { MOCK_RESULTS } from '@/lib/mockData'
 
 const OUTPUT_PILLS = [
-  { icon: '◆', label: 'Yield Forecast' },
-  { icon: '⚠', label: 'Climate Risk' },
-  { icon: '⚖', label: 'Fair Subsidies' },
+  { Icon: BarChart3, label: 'Yield forecast' },
+  { Icon: CloudRain, label: 'Climate risk' },
+  { Icon: Scale, label: 'Fair subsidies' },
 ]
 
 const CONSTRAINT_FIELDS = [
-  { key: 'small_farm_min_share', label: 'Small Farm Min Share', placeholder: 'default: 40', hint: '% of total budget' },
-  { key: 'per_capita_ratio', label: 'Per Capita Ratio', placeholder: 'default: 0.7', hint: 'small avg ÷ large avg' },
-  { key: 'need_floor_dollars', label: 'Need Floor (dollars)', placeholder: 'default: 50000', hint: 'baseline_need × this' },
-  { key: 'max_single_farm_share', label: 'Max Single Farm Share', placeholder: 'default: 30', hint: '% max per farm' },
-  { key: 'high_risk_floor_threshold', label: 'High Risk Threshold', placeholder: 'default: 70', hint: 'risk score out of 100' },
-  { key: 'high_risk_floor_amount', label: 'High Risk Floor', placeholder: 'default: 25000', hint: 'guaranteed floor $' },
+  { key: 'small_farm_min_share', label: 'Small farm min share', placeholder: 'default: 40', hint: '% of total budget' },
+  { key: 'per_capita_ratio', label: 'Per capita ratio', placeholder: 'default: 0.7', hint: 'small avg ÷ large avg' },
+  { key: 'need_floor_dollars', label: 'Need floor (dollars)', placeholder: 'default: 50000', hint: 'baseline_need × this' },
+  { key: 'max_single_farm_share', label: 'Max single farm share', placeholder: 'default: 30', hint: '% max per farm' },
+  { key: 'high_risk_floor_threshold', label: 'High risk threshold', placeholder: 'default: 70', hint: 'risk score out of 100' },
+  { key: 'high_risk_floor_amount', label: 'High risk floor', placeholder: 'default: 25000', hint: 'guaranteed floor $' },
 ]
-
-function WheatLeafIcon({ className = '' }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M12 2c-2 4-4 8-4 14 0 4 2 8 6 8s6-4 6-8c0-6-2-10-4-14" />
-      <path d="M12 2c2 4 4 8 4 14 0 4-2 8-6 8s-6-4-6-8c0-6 2-10 4-14" />
-      <ellipse cx="12" cy="8" rx="4" ry="3" fill="currentColor" opacity="0.9" />
-    </svg>
-  )
-}
 
 export default function UploadZone({
   results,
@@ -155,199 +137,203 @@ export default function UploadZone({
   }
 
   return (
-    <div className="min-h-[60vh] bg-zinc-950">
-      <div className="mx-auto mt-24 max-w-lg rounded-3xl border border-zinc-800 bg-zinc-900 p-12">
-        <div className="flex flex-col items-center text-center">
-          <WheatLeafIcon className="h-12 w-12 shrink-0 text-[#00ff87]" />
-          <h1 className="mt-4 text-2xl font-bold text-white">AgriEquity AI</h1>
-          <p className="mt-2 text-sm text-zinc-400">
-            Upload your farms CSV to begin analysis
-          </p>
+    <div className="min-h-[50vh] bg-background sm:min-h-[60vh]">
+      <div className="mx-auto mt-8 max-w-2xl px-4 sm:mt-12 sm:px-6 md:mt-16 md:max-w-3xl md:p-8 lg:mt-24 lg:p-12">
+        <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 md:p-10">
+          <div className="flex flex-col items-center text-center">
+            <Wheat className="h-10 w-10 shrink-0 text-primary sm:h-12 sm:w-12" aria-hidden />
+            <h1 className="mt-3 text-xl font-bold text-foreground sm:mt-4 sm:text-2xl">AgriEquity AI</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Upload your farms CSV to begin analysis
+            </p>
 
-          <div
-            className={`mt-6 w-full cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition-colors ${
-              isDragging
-                ? 'border-emerald-500 bg-emerald-950/20'
-                : 'border-zinc-700 hover:border-emerald-500'
-            }`}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
-            onClick={() => inputRef.current?.click()}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                inputRef.current?.click()
-              }
-            }}
-          >
-            <input
-              ref={inputRef}
-              type="file"
-              accept=".csv"
-              className="sr-only"
-              aria-label="Select CSV file"
-              onChange={onInputChange}
-              disabled={uploading}
-            />
-            <p className="text-zinc-300">Drop CSV here</p>
-            <p className="mt-1 text-sm text-zinc-500">or click to browse</p>
-            {selectedFile && (
-              <p className="mt-2 text-xs text-emerald-400">
-                Selected: {selectedFile.name}
-              </p>
-            )}
-          </div>
-
-          {error && (
-            <div className="mt-4 rounded-lg border border-red-900/50 bg-red-950/30 px-3 py-2 text-left">
-              <p className="text-sm text-red-400" role="alert">
-                {error}
-              </p>
-              {errorDetail && (
-                <p className="mt-1 font-mono text-xs text-zinc-500 break-all">
-                  {errorDetail}
+            <div
+              className={`mt-4 w-full cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-colors sm:mt-6 sm:p-8 md:p-10 ${
+                isDragging
+                  ? 'border-primary bg-primary/10'
+                  : 'border-input hover:border-primary'
+              }`}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              onDragLeave={onDragLeave}
+              onClick={() => inputRef.current?.click()}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  inputRef.current?.click()
+                }
+              }}
+            >
+              <input
+                ref={inputRef}
+                type="file"
+                accept=".csv"
+                className="sr-only"
+                aria-label="Select CSV file"
+                onChange={onInputChange}
+                disabled={uploading}
+              />
+              <FileSpreadsheet className="mx-auto h-8 w-8 text-muted-foreground sm:h-10 sm:w-10" aria-hidden />
+              <p className="mt-2 text-foreground sm:mt-3">Drop CSV here</p>
+              <p className="mt-1 text-sm text-muted-foreground">or click to browse</p>
+              {selectedFile && (
+                <p className="mt-2 text-xs text-primary">
+                  Selected: {selectedFile.name}
                 </p>
               )}
             </div>
-          )}
 
-          {/* Configuration */}
-          <div className="mt-8 w-full text-left">
-            <p className="text-xs uppercase tracking-widest text-zinc-500">
-              Configuration
-            </p>
-            <Separator className="mb-4 mt-2 bg-zinc-800" />
-
-            <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-zinc-300">
-                Total Budget
-              </label>
-              <div className="relative mt-1">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">
-                  $
-                </span>
-                <Input
-                  type="number"
-                  placeholder="1000000"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
-                  className="h-9 bg-zinc-800 pl-7 text-white placeholder:text-zinc-500 focus:border-emerald-500 focus:ring-emerald-500/20 border-zinc-700"
-                />
+            {error && (
+              <div className="mt-4 w-full rounded-2xl border border-destructive/50 bg-destructive/10 px-3 py-2 text-left">
+                <p className="text-sm text-destructive" role="alert">
+                  {error}
+                </p>
+                {errorDetail && (
+                  <p className="mt-1 font-mono text-xs text-muted-foreground break-all">
+                    {errorDetail}
+                  </p>
+                )}
               </div>
-              <span className="mt-1 text-xs text-zinc-600">
-                Default: $1,000,000
-              </span>
-            </div>
+            )}
 
-            {/* Fairness constraints */}
-            <div className="mt-6">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-zinc-300">
-                  Fairness Constraints
-                </span>
-                <Badge
-                  variant="outline"
-                  className="rounded-full border-zinc-700 bg-zinc-800/80 text-xs text-zinc-400"
-                >
-                  All Optional
-                </Badge>
-              </div>
-              <p className="mt-1 mb-3 text-xs text-zinc-600">
-                Leave blank to use default values
+            <div className="mt-6 w-full text-left sm:mt-8">
+              <p className="text-xs text-muted-foreground">
+                Configuration
               </p>
+              <Separator className="mb-4 mt-2 bg-border" />
 
-              <button
-                type="button"
-                onClick={() => setConstraintsExpanded((v) => !v)}
-                className="flex w-full items-center gap-1 text-xs text-zinc-500 cursor-pointer hover:text-zinc-400"
-              >
-                <span
-                  className={`inline-block transition-transform duration-200 ${constraintsExpanded ? 'rotate-180' : ''}`}
-                  aria-hidden
-                >
-                  ▼
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-foreground">
+                  Total budget
+                </label>
+                <div className="relative mt-1">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    $
+                  </span>
+                  <Input
+                    type="number"
+                    placeholder="1000000"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                    className="h-9 bg-input pl-8 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-ring border-border"
+                  />
+                </div>
+                <span className="mt-1 text-xs text-muted-foreground">
+                  Default: $1,000,000
                 </span>
-                Advanced Constraints
-              </button>
+              </div>
 
-              <div
-                className="overflow-hidden transition-all duration-300 ease-in-out"
-                style={{ maxHeight: constraintsExpanded ? 400 : 0 }}
-              >
-                <div className="mt-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    {CONSTRAINT_FIELDS.map(({ key, label, placeholder, hint }) => (
-                      <div key={key} className="flex flex-col gap-1">
-                        <label className="text-xs text-zinc-400">{label}</label>
-                        <Input
-                          type="number"
-                          placeholder={placeholder}
-                          value={constraints[key] ?? ''}
-                          onChange={(e) => updateConstraint(key, e.target.value)}
-                          className="h-8 bg-zinc-800 text-sm text-white placeholder:text-zinc-500 focus:border-emerald-500 border-zinc-700"
-                        />
-                        <span className="text-xs text-zinc-600">{hint}</span>
-                      </div>
-                    ))}
+              <div className="mt-6">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground">
+                    Fairness constraints
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="rounded-full border-border bg-muted/80 text-xs text-muted-foreground"
+                  >
+                    All optional
+                  </Badge>
+                </div>
+                <p className="mt-1 mb-3 text-xs text-muted-foreground">
+                  Leave blank to use default values
+                </p>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setConstraintsExpanded((v) => !v)}
+                  className="w-full justify-start text-xs text-muted-foreground hover:text-foreground"
+                >
+                  <ChevronDown
+                    className={`h-4 w-4 shrink-0 transition-transform duration-200 ${constraintsExpanded ? 'rotate-180' : ''}`}
+                    aria-hidden
+                  />
+                  Advanced constraints
+                </Button>
+
+                <div
+                  className="overflow-hidden transition-all duration-300 ease-in-out"
+                  style={{ maxHeight: constraintsExpanded ? 400 : 0 }}
+                >
+                  <div className="mt-3 rounded-2xl border border-border bg-card/50 p-3">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {CONSTRAINT_FIELDS.map(({ key, label, placeholder, hint }) => (
+                        <div key={key} className="flex flex-col gap-1">
+                          <label className="text-xs text-muted-foreground">{label}</label>
+                          <Input
+                            type="number"
+                            placeholder={placeholder}
+                            value={constraints[key] ?? ''}
+                            onChange={(e) => updateConstraint(key, e.target.value)}
+                            className="h-8 bg-input text-sm text-foreground placeholder:text-muted-foreground focus:border-primary border-border"
+                          />
+                          <span className="text-xs text-muted-foreground">{hint}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <Button
+                type="button"
+                onClick={submitAnalysis}
+                disabled={!selectedFile || uploading}
+                className="mt-4 h-10 w-full disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                    Analyzing...
+                  </>
+                ) : (
+                  <>
+                    Analyze farms
+                    <ArrowRight className="h-4 w-4" aria-hidden />
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:mt-8 sm:gap-3">
+              {OUTPUT_PILLS.map(({ Icon, label }) => (
+                <Badge
+                  key={label}
+                  variant="outline"
+                  className="cursor-default rounded-full border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground sm:px-4"
+                >
+                  <Icon className="h-3.5 w-3.5" aria-hidden />
+                  {label}
+                </Badge>
+              ))}
             </div>
 
             <Button
               type="button"
-              onClick={submitAnalysis}
-              disabled={!selectedFile || uploading}
-              className="mt-4 h-10 w-full rounded-xl bg-emerald-600 font-medium text-white transition-colors hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-40"
+              variant="link"
+              size="sm"
+              onClick={loadMockData}
+              className="mt-6 text-xs text-muted-foreground hover:text-foreground"
             >
-              {uploading ? (
-                <>
-                  <span className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden />
-                  Analyzing...
-                </>
-              ) : (
-                'Analyze Farms →'
-              )}
+              Load sample data
             </Button>
-            <p className="mt-2 text-xs text-zinc-600">
-              Sending to: ngrok-free.app
-            </p>
           </div>
-
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            {OUTPUT_PILLS.map(({ icon, label }) => (
-              <Badge
-                key={label}
-                variant="outline"
-                className="cursor-default rounded-full border-zinc-700 bg-zinc-900 px-4 py-1.5 text-xs font-medium text-zinc-300"
-              >
-                {icon} {label}
-              </Badge>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={loadMockData}
-            className="mt-6 text-xs text-zinc-500 underline hover:text-zinc-400"
-          >
-            Load sample data
-          </button>
         </div>
       </div>
 
       {uploading && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-zinc-950/95 text-zinc-100"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-background/95 text-foreground"
           role="status"
           aria-live="polite"
           aria-label="Analyzing farms"
         >
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
-          <p className="text-lg font-medium">Analyzing farms...</p>
+          <Loader2 className="h-10 w-10 animate-spin text-primary" aria-hidden />
+          <p className="text-base font-medium sm:text-lg">Analyzing farms...</p>
         </div>
       )}
     </div>

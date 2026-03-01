@@ -26,24 +26,24 @@ export default function YieldCard({
   const ringColor = getRingColor(s)
 
   return (
-    <Card className="h-[200px] overflow-hidden border-zinc-800 bg-zinc-900 transition-shadow hover:shadow-lg hover:shadow-black/20">
+    <Card className="h-[200px] overflow-hidden rounded-2xl border-border bg-card transition-shadow hover:shadow-lg hover:shadow-black/20">
       <CardHeader className="space-y-1 p-4 pb-0">
         <div className="flex flex-wrap items-center gap-2">
-          <CardTitle className="text-base font-semibold text-zinc-100">
+          <CardTitle className="text-base font-semibold text-foreground">
             {farm_id ?? '—'}
           </CardTitle>
           {region && (
-            <Badge variant="outline" className="border-zinc-600 text-zinc-400 text-[10px]">
+            <Badge variant="outline" className="rounded-full border-border text-[10px] text-muted-foreground">
               {region}
             </Badge>
           )}
           {is_small && (
-            <Badge className="bg-teal-900/80 text-teal-300 border-0 text-[10px]">
-              Small Farm
+            <Badge className="rounded-full border-0 bg-primary/20 text-[10px] text-primary">
+              Small farm
             </Badge>
           )}
         </div>
-        <p className="text-xs text-zinc-500">{crop ?? '—'}</p>
+        <p className="text-xs text-muted-foreground">{crop ?? '—'}</p>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-4 pt-2">
         <div className="flex items-center gap-3">
@@ -56,7 +56,7 @@ export default function YieldCard({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="5"
-                className="text-zinc-700"
+                className="text-border"
               />
               <circle
                 cx="40"
@@ -80,11 +80,11 @@ export default function YieldCard({
           </div>
           <div className="min-w-0 flex-1">
             {farm_size_ha != null && (
-              <p className="text-[11px] text-zinc-500">{farm_size_ha} ha</p>
+              <p className="text-[11px] text-muted-foreground">{farm_size_ha} ha</p>
             )}
           </div>
         </div>
-        <Progress value={s * 100} className="h-1.5 [&>div]:bg-teal-500" />
+        <Progress value={s * 100} className="h-1.5 rounded-full [&>div]:rounded-full [&>div]:bg-primary" />
       </CardContent>
     </Card>
   )
