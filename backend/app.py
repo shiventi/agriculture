@@ -1,13 +1,34 @@
 import csv
 import io
-import math
+import os
+import numpy as np
 from flask import Flask, jsonify, request
 
 from longlat import fetch_open_meteo_metrics, default_season_dates
+from ml import load_model, predict as ml_predict
 from subsidize import allocate
 
 app = Flask(__name__)
 ALLOWED_ORIGIN = "https://agriequity.vercel.app"
+
+# The 11 feature keys longlat returns, in the exact order the ML model expects
+FEATURE_KEYS = [
+    "temperature_2m_season_mean_C",
+    "temperature_2m_max_season_max_C",
+    "temperature_2m_min_season_min_C",
+    "precipitation_season_sum_mm",
+    "et0_fao_evapotranspiration_season_sum_mm",
+    "vapour_pressure_deficit_season_mean_kPa",
+    "vapour_pressure_deficit_season_max_kPa",
+    "soil_moisture_rootzone_mean_m3m3",
+    "soil_moisture_rootzone_min_m3m3",
+    "shortwave_radiation_season_sum_MJ_m2",
+    "wind_gusts_10m_season_max_mps",
+]
+
+# Load the trained model once at startup
+_model_path = os.path.join(os.path.dirname(__file__), "farm_model.pth")
+_model, _X_min, _X_max, _y_min, _y_max = load_model(_model_path)
 
 
 def _clamp(value, lo, hi):
@@ -92,7 +113,7 @@ def analyze():
     if request.method == "OPTIONS":
         return ("", 204)
 
-    # 1. Parse budget
+    # ── 1. Parse budget ───────────────────────────────────────────────
     budget = (
         request.args.get("budget")
         or request.form.get("budget")
@@ -105,28 +126,24 @@ def analyze():
     except ValueError:
         return jsonify({"error": "budget must be a number"}), 400
 
-    # 2. Parse constraints (optional, with defaults)
+    # ── 2. Parse constraints (all optional, fall back to defaults) ────
     def _float_param(name, default):
-        val = (
-            request.args.get(name)
-            or request.form.get(name)
-            or (request.get_json(silent=True) or {}).get(name)
-        )
+        val = request.args.get(name) or (request.get_json(silent=True) or {}).get(name)
         try:
             return float(val) if val is not None else default
         except (ValueError, TypeError):
             return default
 
     constraints = {
-        "small_farm_min_share": _float_param("small_farm_min_share", 0.40),
-        "per_capita_ratio": _float_param("per_capita_ratio", 0.70),
-        "need_floor_dollars": _float_param("need_floor_dollars", 50000),
-        "max_single_farm_share": _float_param("max_single_farm_share", 0.30),
+        "small_farm_min_share":      _float_param("small_farm_min_share",      0.40),
+        "per_capita_ratio":          _float_param("per_capita_ratio",          0.70),
+        "need_floor_dollars":        _float_param("need_floor_dollars",        50000),
+        "max_single_farm_share":     _float_param("max_single_farm_share",     0.30),
         "high_risk_floor_threshold": _float_param("high_risk_floor_threshold", 75),
-        "high_risk_floor_amount": _float_param("high_risk_floor_amount", 25000),
+        "high_risk_floor_amount":    _float_param("high_risk_floor_amount",    25000),
     }
 
-    # 3. Parse CSV: farm_id,lat,lon,farm_size_ha,is_small,baseline_need
+    # ── 3. Parse CSV ──────────────────────────────────────────────────
     if "file" not in request.files or not request.files["file"].filename:
         return jsonify({"error": "CSV file is required"}), 400
 
@@ -140,26 +157,12 @@ def analyze():
     if missing:
         return jsonify({"error": f"CSV missing columns: {missing}"}), 400
 
-    # 4. Fetch weather metrics, build features lines, and collect yield/risk inputs.
+    # ── 4. Fetch weather for each farm and build feature matrix ───────
     start_date, end_date = default_season_dates()
-    ordered_metric_keys = [
-        "temperature_2m_season_mean_C",
-        "temperature_2m_max_season_max_C",
-        "temperature_2m_min_season_min_C",
-        "precipitation_season_sum_mm",
-        "et0_fao_evapotranspiration_season_sum_mm",
-        "vapour_pressure_deficit_season_mean_kPa",
-        "vapour_pressure_deficit_season_max_kPa",
-        "soil_moisture_rootzone_mean_m3m3",
-        "soil_moisture_rootzone_min_m3m3",
-        "shortwave_radiation_season_sum_MJ_m2",
-        "wind_gusts_10m_season_max_mps",
-    ]
-    results = []
-    output_lines = []
-    farms = []
-    yield_scores = []
-    risk_scores = []
+
+    farms        = []
+    feature_rows = []   # will become the (n, 11) numpy array for the ML model
+    weather_data = []
 
     for row in rows:
         try:
@@ -173,42 +176,37 @@ def analyze():
         except Exception as e:
             return jsonify({"error": f"Weather fetch failed for {row['farm_id']}: {str(e)}"}), 502
 
-        metric_values = [metrics.get(key) for key in ordered_metric_keys]
-        line = f"{row['farm_id']},{metric_values}"
-        print(line)
+        # Pull the 11 features out in the exact order the model was trained on
+        feature_vec = [metrics.get(k) for k in FEATURE_KEYS]
+        if any(v is None for v in feature_vec):
+            missing_keys = [FEATURE_KEYS[i] for i, v in enumerate(feature_vec) if v is None]
+            return jsonify({"error": f"Missing weather features for {row['farm_id']}: {missing_keys}"}), 500
 
-        risk_val = metrics.get("climate_risk_score")
-        if risk_val is None:
-            risk_val = _fallback_climate_risk_score(metrics)
-        yield_val = metrics.get("projected_yield_t_ha")
-        if yield_val is None:
-            yield_val = _fallback_projected_yield_t_ha(metrics, risk_val)
-        if yield_val is None or risk_val is None:
-            return jsonify({"error": f"Missing yield/risk for farm {row['farm_id']}"}), 500
+        feature_rows.append(feature_vec)
 
-        try:
-            farms.append(
-                {
-                    "farm_id": row["farm_id"],
-                    "is_small": int(row["is_small"]),
-                    "baseline_need": float(row["baseline_need"]),
-                }
-            )
-        except (ValueError, TypeError):
-            return jsonify({"error": f"Invalid is_small/baseline_need for farm {row['farm_id']}"}), 400
-        yield_scores.append(float(yield_val))
-        risk_scores.append(round(float(risk_val) * 100, 2))
-
-        results.append({
-            "farm_id": row["farm_id"],
-            "values": metric_values,
-            "line": line,
-            "projected_yield_t_ha": yield_val,
-            "climate_risk_score": risk_val,
+        farms.append({
+            "farm_id":       row["farm_id"],
+            "is_small":      int(row["is_small"]),
+            "baseline_need": float(row["baseline_need"]),
         })
-        output_lines.append(line)
 
-    # 5. Allocate subsidies using budget + constraints + yield/risk.
+        weather_data.append({
+            "farm_id": row["farm_id"],
+            "metrics": metrics,
+        })
+
+    # ── 5. Run ML model → yield (t/ha) + risk (0-100) ─────────────────
+    X = np.array(feature_rows, dtype=np.float32)
+
+    try:
+        yield_scores, risk_scores = ml_predict(
+            _model, X, _X_min, _X_max, _y_min, _y_max
+        )
+    except Exception as e:
+        return jsonify({"error": f"ML prediction failed: {str(e)}"}), 500
+
+    # ── 6. Allocate subsidies ─────────────────────────────────────────
+    # risk_scores already come out of ml.predict as 0-100
     try:
         allocation = allocate(
             yield_scores=yield_scores,
@@ -220,13 +218,12 @@ def analyze():
     except Exception as e:
         return jsonify({"error": f"Allocation failed: {str(e)}"}), 500
 
+    # ── 7. Return to frontend ─────────────────────────────────────────
     return jsonify({
-        "budget": budget,
+        "budget":      budget,
         "constraints": constraints,
-        "metric_order": ordered_metric_keys,
-        "results": results,
-        "lines": output_lines,
-        "allocation": allocation,
+        "results":     allocation,    # [{ farm_id, before, after }, ...]
+        "weather":     weather_data,  # per-farm climate metrics
     })
 
 
