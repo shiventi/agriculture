@@ -17,12 +17,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
-      <body className="min-h-screen bg-background text-foreground antialiased flex flex-col transition-colors duration-200">
+      <body className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-foreground antialiased flex flex-col transition-colors duration-200">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <div className="grain-overlay" aria-hidden />
           <ResultsProvider>
             <Header />
-            <main className="relative z-10 flex-1">
+            <main className="relative z-10 flex-1 bg-zinc-50 dark:bg-zinc-950 transition-colors duration-200">
               {children}
             </main>
             <footer className="site-footer">

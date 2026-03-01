@@ -26,24 +26,24 @@ export default function YieldCard({
   const ringColor = getRingColor(s)
 
   return (
-    <Card className="h-[200px] overflow-hidden rounded-2xl border-border bg-card transition-shadow hover:shadow-lg hover:shadow-black/20">
+    <Card className="h-[200px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 transition-shadow hover:shadow-lg hover:shadow-black/20 dark:border-zinc-800 dark:bg-zinc-900">
       <CardHeader className="space-y-1 p-4 pb-0">
         <div className="flex flex-wrap items-center gap-2">
-          <CardTitle className="text-base font-semibold text-foreground">
+          <CardTitle className="text-base font-semibold text-zinc-900 dark:text-white">
             {farm_id ?? '—'}
           </CardTitle>
           {region && (
-            <Badge variant="outline" className="rounded-full border-border text-[10px] text-muted-foreground">
+            <Badge variant="outline" className="rounded-full border-zinc-300 text-[10px] text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
               {region}
             </Badge>
           )}
           {is_small && (
-            <Badge className="rounded-full border-0 bg-primary/20 text-[10px] text-primary">
+            <Badge className="rounded-full border-0 border-teal-200 bg-teal-50 text-[10px] text-teal-700 dark:border-teal-800 dark:bg-teal-900 dark:text-teal-300">
               Small farm
             </Badge>
           )}
         </div>
-        <p className="text-xs text-muted-foreground">{crop ?? '—'}</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">{crop ?? '—'}</p>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-4 pt-2">
         <div className="flex items-center gap-3">
@@ -56,7 +56,7 @@ export default function YieldCard({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="5"
-                className="text-border"
+                className="stroke-zinc-200 dark:stroke-zinc-700"
               />
               <circle
                 cx="40"
@@ -80,7 +80,7 @@ export default function YieldCard({
           </div>
           <div className="min-w-0 flex-1">
             {farm_size_ha != null && (
-              <p className="text-[11px] text-muted-foreground">{farm_size_ha} ha</p>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400">{farm_size_ha} ha</p>
             )}
           </div>
         </div>

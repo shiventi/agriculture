@@ -46,8 +46,8 @@ export default function FarmGrid({ results, isLoading, onBack }) {
 
   if (farms.length === 0) {
     return (
-      <Card className="farm-card rounded-2xl border-border bg-card">
-        <CardContent className="py-12 text-center text-muted-foreground">
+      <Card className="farm-card rounded-2xl border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900 transition-colors duration-200">
+        <CardContent className="py-12 text-center text-zinc-500 dark:text-muted-foreground">
           {isLoading ? 'Loading...' : 'No farm data to display.'}
         </CardContent>
       </Card>
@@ -56,24 +56,24 @@ export default function FarmGrid({ results, isLoading, onBack }) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <Card className="farm-card rounded-2xl border-border bg-card sm:mb-2">
+      <Card className="farm-card rounded-2xl border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:mb-2 transition-colors duration-200">
         <CardContent className="flex flex-row flex-wrap items-center justify-center gap-3 py-4 sm:justify-start sm:gap-4">
-          <span className="text-sm text-muted-foreground">
-            <span className="font-semibold text-foreground">{summary.totalFarms}</span> farms
+          <span className="text-sm text-zinc-500">
+            <span className="font-semibold text-emerald-600 dark:text-emerald-400">{summary.totalFarms}</span> farms
           </span>
-          <Separator orientation="vertical" className="hidden h-5 bg-border sm:block" />
-          <span className="text-sm text-muted-foreground">
-            <span className="font-semibold text-primary">{formatUSD(summary.totalBudget)}</span> total budget
+          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-border sm:block" />
+          <span className="text-sm text-zinc-500">
+            <span className="font-semibold text-emerald-600 dark:text-emerald-400">{formatUSD(summary.totalBudget)}</span> total budget
           </span>
-          <Separator orientation="vertical" className="hidden h-5 bg-border sm:block" />
-          <span className="text-sm text-muted-foreground">
-            <span className="font-semibold text-primary">{formatPercent(summary.avgYield)}</span> avg yield
+          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-border sm:block" />
+          <span className="text-sm text-zinc-500">
+            <span className="font-semibold text-emerald-600 dark:text-emerald-400">{formatPercent(summary.avgYield)}</span> avg yield
           </span>
-          <Separator orientation="vertical" className="hidden h-5 bg-border sm:block" />
-          <span className="text-sm text-muted-foreground">
-            <span className="font-semibold text-foreground">{summary.smallFarmShare}%</span> small farm share
+          <Separator orientation="vertical" className="hidden h-5 bg-zinc-300 dark:bg-border sm:block" />
+          <span className="text-sm text-zinc-500">
+            <span className="font-semibold text-zinc-900 dark:text-foreground">{summary.smallFarmShare}%</span> small farm share
           </span>
-          <Badge className="ml-auto w-full justify-center rounded-full border-primary/40 bg-primary/20 py-1.5 text-primary sm:w-auto sm:justify-start">
+          <Badge className="ml-auto w-full justify-center rounded-full border-emerald-200 bg-emerald-50 py-1.5 text-emerald-700 dark:border-primary/40 dark:bg-primary/20 dark:text-primary sm:w-auto sm:justify-start">
             <Check className="mr-1 h-3.5 w-3.5" aria-hidden />
             Fairness active
           </Badge>
@@ -87,7 +87,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
           return (
             <Card
               key={farmId}
-              className={`farm-card relative overflow-hidden rounded-2xl border border-border bg-card p-4 transition-all duration-300 sm:rounded-3xl ${accent.border} border-t-4`}
+              className={`farm-card relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-300 dark:border-zinc-700 dark:bg-zinc-900 sm:rounded-3xl ${accent.border} border-t-4`}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = `0 10px 40px -10px ${accent.shadow}`
               }}
@@ -102,17 +102,17 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                 }}
               />
               <span
-                className="pointer-events-none absolute right-3 top-2 select-none text-5xl font-black text-white/5 sm:text-6xl"
+                className="pointer-events-none absolute right-3 top-2 select-none text-5xl font-black text-zinc-900/5 sm:text-6xl dark:text-white/5"
                 aria-hidden
               >
                 {farmId}
               </span>
               <div className="relative mb-4 flex flex-wrap items-center gap-2">
                 <span className={`h-2 w-2 shrink-0 rounded-full ${accent.dot}`} aria-hidden />
-                <span className="font-bold text-foreground">{farmId}</span>
-                <span className="text-muted-foreground">{farm.crop ?? '—'}</span>
+                <span className="font-bold text-zinc-900 dark:text-white">{farmId}</span>
+                <span className="text-zinc-500 dark:text-zinc-400">{farm.crop ?? '—'}</span>
                 {farm.region && (
-                  <Badge variant="outline" className="rounded-full border-border text-[10px] text-muted-foreground">
+                  <Badge variant="outline" className="rounded-full border-zinc-300 text-[10px] text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
                     {farm.region}
                   </Badge>
                 )}

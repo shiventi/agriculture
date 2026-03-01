@@ -21,49 +21,16 @@
   box-sizing: border-box;
 }
 
+html {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
 body {
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-/* Light mode overrides (next-themes sets class="light" on html) */
-html.light body {
-  background-color: #f4f4f5; /* zinc-100 */
-  color: #18181b; /* zinc-900 */
-}
-
-html.light header {
-  background-color: #ffffff;
-  border-bottom: 1px solid #e4e4e7;
-}
-
-html.light .farm-card {
-  background-color: #ffffff;
-  border-color: #e4e4e7;
-}
-
-html.light .upload-zone {
-  background-color: #ffffff;
-  border-color: #e4e4e7;
-}
-
-html.light .text-zinc-400 { color: #52525b; }
-html.light .text-zinc-500 { color: #71717a; }
-html.light .text-white { color: #18181b; }
-html.light .text-zinc-300 { color: #3f3f46; }
-
-/* Light theme */
-html.theme-light body {
-  @apply text-deep-green;
-  background: radial-gradient(ellipse 100% 100% at 50% 50%, #f5f0e8 0%, #e8e0d5 100%);
-}
-html.theme-light .grain-overlay {
-  opacity: 0.06;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .grain-overlay {
@@ -87,9 +54,6 @@ html.theme-light .grain-overlay {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px -8px rgb(0 0 0 / 0.2), 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
-html.theme-light .dashboard-card {
-  border-color: rgba(26, 58, 42, 0.1);
-}
 
 .card-header-label {
   font-size: 11px;
@@ -108,9 +72,6 @@ html.theme-light .dashboard-card {
 .card-muted {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.5);
-}
-html.theme-light .card-muted {
-  color: rgba(26, 58, 42, 0.5);
 }
 
 /* YieldCard ring colors */
@@ -197,10 +158,14 @@ html.theme-light .card-muted {
 .site-footer {
   position: relative;
   z-index: 10;
-  border-top: 1px solid hsl(var(--border));
+  border-top: 1px solid #e4e4e7;
   padding: 0.75rem;
   text-align: center;
   font-size: 0.75rem;
+  color: #71717a;
+}
+.dark .site-footer {
+  border-top-color: hsl(var(--border));
   color: hsl(var(--muted-foreground));
 }
 
