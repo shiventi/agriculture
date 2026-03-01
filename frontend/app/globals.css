@@ -30,16 +30,250 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Light theme */
-html.theme-light body {
-  @apply text-deep-green;
-  background: radial-gradient(ellipse 100% 100% at 50% 50%, #f5f0e8 0%, #e8e0d5 100%);
+/* Back button: light mode overrides (dark uses inline classes) */
+html.theme-light .back-to-upload-btn {
+  color: #5a7a5a;
 }
-html.theme-light .page-bg {
-  background: transparent;
+html.theme-light .back-to-upload-btn:hover {
+  color: #1a2e1a;
+}
+html.theme-light .back-to-upload-btn:hover svg {
+  color: #76a874;
+}
+.back-to-upload-btn span {
+  text-underline-offset: 2px;
+}
+.back-to-upload-btn:hover span {
+  text-decoration: underline;
+}
+
+/* Light theme – full palette (#f4f7f0 page, #1a2e1a primary text, #588157 accent) */
+html.theme-light body {
+  background-color: #f4f7f0;
+  color: #1a2e1a;
 }
 html.theme-light .grain-overlay {
   opacity: 0.06;
+}
+
+/* Header */
+html.theme-light .site-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #d4e0cc;
+  box-shadow: 0 1px 3px rgba(88, 129, 87, 0.08);
+}
+html.theme-light .logo-agri {
+  color: #1a2e1a;
+}
+html.theme-light .logo-ai {
+  color: #588157;
+}
+html.theme-light .header-ping-dot .rounded-full.bg-primary,
+html.theme-light .header-ping-dot .animate-ping {
+  background-color: #588157 !important;
+}
+html.theme-light .theme-toggle-btn,
+html.theme-light .header-amd-badge {
+  background: #f0f4ec;
+  border-color: #d4e0cc;
+  color: #5a7a5a;
+}
+html.theme-light .theme-toggle-btn:hover,
+html.theme-light .header-amd-badge:hover {
+  color: #1a2e1a;
+}
+
+/* Hero banner */
+html.theme-light .hero-banner {
+  background-color: #e8f0e4;
+  border-bottom: 1px solid #d4e0cc;
+}
+html.theme-light .hero-banner h2 {
+  color: #1a2e1a;
+}
+html.theme-light .hero-banner p.text-muted-foreground,
+html.theme-light .hero-banner .text-xs.text-muted-foreground {
+  color: #5a7a5a;
+}
+html.theme-light .hero-banner .text-xl.font-bold,
+html.theme-light .hero-banner .text-2xl {
+  color: #588157;
+}
+html.theme-light .hero-banner [class*="border-r"] {
+  border-color: #d4e0cc;
+}
+
+/* Upload zone */
+html.theme-light .upload-card {
+  background-color: #ffffff;
+  border: 1px solid #d4e0cc;
+  box-shadow: 0 4px 16px rgba(88, 129, 87, 0.08);
+}
+html.theme-light .drop-zone {
+  background-color: #f4f7f0;
+  border: 2px dashed #c4d4bc;
+}
+html.theme-light .drop-zone:hover {
+  border-color: #588157;
+  background-color: #edf3e8;
+}
+html.theme-light .upload-card input[type="number"],
+html.theme-light .upload-card .bg-input {
+  background: #f4f7f0;
+  border-color: #d4e0cc;
+  color: #1a2e1a;
+}
+html.theme-light .upload-card label.text-foreground,
+html.theme-light .upload-card .text-foreground {
+  color: #1a2e1a;
+}
+html.theme-light .upload-card .text-muted-foreground,
+html.theme-light .upload-card label.text-xs {
+  color: #5a7a5a;
+}
+html.theme-light .constraints-wrapper {
+  background: #f4f7f0;
+  border-color: #d4e0cc;
+}
+html.theme-light .upload-card button.bg-primary {
+  background: #588157 !important;
+}
+html.theme-light .upload-card button.bg-primary:hover:not(:disabled) {
+  background: #4a6e47 !important;
+}
+html.theme-light .upload-card .text-primary {
+  color: #588157;
+}
+
+/* Farm grid */
+html.theme-light .farm-grid-wrapper {
+  background-color: transparent;
+}
+html.theme-light .summary-bar {
+  background-color: #ffffff;
+  border: 1px solid #d4e0cc;
+  box-shadow: 0 1px 4px rgba(88, 129, 87, 0.06);
+}
+html.theme-light .summary-bar .font-semibold.text-primary {
+  color: #588157;
+}
+html.theme-light .farm-panel {
+  background-color: #ffffff;
+  border: 1px solid #d4e0cc;
+  box-shadow: 0 2px 8px rgba(88, 129, 87, 0.08);
+}
+html.theme-light .farm-panel:hover {
+  box-shadow: 0 4px 16px rgba(88, 129, 87, 0.15);
+}
+html.theme-light .farm-panel .font-bold.text-foreground {
+  color: #1a2e1a;
+}
+html.theme-light .farm-panel .text-muted-foreground {
+  color: #5a7a5a;
+}
+
+/* Yield card */
+html.theme-light .yield-card {
+  background-color: #f0f4ec;
+  border: 1px solid #d4e0cc;
+}
+html.theme-light .yield-card .text-base.font-semibold,
+html.theme-light .yield-card .text-foreground {
+  color: #1a2e1a;
+}
+html.theme-light .yield-card .text-muted-foreground {
+  color: #5a7a5a;
+}
+html.theme-light .yield-card .text-border {
+  color: #d4e0cc;
+}
+html.theme-light .yield-card .relative.overflow-hidden.rounded-full {
+  background-color: #e0eada !important;
+}
+html.theme-light .yield-card .relative.overflow-hidden.rounded-full > div {
+  background: #588157 !important;
+}
+html.theme-light .yield-card .bg-primary\/20.text-primary,
+html.theme-light .yield-card .border-0.bg-primary\/20 {
+  background: #e8f0e4 !important;
+  color: #588157 !important;
+  border: 1px solid #c4d4bc !important;
+}
+
+/* Climate card */
+html.theme-light .climate-card {
+  background-color: #f0f4ec;
+  border: 1px solid #d4e0cc;
+}
+html.theme-light .climate-card .text-foreground {
+  color: #1a2e1a;
+}
+html.theme-light .climate-card .text-border {
+  color: #d4e0cc;
+}
+html.theme-light .climate-card .text-muted-foreground {
+  color: #5a7a5a;
+}
+html.theme-light .risk-badge-low {
+  background: #e8f0e4 !important;
+  color: #3a7a3a !important;
+  border-color: #b8d4b8 !important;
+}
+html.theme-light .risk-badge-moderate {
+  background: #fdf3dc !important;
+  color: #a07820 !important;
+  border: 1px solid #e8d080 !important;
+}
+html.theme-light .risk-badge-high {
+  background: #fdecea !important;
+  color: #c0392b !important;
+  border: 1px solid #f0b0a8 !important;
+}
+
+/* Subsidy card */
+html.theme-light .subsidy-card {
+  background-color: #edf5e8;
+  border: 1px solid #c4d4bc;
+}
+html.theme-light .subsidy-card .text-foreground {
+  color: #1a2e1a;
+}
+html.theme-light .subsidy-card .text-2xl.font-bold.text-primary {
+  color: #c49a30 !important;
+}
+html.theme-light .subsidy-card .text-muted-foreground {
+  color: #5a7a5a;
+}
+html.theme-light .subsidy-card .relative.overflow-hidden.rounded-full {
+  background-color: #d4e0cc !important;
+}
+html.theme-light .subsidy-card .relative.overflow-hidden.rounded-full > div {
+  background: #588157 !important;
+}
+html.theme-light .subsidy-card .border-primary\/50.bg-primary\/20,
+html.theme-light .subsidy-card .w-fit.rounded-full.border.border-primary\/50.bg-primary\/20 {
+  background: #e8f0e4 !important;
+  color: #588157 !important;
+  border-color: #c4d4bc !important;
+}
+
+/* Reasoning card */
+html.theme-light .reasoning-card {
+  background-color: #f0f4ec;
+  border: 1px solid #d4e0cc;
+  border-left-color: #c49a30 !important;
+}
+html.theme-light .reasoning-card .text-foreground {
+  color: #1a2e1a;
+}
+html.theme-light .reasoning-card .text-muted-foreground {
+  color: #5a7a5a;
+}
+
+/* Site footer */
+html.theme-light .site-footer {
+  border-top-color: #d4e0cc;
+  color: #5a7a5a;
 }
 
 .grain-overlay {
@@ -233,28 +467,5 @@ html.theme-light .card-muted {
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
     --radius: 0.5rem;
-  }
-
-  /* Light theme: cream background, deep-green text */
-  html.theme-light {
-    --background: 40 33% 95%;
-    --foreground: 150 38% 17%;
-    --card: 40 25% 98%;
-    --card-foreground: 150 38% 17%;
-    --popover: 40 25% 98%;
-    --popover-foreground: 150 38% 17%;
-    --primary: 82 45% 28%;
-    --primary-foreground: 40 33% 95%;
-    --secondary: 40 20% 92%;
-    --secondary-foreground: 150 38% 17%;
-    --muted: 40 20% 92%;
-    --muted-foreground: 150 20% 40%;
-    --accent: 82 35% 88%;
-    --accent-foreground: 150 38% 17%;
-    --destructive: 0 62.8% 45%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 150 15% 85%;
-    --input: 150 15% 85%;
-    --ring: 82 45% 28%;
   }
 }

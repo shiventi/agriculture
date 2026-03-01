@@ -3,10 +3,7 @@
 import { useTheme } from 'next-themes'
 import { useEffect } from 'react'
 
-/**
- * next-themes uses class "light" or "dark" on html.
- * Our CSS uses html.theme-light for light theme overrides, so we sync that class.
- */
+/** Sync next-themes "light" to html.theme-light for CSS overrides */
 export function ThemeClassSync() {
   const { theme, resolvedTheme } = useTheme()
 

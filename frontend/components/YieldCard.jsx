@@ -6,9 +6,9 @@ import { Progress } from '@/components/ui/progress'
 import { formatPercent } from '@/lib/format'
 
 function getRingColor(score) {
-  if (score < 0.4) return '#c0392b'
-  if (score <= 0.7) return '#d4a843'
-  return '#76a874'
+  if (score < 0.4) return '#ef4444'
+  if (score <= 0.7) return '#f59e0b'
+  return '#14b8a6'
 }
 
 export default function YieldCard({
@@ -26,24 +26,24 @@ export default function YieldCard({
   const ringColor = getRingColor(s)
 
   return (
-    <Card className="h-[200px] overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 transition-shadow duration-200 hover:shadow-lg hover:shadow-black/20 dark:border-[#588157]/30 dark:bg-[#2d4433]">
+    <Card className="yield-card h-[200px] overflow-hidden rounded-2xl border-border bg-card transition-shadow hover:shadow-lg hover:shadow-black/20">
       <CardHeader className="space-y-1 p-4 pb-0">
         <div className="flex flex-wrap items-center gap-2">
-          <CardTitle className="text-base font-semibold text-zinc-900 dark:text-[#f0f4ee]">
+          <CardTitle className="text-base font-semibold text-foreground">
             {farm_id ?? '—'}
           </CardTitle>
           {region && (
-            <Badge variant="outline" className="rounded-full border-zinc-300 text-[10px] text-zinc-500 dark:border-[#588157]/30 dark:text-[#a8bfa8]">
+            <Badge variant="outline" className="rounded-full border-border text-[10px] text-muted-foreground">
               {region}
             </Badge>
           )}
           {is_small && (
-            <Badge className="rounded-full border-0 border-teal-200 bg-teal-50 text-[10px] text-teal-700 dark:border-[#588157]/30 dark:bg-[#588157]/20 dark:text-[#76a874]">
+            <Badge className="rounded-full border-0 bg-primary/20 text-[10px] text-primary">
               Small farm
             </Badge>
           )}
         </div>
-        <p className="text-xs text-zinc-500 dark:text-[#a8bfa8]">{crop ?? '—'}</p>
+        <p className="text-xs text-muted-foreground">{crop ?? '—'}</p>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-4 pt-2">
         <div className="flex items-center gap-3">
@@ -56,7 +56,7 @@ export default function YieldCard({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="5"
-                className="stroke-zinc-200 dark:stroke-[#588157]/25"
+                className="text-border"
               />
               <circle
                 cx="40"
@@ -80,11 +80,11 @@ export default function YieldCard({
           </div>
           <div className="min-w-0 flex-1">
             {farm_size_ha != null && (
-              <p className="text-[11px] text-zinc-500 dark:text-[#a8bfa8]">{farm_size_ha} ha</p>
+              <p className="text-[11px] text-muted-foreground">{farm_size_ha} ha</p>
             )}
           </div>
         </div>
-        <Progress value={s * 100} className="h-1.5 rounded-full bg-zinc-200 dark:bg-[#2d4433] [&>div]:rounded-full [&>div]:bg-primary [&>div]:dark:bg-[#588157]" />
+        <Progress value={s * 100} className="h-1.5 rounded-full [&>div]:rounded-full [&>div]:bg-primary" />
       </CardContent>
     </Card>
   )

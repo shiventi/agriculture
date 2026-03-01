@@ -59,12 +59,12 @@ export default function UploadZone({
       const params = new URLSearchParams()
       params.append('fairness_on', 'true')
       if (budget) params.append('budget', budget)
-      if (constraints.small_farm_min_share) params.append('small_farm_min_share', constraints.small_farm_min_share)
-      if (constraints.per_capita_ratio) params.append('per_capita_ratio', constraints.per_capita_ratio)
-      if (constraints.need_floor_dollars) params.append('need_floor_dollars', constraints.need_floor_dollars)
-      if (constraints.max_single_farm_share) params.append('max_single_farm_share', constraints.max_single_farm_share)
-      if (constraints.high_risk_floor_threshold) params.append('high_risk_floor_threshold', constraints.high_risk_floor_threshold)
-      if (constraints.high_risk_floor_amount) params.append('high_risk_floor_amount', constraints.high_risk_floor_amount)
+      if (constraints?.small_farm_min_share) params.append('small_farm_min_share', constraints.small_farm_min_share)
+      if (constraints?.per_capita_ratio) params.append('per_capita_ratio', constraints.per_capita_ratio)
+      if (constraints?.need_floor_dollars) params.append('need_floor_dollars', constraints.need_floor_dollars)
+      if (constraints?.max_single_farm_share) params.append('max_single_farm_share', constraints.max_single_farm_share)
+      if (constraints?.high_risk_floor_threshold) params.append('high_risk_floor_threshold', constraints.high_risk_floor_threshold)
+      if (constraints?.high_risk_floor_amount) params.append('high_risk_floor_amount', constraints.high_risk_floor_amount)
 
       const response = await fetch(`${API_BASE}/analyze?${params.toString()}`, {
         method: 'POST',
@@ -137,21 +137,21 @@ export default function UploadZone({
   }
 
   return (
-    <div className="min-h-[50vh] bg-zinc-50 dark:bg-[#2d4433] sm:min-h-[60vh] transition-colors duration-200">
+    <div className="min-h-[50vh] bg-background sm:min-h-[60vh]">
       <div className="mx-auto mt-8 max-w-2xl px-4 sm:mt-12 sm:px-6 md:mt-16 md:max-w-3xl md:p-8 lg:mt-24 lg:p-12">
-        <div className="upload-zone rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-[#588157]/30 dark:bg-[#3a5a40] sm:p-8 md:p-10 transition-colors duration-200">
+        <div className="upload-card rounded-3xl border border-border bg-card p-6 sm:p-8 md:p-10">
           <div className="flex flex-col items-center text-center">
-            <Wheat className="h-10 w-10 shrink-0 text-emerald-600 dark:text-[#76a874] sm:h-12 sm:w-12" aria-hidden />
-            <h1 className="mt-3 text-xl font-bold text-zinc-900 dark:text-[#f0f4ee] sm:mt-4 sm:text-2xl">AgriEquity AI</h1>
-            <p className="mt-2 text-sm text-zinc-500 dark:text-[#a8bfa8]">
+            <Wheat className="h-10 w-10 shrink-0 text-primary sm:h-12 sm:w-12" aria-hidden />
+            <h1 className="mt-3 text-xl font-bold text-foreground sm:mt-4 sm:text-2xl">AgriEquity AI</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
               Upload your farms CSV to begin analysis
             </p>
 
             <div
-              className={`mt-4 w-full cursor-pointer rounded-2xl border-2 border-dashed bg-zinc-50 p-6 text-center transition-colors duration-200 hover:border-emerald-500 dark:border-[#588157]/40 dark:bg-[#2d4433] dark:hover:border-[#76a874] dark:hover:bg-[#344d3a] sm:mt-6 sm:p-8 md:p-10 ${
+              className={`drop-zone mt-4 w-full cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-colors sm:mt-6 sm:p-8 md:p-10 ${
                 isDragging
-                  ? 'border-emerald-500 bg-emerald-50 dark:border-[#76a874] dark:bg-[#344d3a]'
-                  : 'border-zinc-300'
+                  ? 'border-primary bg-primary/10'
+                  : 'border-input hover:border-primary'
               }`}
               onDrop={onDrop}
               onDragOver={onDragOver}
@@ -175,11 +175,11 @@ export default function UploadZone({
                 onChange={onInputChange}
                 disabled={uploading}
               />
-              <FileSpreadsheet className="mx-auto h-8 w-8 text-zinc-600 dark:text-[#f0f4ee] sm:h-10 sm:w-10" aria-hidden />
-              <p className="mt-2 text-zinc-600 dark:text-[#f0f4ee] sm:mt-3">Drop CSV here</p>
-              <p className="mt-1 text-sm text-zinc-500 dark:text-[#a8bfa8]">or click to browse</p>
+              <FileSpreadsheet className="mx-auto h-8 w-8 text-muted-foreground sm:h-10 sm:w-10" aria-hidden />
+              <p className="mt-2 text-foreground sm:mt-3">Drop CSV here</p>
+              <p className="mt-1 text-sm text-muted-foreground">or click to browse</p>
               {selectedFile && (
-                <p className="mt-2 text-xs text-emerald-600 dark:text-[#76a874]">
+                <p className="mt-2 text-xs text-primary">
                   Selected: {selectedFile.name}
                 </p>
               )}
@@ -191,7 +191,7 @@ export default function UploadZone({
                   {error}
                 </p>
                 {errorDetail && (
-                  <p className="mt-1 font-mono text-xs text-zinc-500 dark:text-zinc-400 break-all">
+                  <p className="mt-1 font-mono text-xs text-muted-foreground break-all">
                     {errorDetail}
                   </p>
                 )}
@@ -199,45 +199,45 @@ export default function UploadZone({
             )}
 
             <div className="mt-6 w-full text-left sm:mt-8">
-              <p className="text-xs text-zinc-500 dark:text-[#a8bfa8]">
+              <p className="text-xs text-muted-foreground">
                 Configuration
               </p>
-              <Separator className="mb-4 mt-2 bg-zinc-200 dark:bg-[#588157]/30" />
+              <Separator className="mb-4 mt-2 bg-border" />
 
               <div className="flex flex-col gap-1">
-                <label className="text-sm font-medium text-zinc-700 dark:text-[#a8bfa8]">
+                <label className="text-sm font-medium text-foreground">
                   Total budget
                 </label>
                 <div className="relative mt-1">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 dark:text-[#a8bfa8]">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                     $
                   </span>
                   <Input
                     type="number"
                     placeholder="1000000"
-                    value={budget}
-                    onChange={(e) => setBudget(e.target.value)}
-                    className="h-9 border-zinc-300 bg-white pl-8 text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:ring-emerald-500/20 dark:border-[#588157]/30 dark:bg-[#2d4433] dark:text-[#f0f4ee] dark:placeholder:text-[#a8bfa8]"
+                    value={budget ?? ''}
+                    onChange={(e) => setBudget?.(e.target.value)}
+                    className="h-9 bg-input pl-8 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-ring border-border"
                   />
                 </div>
-                <span className="mt-1 text-xs text-zinc-400 dark:text-[#a8bfa8]/60">
+                <span className="mt-1 text-xs text-muted-foreground">
                   Default: $1,000,000
                 </span>
               </div>
 
               <div className="mt-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-zinc-700 dark:text-[#a8bfa8]">
+                  <span className="text-sm font-medium text-foreground">
                     Fairness constraints
                   </span>
                   <Badge
                     variant="outline"
-                    className="rounded-full border-zinc-300 bg-zinc-100 text-xs text-zinc-500 dark:border-[#588157]/30 dark:bg-[#3a5a40] dark:text-[#a8bfa8]"
+                    className="rounded-full border-border bg-muted/80 text-xs text-muted-foreground"
                   >
                     All optional
                   </Badge>
                 </div>
-                <p className="mt-1 mb-3 text-xs text-zinc-400 dark:text-[#a8bfa8]/60">
+                <p className="mt-1 mb-3 text-xs text-muted-foreground">
                   Leave blank to use default values
                 </p>
 
@@ -246,7 +246,7 @@ export default function UploadZone({
                   variant="ghost"
                   size="sm"
                   onClick={() => setConstraintsExpanded((v) => !v)}
-                  className="w-full justify-start text-xs text-zinc-500 hover:text-zinc-900 dark:text-[#a8bfa8] dark:hover:text-[#f0f4ee]"
+                  className="w-full justify-start text-xs text-muted-foreground hover:text-foreground"
                 >
                   <ChevronDown
                     className={`h-4 w-4 shrink-0 transition-transform duration-200 ${constraintsExpanded ? 'rotate-180' : ''}`}
@@ -259,19 +259,19 @@ export default function UploadZone({
                   className="overflow-hidden transition-all duration-300 ease-in-out"
                   style={{ maxHeight: constraintsExpanded ? 400 : 0 }}
                 >
-                  <div className="mt-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-3 dark:border-[#588157]/25 dark:bg-[#2d4433]">
+                  <div className="constraints-wrapper mt-3 rounded-2xl border border-border bg-card/50 p-3">
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {CONSTRAINT_FIELDS.map(({ key, label, placeholder, hint }) => (
                         <div key={key} className="flex flex-col gap-1">
-                          <label className="text-xs text-zinc-500 dark:text-[#a8bfa8]">{label}</label>
+                          <label className="text-xs text-muted-foreground">{label}</label>
                           <Input
                             type="number"
                             placeholder={placeholder}
-                            value={constraints[key] ?? ''}
-                            onChange={(e) => updateConstraint(key, e.target.value)}
-                            className="h-8 border-zinc-300 bg-white text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 dark:border-[#588157]/30 dark:bg-[#2d4433] dark:text-[#f0f4ee] dark:placeholder:text-[#a8bfa8]"
+                            value={constraints?.[key] ?? ''}
+                            onChange={(e) => updateConstraint?.(key, e.target.value)}
+                            className="h-8 bg-input text-sm text-foreground placeholder:text-muted-foreground focus:border-primary border-border"
                           />
-                          <span className="text-xs text-zinc-400 dark:text-[#a8bfa8]/60">{hint}</span>
+                          <span className="text-xs text-muted-foreground">{hint}</span>
                         </div>
                       ))}
                     </div>
@@ -283,7 +283,7 @@ export default function UploadZone({
                 type="button"
                 onClick={submitAnalysis}
                 disabled={!selectedFile || uploading}
-                className="mt-4 h-10 w-full bg-emerald-600 text-white hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#588157] dark:hover:bg-[#6a9868] dark:text-[#f0f4ee]"
+                className="mt-4 h-10 w-full disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {uploading ? (
                   <>
@@ -304,7 +304,7 @@ export default function UploadZone({
                 <Badge
                   key={label}
                   variant="outline"
-                  className="cursor-default rounded-full border-zinc-300 bg-zinc-100 px-3 py-1.5 text-xs font-medium text-zinc-600 dark:border-[#588157]/30 dark:bg-[#3a5a40] dark:text-[#a8bfa8] dark:hover:text-[#f0f4ee] sm:px-4"
+                  className="cursor-default rounded-full border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground sm:px-4"
                 >
                   <Icon className="h-3.5 w-3.5" aria-hidden />
                   {label}
@@ -317,7 +317,7 @@ export default function UploadZone({
               variant="link"
               size="sm"
               onClick={loadMockData}
-              className="mt-6 text-xs text-zinc-500 hover:text-zinc-900 dark:text-[#a8bfa8] dark:hover:text-[#f0f4ee]"
+              className="mt-6 text-xs text-muted-foreground hover:text-foreground"
             >
               Load sample data
             </Button>
@@ -327,12 +327,12 @@ export default function UploadZone({
 
       {uploading && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-zinc-50/95 text-zinc-900 dark:bg-[#2d4433]/95 dark:text-[#f0f4ee]"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-background/95 text-foreground"
           role="status"
           aria-live="polite"
           aria-label="Analyzing farms"
         >
-          <Loader2 className="h-10 w-10 animate-spin text-emerald-600 dark:text-[#76a874]" aria-hidden />
+          <Loader2 className="h-10 w-10 animate-spin text-primary" aria-hidden />
           <p className="text-base font-medium sm:text-lg">Analyzing farms...</p>
         </div>
       )}
