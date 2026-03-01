@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Check, LayoutGrid, Table2 } from 'lucide-react'
+import { BarChart2, Check, Info, LayoutGrid, Table2, Users } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -41,6 +41,15 @@ function getAccent(index) {
     border: ACCENT_BORDERS[index] ?? FALLBACK_BORDER,
     dot: ACCENT_DOTS[index] ?? FALLBACK_DOT,
   }
+}
+
+/** Shorten farm ID for display, e.g. FARM_CA_001 → CA 001 */
+function shortFarmLabel(farmId) {
+  if (farmId == null || farmId === '') return '—'
+  const s = String(farmId).trim()
+  const parts = s.split('_')
+  if (parts.length > 1 && parts[0].toUpperCase() === 'FARM') return parts.slice(1).join(' ')
+  return s
 }
 
 export default function FarmGrid({ results, isLoading, onBack }) {
@@ -173,14 +182,39 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                   <th className="px-4 py-3 text-center font-semibold text-foreground">Small</th>
                   <th className="px-4 py-3 text-right font-semibold text-foreground">Expected Yield (ha)</th>
                   <th className="px-4 py-3 text-right font-semibold text-foreground">Climate risk</th>
-                  <th className="px-4 py-3 text-right font-semibold text-foreground">Subsidy (before)</th>
-                  <th className="px-4 py-3 text-right font-semibold text-foreground">Subsidy (after)</th>
+                  <th className="px-4 py-3 text-right font-semibold text-foreground">
+                    <span className="inline-flex items-center gap-1">
+                      Subsidy (before)
+                      <TooltipProvider delayDuration={200}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="h-3.5 w-3.5 cursor-help text-muted-foreground" aria-label="Info" />
+                          </TooltipTrigger>
+                          <TooltipContent side="top">Subsidy before fairness</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </span>
+                  </th>
+                  <th className="px-4 py-3 text-right font-semibold text-foreground">
+                    <span className="inline-flex items-center gap-1">
+                      Subsidy (after)
+                      <TooltipProvider delayDuration={200}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="h-3.5 w-3.5 cursor-help text-muted-foreground" aria-label="Info" />
+                          </TooltipTrigger>
+                          <TooltipContent side="top">Subsidy after fairness</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </span>
+                  </th>
                   <th className="max-w-[220px] px-4 py-3 text-left font-semibold text-foreground">Reasoning</th>
                 </tr>
               </thead>
               <tbody>
                 {farms.map((farm, index) => {
                   const farmId = farm?.farm_id ?? farm?.id ?? '—'
+                  const farmLabel = shortFarmLabel(farmId)
                   const riskScore = farm?.climate_risk_score
                   const riskNum = riskScore != null ? (Number(riskScore) * 100).toFixed(0) : '—'
                   const expectedYieldHa = farm?.expected_yield_ha ?? (farm?.yield_score != null ? farm.yield_score * 15 : null)
@@ -189,7 +223,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                       key={farmId}
                       className={`farms-table-row border-b border-border ${index % 2 === 0 ? 'bg-card' : 'bg-muted/20'}`}
                     >
-                      <td className="px-4 py-2.5 text-base font-medium text-foreground">{farmId}</td>
+                      <td className="px-4 py-2.5 text-base font-medium text-foreground" title={farmId}>{farmLabel}</td>
                       <td className="px-4 py-2.5 text-right text-muted-foreground">{farm?.farm_size_ha ?? '—'}</td>
                       <td className="px-4 py-2.5 text-center">{farm?.is_small ? 'Yes' : 'No'}</td>
                       <td className="px-4 py-2.5 text-right text-foreground">{formatHa(expectedYieldHa)}</td>
@@ -220,6 +254,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
           {farms.map((farm, index) => {
             const accent = getAccent(index)
             const farmId = farm?.farm_id ?? farm?.id ?? '—'
+            const farmLabel = shortFarmLabel(farmId)
             return (
               <Card
                 key={farmId}
@@ -230,14 +265,14 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                 }}
               >
                 <span
-                  className="farm-panel-watermark pointer-events-none absolute right-3 top-2 select-none text-6xl font-black dark:text-white/5 text-black/5"
+                  className="farm-panel-watermark pointer-events-none absolute right-3 top-2 select-none text-5xl font-black dark:text-white/5 text-black/5"
                   aria-hidden
                 >
-                  {farmId}
+                  {farmLabel}
                 </span>
                 <div className="relative mb-3 flex flex-wrap items-center gap-2">
                   <span className={`h-2 w-2 shrink-0 rounded-full ${accent.dot}`} aria-hidden />
-                  <span className="text-lg font-bold text-foreground">{farmId}</span>
+                  <span className="text-lg font-bold text-foreground">{farmLabel}</span>
                   {farm?.crop != null && (
                     <span className="text-sm text-muted-foreground">{farm.crop}</span>
                   )}
@@ -247,6 +282,22 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                     </Badge>
                   )}
                 </div>
+                {(summary.gini != null || summary.smallFarmShare != null) && (
+                  <div className="relative mb-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                    {summary.gini != null && !Number.isNaN(summary.gini) && (
+                      <span className="flex items-center gap-1">
+                        <BarChart2 className="h-3 w-3 shrink-0" aria-hidden />
+                        Gini {summary.gini.toFixed(2)}
+                      </span>
+                    )}
+                    {summary.smallFarmShare != null && !Number.isNaN(summary.smallFarmShare) && (
+                      <span className="flex items-center gap-1">
+                        <Users className="h-3 w-3 shrink-0" aria-hidden />
+                        {summary.smallFarmShare}% small farms
+                      </span>
+                    )}
+                  </div>
+                )}
                 <div className="relative flex flex-col gap-3">
                   <YieldCard
                     farm_id={farm?.farm_id}
@@ -268,6 +319,8 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                     is_small={farm?.is_small}
                     gini_coefficient={farm?.gini_coefficient}
                     small_farm_share_pct={farm?.small_farm_share_pct}
+                    overallGini={summary.gini}
+                    overallSmallFarmSharePct={summary.smallFarmShare}
                     maxAllocation={maxAllocation}
                   />
                   <ReasoningCard

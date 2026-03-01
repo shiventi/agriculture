@@ -1,8 +1,9 @@
 'use client'
 
-import { Coins, Check } from 'lucide-react'
+import { BarChart2, Coins, Check, Info, Users } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 const formatUSD = (value) => {
   if (value == null || Number.isNaN(value)) return '—'
@@ -20,8 +21,12 @@ export default function SubsidyCard({
   is_small,
   gini_coefficient,
   small_farm_share_pct,
+  overallGini,
+  overallSmallFarmSharePct,
   maxAllocation,
 }) {
+  const gini = gini_coefficient ?? overallGini
+  const smallShare = small_farm_share_pct ?? overallSmallFarmSharePct
   const amount = subsidy_amount ?? 0
   const before = subsidy_before != null ? subsidy_before : null
   const max = maxAllocation != null && maxAllocation > 0 ? maxAllocation : amount || 1
@@ -40,13 +45,31 @@ export default function SubsidyCard({
       </CardHeader>
       <CardContent className="space-y-2 p-3 pt-2">
         {before != null ? (
-          <div className="space-y-0.5">
-            <p className="text-xs text-muted-foreground">
-              Before constraint: <span className="font-medium tabular-nums text-foreground">{formatUSD(before)}</span>
-            </p>
-            <p className="subsidy-amount text-[22px] font-bold tabular-nums text-primary">
-              After fairness: {formatUSD(amount)}
-            </p>
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-muted-foreground">Before</span>
+              <TooltipProvider delayDuration={200}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-3 w-3 shrink-0 cursor-help text-muted-foreground" aria-label="Info" />
+                  </TooltipTrigger>
+                  <TooltipContent side="top">Subsidy before fairness</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <span className="ml-auto font-medium tabular-nums text-foreground">{formatUSD(before)}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-muted-foreground">After</span>
+              <TooltipProvider delayDuration={200}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-3 w-3 shrink-0 cursor-help text-muted-foreground" aria-label="Info" />
+                  </TooltipTrigger>
+                  <TooltipContent side="top">Subsidy after fairness</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <span className="subsidy-amount ml-auto text-lg font-bold tabular-nums text-primary">{formatUSD(amount)}</span>
+            </div>
           </div>
         ) : (
           <p className="subsidy-amount text-[28px] font-bold tabular-nums text-primary">
@@ -64,16 +87,22 @@ export default function SubsidyCard({
           </div>
         )}
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <div className="subsidy-stat-box rounded-lg border border-border bg-muted/50 p-2">
-            <p className="text-xs text-muted-foreground">Gini Index</p>
+          <div className="subsidy-stat-box flex flex-col gap-0.5 rounded-lg border border-border bg-muted/50 p-2">
+            <p className="flex items-center gap-1 text-xs text-muted-foreground">
+              <BarChart2 className="h-3 w-3 shrink-0" aria-hidden />
+              Gini Index
+            </p>
             <p className="text-sm font-bold tabular-nums text-foreground">
-              {gini_coefficient != null ? gini_coefficient.toFixed(2) : '—'}
+              {gini != null && !Number.isNaN(gini) ? gini.toFixed(2) : '—'}
             </p>
           </div>
-          <div className="subsidy-stat-box rounded-lg border border-border bg-muted/50 p-2">
-            <p className="text-xs text-muted-foreground">Small Farm Share</p>
+          <div className="subsidy-stat-box flex flex-col gap-0.5 rounded-lg border border-border bg-muted/50 p-2">
+            <p className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Users className="h-3 w-3 shrink-0" aria-hidden />
+              Small Farm Share
+            </p>
             <p className="text-sm font-bold tabular-nums text-foreground">
-              {small_farm_share_pct != null ? `${small_farm_share_pct}%` : '—'}
+              {smallShare != null && !Number.isNaN(smallShare) ? `${smallShare}%` : '—'}
             </p>
           </div>
         </div>

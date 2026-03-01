@@ -1,6 +1,6 @@
 'use client'
 
-import { CloudRain } from 'lucide-react'
+import { AlertTriangle, CloudRain, Droplets, Thermometer } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -93,24 +93,26 @@ export default function ClimateRiskCard({
         <Separator className="bg-border" />
         <div className="space-y-1 text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">
-            <span aria-hidden>🌡</span>
+            <Thermometer className="h-3.5 w-3.5 shrink-0" aria-hidden />
             <span>{temperature_c != null ? `${temperature_c}°C avg temperature` : '—'}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span aria-hidden>💧</span>
+            <Droplets className="h-3.5 w-3.5 shrink-0" aria-hidden />
             <span>{precipitation_mm != null ? `${precipitation_mm}mm precipitation` : '—'}</span>
           </div>
         </div>
         {(droughtRisk || heatStress) && (
           <div className="flex flex-wrap gap-1.5 pt-0.5">
             {droughtRisk && (
-              <Badge className="rounded-full border border-amber-500/50 bg-amber-500/20 text-[10px] text-amber-700 dark:text-[#d4a843]">
-                ⚠ Drought Risk
+              <Badge className="flex w-fit items-center gap-1 rounded-full border border-amber-500/50 bg-amber-500/20 text-[10px] text-amber-700 dark:text-[#d4a843]">
+                <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden />
+                Drought Risk
               </Badge>
             )}
             {heatStress && (
-              <Badge className="rounded-full border border-red-500/50 bg-red-500/20 text-[10px] text-red-700 dark:text-[#e07060]">
-                ⚠ Heat Stress
+              <Badge className="flex w-fit items-center gap-1 rounded-full border border-red-500/50 bg-red-500/20 text-[10px] text-red-700 dark:text-[#e07060]">
+                <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden />
+                Heat Stress
               </Badge>
             )}
           </div>
