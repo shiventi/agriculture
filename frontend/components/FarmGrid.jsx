@@ -10,7 +10,7 @@ import YieldCard from '@/components/YieldCard'
 import ClimateRiskCard from '@/components/ClimateRiskCard'
 import SubsidyCard from '@/components/SubsidyCard'
 import ReasoningCard from '@/components/ReasoningCard'
-import { formatUSD, formatPercent } from '@/lib/format'
+import { formatUSD, formatHa } from '@/lib/format'
 
 const ACCENTS = [
   { border: 'border-t-primary', dot: 'bg-primary', glow: 'hsl(var(--primary) / 0.12)', shadow: 'hsl(var(--primary) / 0.25)' },
@@ -33,16 +33,16 @@ export default function FarmGrid({ results, isLoading, onBack }) {
   const [viewMode, setViewMode] = useState('table')
 
   const summary = useMemo(() => {
-    if (!farms.length) return { totalFarms: 0, totalBudget: 0, avgExpectedYield: 0, smallFarmShare: 0 }
+    if (!farms.length) return { totalFarms: 0, totalBudget: 0, avgExpectedYieldHa: 0, smallFarmShare: 0 }
     const totalBudget = farms.reduce((sum, f) => sum + (f.subsidy_amount ?? 0), 0)
-    const expectedYields = farms.map((f) => f.expected_yield ?? (f.yield_score != null ? f.yield_score * 50000 : 0))
-    const avgExpectedYield = expectedYields.length ? expectedYields.reduce((a, b) => a + b, 0) / expectedYields.length : 0
+    const expectedYieldsHa = farms.map((f) => f.expected_yield_ha ?? (f.yield_score != null ? f.yield_score * 15 : 0))
+    const avgExpectedYieldHa = expectedYieldsHa.length ? expectedYieldsHa.reduce((a, b) => a + b, 0) / expectedYieldsHa.length : 0
     const smallCount = farms.filter((f) => f.is_small).length
     const smallFarmShare = farms.length ? (smallCount / farms.length) * 100 : 0
     return {
       totalFarms: farms.length,
       totalBudget,
-      avgExpectedYield,
+      avgExpectedYieldHa,
       smallFarmShare: Math.round(smallFarmShare * 10) / 10,
     }
   }, [farms])
@@ -70,7 +70,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
           </span>
           <Separator orientation="vertical" className="hidden h-5 bg-border sm:block" />
           <span className="summary-bar-text text-sm text-muted-foreground">
-            <span className="font-semibold text-primary">{formatUSD(summary.avgExpectedYield)}</span> avg expected yield
+            <span className="font-semibold text-primary">{formatHa(summary.avgExpectedYieldHa)}</span> avg expected yield
           </span>
           <Separator orientation="vertical" className="hidden h-5 bg-border sm:block" />
           <span className="summary-bar-text text-sm text-muted-foreground">
@@ -116,7 +116,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                   <th className="px-4 py-3 text-left font-semibold text-foreground">Farm</th>
                   <th className="px-4 py-3 text-right font-semibold text-foreground">Size (ha)</th>
                   <th className="px-4 py-3 text-center font-semibold text-foreground">Small</th>
-                  <th className="px-4 py-3 text-right font-semibold text-foreground">Expected Yield</th>
+                  <th className="px-4 py-3 text-right font-semibold text-foreground">Expected Yield (ha)</th>
                   <th className="px-4 py-3 text-right font-semibold text-foreground">Climate risk</th>
                   <th className="px-4 py-3 text-right font-semibold text-foreground">Subsidy</th>
                   <th className="max-w-[280px] px-4 py-3 text-left font-semibold text-foreground">Reasoning</th>
@@ -127,7 +127,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                   const farmId = farm.farm_id ?? farm.id
                   const riskScore = farm.climate_risk_score
                   const riskNum = riskScore != null ? (riskScore * 100).toFixed(0) : '—'
-                  const expectedYield = farm.expected_yield ?? (farm.yield_score != null ? farm.yield_score * 50000 : null)
+                  const expectedYieldHa = farm.expected_yield_ha ?? (farm.yield_score != null ? farm.yield_score * 15 : null)
                   return (
                     <tr
                       key={farmId}
@@ -136,7 +136,7 @@ export default function FarmGrid({ results, isLoading, onBack }) {
                       <td className="px-4 py-2.5 font-medium text-foreground">{farmId}</td>
                       <td className="px-4 py-2.5 text-right text-muted-foreground">{farm.farm_size_ha ?? '—'}</td>
                       <td className="px-4 py-2.5 text-center">{farm.is_small ? 'Yes' : 'No'}</td>
-                      <td className="px-4 py-2.5 text-right text-foreground">{formatUSD(expectedYield)}</td>
+                      <td className="px-4 py-2.5 text-right text-foreground">{formatHa(expectedYieldHa)}</td>
                       <td className="px-4 py-2.5 text-right text-muted-foreground">{riskNum}</td>
                       <td className="px-4 py-2.5 text-right font-medium text-primary">{formatUSD(farm.subsidy_amount)}</td>
                       <td className="max-w-[280px] px-4 py-2.5 text-sm leading-relaxed text-muted-foreground" title={farm.reasoning ?? ''}>
@@ -171,11 +171,10 @@ export default function FarmGrid({ results, isLoading, onBack }) {
               </div>
               <div className="relative flex flex-col gap-3 sm:gap-4">
                 <YieldCard
-                  farm_id={farm.farm_id}
                   farm_size_ha={farm.farm_size_ha}
                   is_small={farm.is_small}
                   yield_score={farm.yield_score}
-                  expected_yield={farm.expected_yield}
+                  expected_yield_ha={farm.expected_yield_ha}
                 />
                 <ClimateRiskCard
                   climate_risk_score={farm.climate_risk_score}
