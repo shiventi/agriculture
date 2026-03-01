@@ -161,7 +161,7 @@ export default function UploadZone({
         <div className="upload-card rounded-3xl border border-border bg-card p-6 sm:p-8 md:p-10">
           <div className="flex flex-col items-center text-center relative z-10">
             <Image
-              src="/fork.png"
+              src="/fork.webp"
               alt="AgriEquity AI"
               width={80}
               height={80}

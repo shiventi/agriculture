@@ -37,7 +37,7 @@ export default function Home() {
       {isLoading && <LoadingState />}
       <div className="relative min-h-[50vh] sm:min-h-[60vh]">
         <Image
-          src="/fork.png"
+          src="/fork.webp"
           alt=""
           width={300}
           height={300}
