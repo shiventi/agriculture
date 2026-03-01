@@ -1,6 +1,7 @@
 import os
+from dotenv import load_dotenv
 from groq import Groq
-
+load_dotenv()
 # Initialize the Groq client. It will automatically look for the GROQ_API_KEY environment variable.
 client = Groq()
 
@@ -59,9 +60,9 @@ def generate_farm_reasoning(farm_id: str, raw_features: list, allocation_amount:
                     "content": prompt
                 }
             ],
-            model="llama3-8b-8192",
-            temperature=0.2, # Low temperature keeps the response factual and grounded
-            max_tokens=200   # Keep the response short to save time
+            model="llama-3.1-8b-instant", # This is the fastest Groq model, and it's free to use with your API key
+            temperature=0.3, # Low temperature keeps the response factual and grounded
+            max_tokens=120   # Keep the response short to save time
         )
         
         reasoning_text = chat_completion.choices[0].message.content.strip()
