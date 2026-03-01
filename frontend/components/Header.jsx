@@ -1,8 +1,9 @@
 'use client'
 
+import Image from 'next/image'
 import { useMemo, useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
-import { Wheat, Cpu, Sun, Moon } from 'lucide-react'
+import { Cpu, Sun, Moon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { useResults } from '@/contexts/ResultsContext'
@@ -38,7 +39,13 @@ export default function Header() {
             className="flex min-w-0 shrink items-center gap-2 text-inherit no-underline"
             aria-label="PitchFork home"
           >
-            <Wheat className="h-5 w-5 shrink-0 text-primary sm:h-6 sm:w-6 logo-icon" aria-hidden />
+            <Image
+              src="/fork.jpg"
+              alt="AgriEquity AI Logo"
+              width={36}
+              height={36}
+              className="rounded-full opacity-95 dark:opacity-80 object-cover shrink-0 logo-icon h-9 w-9 sm:h-9 sm:w-9"
+            />
             <span className="logo-agri truncate text-base font-bold text-foreground sm:text-lg">PitchFork</span>
           </a>
 

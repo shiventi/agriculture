@@ -1,7 +1,8 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useRef } from 'react'
-import { Wheat, ChevronDown, ArrowRight, Loader2, BarChart3, CloudRain, Scale, FileSpreadsheet } from 'lucide-react'
+import { ChevronDown, ArrowRight, Loader2, BarChart3, CloudRain, Scale, FileSpreadsheet } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -158,8 +159,14 @@ export default function UploadZone({
     <div className="upload-zone-root min-h-[50vh] bg-[#f4f7f0] sm:min-h-[60vh] dark:bg-background">
       <div className="mx-auto mt-4 max-w-2xl px-4 sm:mt-6 sm:px-6 md:max-w-3xl md:mt-8 md:p-8 lg:mt-10 lg:p-12">
         <div className="upload-card rounded-3xl border border-border bg-card p-6 sm:p-8 md:p-10">
-          <div className="flex flex-col items-center text-center">
-            <Wheat className="h-10 w-10 shrink-0 text-primary sm:h-12 sm:w-12" aria-hidden />
+          <div className="flex flex-col items-center text-center relative z-10">
+            <Image
+              src="/fork.jpg"
+              alt="AgriEquity AI"
+              width={80}
+              height={80}
+              className="rounded-full mx-auto mb-4 opacity-90 dark:opacity-75 object-cover ring-2 ring-[#588157]/30 shadow-lg"
+            />
             <h1 className="mt-3 text-xl font-bold text-foreground sm:mt-4 sm:text-2xl">PitchFork</h1>
             <p className="mt-2 text-sm text-muted-foreground">
               Upload your farms CSV to begin analysis
