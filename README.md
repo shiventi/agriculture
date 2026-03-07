@@ -49,6 +49,8 @@ PitchFork’s core value is quantifying climate risk and predicted yield to supp
 
 Prize support would directly help fund training and validation for these improved models.
 
+Demo Video: [https://www.youtube.com/watch?v=wkt_VEJiEt0](https://www.youtube.com/watch?v=wkt_VEJiEt0)
+
 ## Contributors
 - `Shiven Sheth`
 - `Pranay Jain`
